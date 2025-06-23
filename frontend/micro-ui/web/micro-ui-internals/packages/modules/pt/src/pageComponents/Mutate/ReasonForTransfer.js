@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Dropdown, FormStep, LabelFieldPair, CardLabel, RadioOrSelect } from "@egovernments/digit-ui-react-components";
+import { Dropdown, FormStep, LabelFieldPair, CardLabel, RadioOrSelect } from "@upyog/digit-ui-react-components";
 
 const ReasonForTransfer = (props) => {
   const { t, config, onSelect, userType, formData, setError, clearErrors, errors } = props;

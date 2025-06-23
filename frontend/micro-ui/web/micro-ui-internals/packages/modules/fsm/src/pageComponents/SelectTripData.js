@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getVehicleType } from "../utils";
-import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError } from "@upyog/digit-ui-react-components";
 import { useLocation, useParams } from "react-router-dom";
 
 const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
@@ -23,7 +23,10 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
 
   const { isLoading: isVehicleMenuLoading, data: vehicleData } = Digit.Hooks.fsm.useMDMS(state, "Vehicle", "VehicleType", { staleTime: Infinity });
 
-  const { data: dsoData, isLoading: isDsoLoading, isSuccess: isDsoSuccess, error: dsoError } = Digit.Hooks.fsm.useDsoSearch(tenantId, { limit: -1 });
+  const { data: dsoData, isLoading: isDsoLoading, isSuccess: isDsoSuccess, error: dsoError } = Digit.Hooks.fsm.useDsoSearch(tenantId, {
+    limit: -1,
+    status: "ACTIVE",
+  });
 
   const [vehicleMenu, setVehicleMenu] = useState([]);
 
@@ -41,20 +44,6 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
 
   const inputs = [
     {
-      label: "ES_NEW_APPLICATION_PAYMENT_NO_OF_TRIPS",
-      type: "number",
-      name: "noOfTrips",
-      error: t("ES_NEW_APPLICATION_NO_OF_TRIPS_INVALID"),
-      validation: {
-        isRequired: true,
-        min: 1,
-        autoFocus: presentInModifyApplication,
-      },
-      default: formData?.tripData?.noOfTrips,
-      disable: false,
-      isMandatory: true,
-    },
-    {
       label: "ES_NEW_APPLICATION_AMOUNT_PER_TRIP",
       type: "text",
       name: "amountPerTrip",
@@ -65,7 +54,9 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
         title: t("ES_APPLICATION_BILL_SLAB_ERROR"),
       },
       default: formData?.tripData?.amountPerTrip,
-      disable: true,
+      disable: formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT"
+      ? false
+      : true,
       isMandatory: true,
     },
     {
@@ -86,13 +77,23 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
     onSelect(config.key, { ...formData[config.key], noOfTrips: value });
   }
 
+  function setAmount(value) {
+    onSelect(config.key, {
+      ...formData[config.key],
+      amountPerTrip: value,
+      amount: value * formData.tripData.noOfTrips,
+    });
+  }
+
   function selectVehicle(value) {
     setVehicle({ label: value.capacity });
     onSelect(config.key, { ...formData[config.key], vehicleType: value });
   }
 
   function setValue(object) {
-    onSelect(config.key, { ...formData[config.key], ...object });
+    let a = {...formData[config.key],...object}
+    console.log("config.key",config.key,a)
+    onSelect(config.key,  a);
   }
   useEffect(() => {
     (async () => {
@@ -100,7 +101,8 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
         setVehicle({ label: formData?.tripData?.vehicleType?.capacity });
       }
 
-      if (formData?.propertyType && formData?.subtype && formData?.address && formData?.tripData?.vehicleType?.capacity) {
+      if (formData?.propertyType && formData?.subtype && formData?.address && formData?.tripData?.vehicleType?.capacity &&
+        formData?.address?.propertyLocation?.code === "WITHIN_ULB_LIMITS") {
         const capacity = formData?.tripData?.vehicleType.capacity;
         const { slum: slumDetails } = formData.address;
         const slum = slumDetails ? "YES" : "NO";
@@ -109,9 +111,9 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
           capacity,
           slum,
         });
-
+        console.log("billingDetails",billingDetails)
         const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
-        if (billSlab?.price) {
+        if (billSlab?.price || billSlab?.price === 0) {
           setValue({
             amountPerTrip: billSlab.price,
             amount: billSlab.price * formData.tripData.noOfTrips,
@@ -123,39 +125,39 @@ const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
             amount: "",
           });
           setError(true);
-        }
+        } 
+      } else if (
+        formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" &&
+        formData.tripData.noOfTrips &&
+        formData.tripData.amountPerTrip
+      ) {
+        setValue({
+          amount: formData.tripData.amountPerTrip * formData.tripData.noOfTrips,
+        });
       }
     })();
-  }, [formData?.propertyType, formData?.subtype, formData?.address, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips]);
+  }, [formData?.propertyType, formData?.subtype, formData?.address?.slum, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips && formData?.address?.propertyLocation?.code]);
 
   return isVehicleMenuLoading && isDsoLoading ? (
     <Loader />
   ) : (
     <div>
-      <LabelFieldPair>
-        <CardLabel className="card-label-smaller">{t("ES_NEW_APPLICATION_LOCATION_VEHICLE_REQUESTED") + " * "}</CardLabel>
-        <Dropdown
-          className="form-field"
-          isMandatory
-          option={vehicleMenu?.map((vehicle) => ({ ...vehicle, label: vehicle.capacity }))}
-          optionKey="label"
-          id="vehicle"
-          selected={vehicle}
-          select={selectVehicle}
-          t={t}
-          disable={editScreen && applicationData?.applicationStatus != "CREATED" ? true : false}
-        />
-      </LabelFieldPair>
       {inputs?.map((input, index) => (
         <LabelFieldPair key={index}>
           <CardLabel className="card-label-smaller">
-            {t(input.label)}
+            {t(input.label) + " (₹)"}
             {input.isMandatory ? " * " : null}
           </CardLabel>
           <div className="field">
             <TextInput
               type={input.type}
-              onChange={(e) => setTripNum(e.target.value)}
+              onChange={(e) =>
+                index === 0 &&
+                formData.address.propertyLocation?.code ===
+                  "FROM_GRAM_PANCHAYAT"
+                  ? setAmount(e.target.value)
+                  : setTripNum(e.target.value)
+              }
               key={input.name}
               value={input.default ? input.default : formData && formData[config.key] ? formData[config.key][input.name] : null}
               {...input.validation}

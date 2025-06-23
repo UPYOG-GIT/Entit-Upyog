@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
-import { RadioButtons } from "@egovernments/digit-ui-react-components";
+import { RadioButtons } from "@upyog/digit-ui-react-components";
 
 const SelectPaymentType = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
   const stateId = Digit.ULBService.getStateId();
@@ -9,6 +9,7 @@ const SelectPaymentType = ({ t, config, onSelect, formData = {}, userType, regis
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
   const [paymentType, setPaymentType] = useState(null);
+  const [isSlum, setIsSlum] = useState();
 
   const inputs = [
     {
@@ -25,10 +26,16 @@ const SelectPaymentType = ({ t, config, onSelect, formData = {}, userType, regis
       const preFilledPaymentType = paymentData.filter(
         (paymentType) => paymentType.code === (formData?.paymentPreference?.code || formData?.paymentPreference)
       )[0];
-      preFilledPaymentType ? setPaymentType(preFilledPaymentType) : setPaymentType(paymentData.find((i) => i.code === "POST_PAY"))
+      preFilledPaymentType ? setPaymentType(preFilledPaymentType) : setPaymentType(paymentData.find((i) => i.code === "POST_PAY"));
     }
   }, [formData, formData?.paymentPreference?.code, formData?.paymentPreference, paymentData]);
 
+  useEffect(() => {
+    if (formData?.address) {
+      const { slum: slumDetails } = formData.address;
+      slumDetails ? setIsSlum(true) : setIsSlum(false);
+    }
+  }, [formData]);
 
   function selectPaymentType(value) {
     setPaymentType(value);
@@ -39,7 +46,7 @@ const SelectPaymentType = ({ t, config, onSelect, formData = {}, userType, regis
     <div>
       {inputs?.map((input, index) => (
         <React.Fragment key={index}>
-          {input.type === "RadioButton" &&
+          {formData?.tripData?.amountPerTrip !== 0 && input.type === "RadioButton" && (
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
                 {t(input.label)}
@@ -57,7 +64,7 @@ const SelectPaymentType = ({ t, config, onSelect, formData = {}, userType, regis
                 />
               </div>
             </LabelFieldPair>
-          }
+          )}
         </React.Fragment>
       ))}
     </div>

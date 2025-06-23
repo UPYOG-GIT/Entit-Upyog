@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Card, Banner, CardText, SubmitBar, LinkButton } from "@egovernments/digit-ui-react-components";
+import { Card, Banner, CardText, SubmitBar, LinkButton } from "@upyog/digit-ui-react-components";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import getPDFData from "../../../getPDFData";
 
 const GetActionMessage = () => {
@@ -14,7 +14,7 @@ const BannerPicker = (props) => {
   return (
     <Banner
       message={GetActionMessage()}
-      applicationNumber={props.data?.fsm[0].applicationNo}
+      applicationNumber={props?.data?.fsm && props?.data?.fsm[0]?.applicationNo}
       info={props.t("CS_FILE_DESLUDGING_APPLICATION_NO")}
       successful={props.isSuccess}
     />
@@ -31,6 +31,8 @@ const Response = ({ data, onSuccess }) => {
   const [errorInfo, setErrorInfo, clearError] = Digit.Hooks.useSessionStorage("FSM_ERROR_DATA", false);
   const [successData, setsuccessData, clearSuccessData] = Digit.Hooks.useSessionStorage("FSM_MUTATION_SUCCESS_DATA", false);
   const [paymentPreference, setPaymentPreference] = useState(null);
+  const [advancePay, setAdvancePay] = useState(null);
+  const [zeroPay, setZeroPay] = useState(null);
 
   const Data = mutation?.data || successData;
   const localityCode = Data?.fsm?.[0].address?.locality?.code;
@@ -41,38 +43,73 @@ const Response = ({ data, onSuccess }) => {
   });
 
   const onError = (error, variables) => {
+    console.log("error",error)
     setErrorInfo(error?.response?.data?.Errors[0]?.code || "ERROR");
     setMutationHappened(true);
   };
   useEffect(() => {
     if (mutation.data) setsuccessData(mutation.data);
   }, [mutation.data]);
+
   useEffect(() => {
     if (!mutationHappened && !errorInfo) {
       try {
-        const { subtype, pitDetail, address, pitType, source, selectGender, selectPaymentPreference, selectTripNo } = data;
-        const { city, locality, geoLocation, pincode, street, doorNo, landmark, slum } = address;
+        const amount = Digit.SessionStorage.get("total_amount");
+        const amountPerTrip = Digit.SessionStorage.get("amount_per_trip");
+        const { subtype, propertyID, pitDetail, address, pitType, source, selectGender, selectPaymentPreference, selectTripNo } = data;
+        const {
+          city,
+          locality,
+          geoLocation,
+          pincode,
+          street,
+          doorNo,
+          landmark,
+          slum,
+          gramPanchayat,
+          village,
+          propertyLocation,
+          newLocality,
+          newGramPanchayat,
+          newVillage,
+        } = address;
         setPaymentPreference(selectPaymentPreference?.code);
+        const advanceAmount = amount === 0 ? null : selectPaymentPreference?.advanceAmount;
+        amount === 0 ? setZeroPay(true) : setZeroPay(false);
+        advanceAmount === 0 ? setAdvancePay(true) : setAdvancePay(false);
         const formdata = {
           fsm: {
             citizen: {
               gender: selectGender?.code,
             },
-            tenantId: city.code,
-            additionalDetails: {},
-            propertyUsage: subtype.code,
+            tenantId: city?.code,
+            propertyUsage: subtype?.code,
             address: {
-              tenantId: city.code,
-              additionalDetails: null,
+              tenantId: city?.code,
+              additionalDetails: {
+                boundaryType: propertyLocation?.code === "FROM_GRAM_PANCHAYAT" ? "GP" : "Locality",
+                gramPanchayat: {
+                  code: gramPanchayat?.code,
+                  name: gramPanchayat?.name,
+                },
+                village: village?.code
+                  ? {
+                      code: village?.code ? village?.code : "",
+                      name: village?.name ? village?.name : "",
+                    }
+                  : newVillage,
+                newLocality: newLocality,
+                newGramPanchayat: newGramPanchayat,
+              },
               street: street?.trim(),
               doorNo: doorNo?.trim(),
-              landmark: landmark?.trim(),
+              landmark: landmark,
               slumName: slum,
-              city: city.name,
+              city: city?.name,
               pincode,
               locality: {
-                code: locality.code,
-                name: locality.name,
+                code: propertyLocation?.code === "WITHIN_ULB_LIMITS" ? locality?.code : gramPanchayat?.code,
+                name: propertyLocation?.code === "WITHIN_ULB_LIMITS" ? locality?.name : gramPanchayat?.name,
               },
               geoLocation: {
                 latitude: geoLocation?.latitude,
@@ -80,15 +117,31 @@ const Response = ({ data, onSuccess }) => {
                 additionalDetails: {},
               },
             },
-            pitDetail: { ...pitDetail },
+            pitDetail: {
+              additionalDetails: {
+                fileStoreId: {
+                  CITIZEN: pitDetail?.images,
+                },
+              },
+            },
             source,
             sanitationtype: pitType?.code,
-            paymentPreference: selectPaymentPreference ? selectPaymentPreference?.code : "POST_PAY",
+            paymentPreference: amount === 0 ? null : selectPaymentPreference?.paymentType ? selectPaymentPreference?.paymentType?.code : null,
             noOfTrips: selectTripNo ? selectTripNo?.tripNo?.code : 1,
             vehicleCapacity: selectTripNo ? selectTripNo?.vehicleCapacity?.capacity : "",
+            additionalDetails: {
+              totalAmount: amount,
+              tripAmount: typeof amountPerTrip === "number" ? JSON.stringify(amountPerTrip) : amountPerTrip,
+              propertyID : propertyID?.propertyID,
+              distancefromroad : data?.roadWidth?.distancefromroad,
+              roadWidth: data?.roadWidth?.roadWidth,
+              propertyID : data?.cptId?.id
+            },
+            advanceAmount: typeof advanceAmount === "number" ? JSON.stringify(advanceAmount) : advanceAmount,
           },
           workflow: null,
         };
+        console.log("formdata212",formdata,address,data)
         mutation.mutate(formdata, {
           onError,
           onSuccess: () => {
@@ -96,6 +149,8 @@ const Response = ({ data, onSuccess }) => {
             onSuccess();
           },
         });
+        sessionStorage.removeItem("Digit.total_amount");
+        sessionStorage.removeItem("Digit.fsm.file.address.city");
       } catch (err) {}
     }
   }, []);
@@ -116,14 +171,20 @@ const Response = ({ data, onSuccess }) => {
     <Card>
       <BannerPicker t={t} data={Data} isSuccess={isSuccess} isLoading={(mutation.isIdle && !mutationHappened) || mutation?.isLoading} />
       <CardText>
-        {t(paymentPreference && paymentPreference == "POST_PAY" ? "CS_FILE_PROPERTY_RESPONSE_POST_PAY" : "CS_FILE_PROPERTY_RESPONSE")}
+        {t(
+          (paymentPreference && paymentPreference == "POST_PAY") || advancePay
+            ? "CS_FILE_PROPERTY_RESPONSE_POST_PAY"
+            : zeroPay
+            ? "CS_FSM_RESPONSE_CREATE_DISPLAY_ZERO_PAY"
+            : "CS_FILE_PROPERTY_RESPONSE"
+        )}
       </CardText>
       {isSuccess && (
         <LinkButton
           label={
             <div className="response-download-button">
               <span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#f47738">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#a82227">
                   <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z" />
                 </svg>
               </span>

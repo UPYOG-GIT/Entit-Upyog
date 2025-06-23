@@ -1,7 +1,7 @@
 import React, { useEffect, Fragment, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { EmployeeModuleCard, DocumentIconSolid, EventsIconSolid, PMBIconSolid, SurveyIconSolid, PropertyHouse } from "@egovernments/digit-ui-react-components";
+import { EmployeeModuleCard, DocumentIconSolid, EventsIconSolid, PMBIconSolid, SurveyIconSolid, PropertyHouse } from "@upyog/digit-ui-react-components";
 
 const EngagementCard = () => {
   const userRoles = Digit.SessionStorage.get('User')?.info?.roles

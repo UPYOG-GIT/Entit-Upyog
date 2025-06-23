@@ -61,6 +61,10 @@ import SectionalDropdown from "./atoms/SectionalDropdown";
 import { LastRow, MediaRow, Row, StatusTable } from "./atoms/StatusTable";
 import SubmitBar from "./atoms/SubmitBar";
 import StandaloneSearchBar from "./atoms/StandaloneSearchBar";
+import ToggleSwitch from "./atoms/ToggleSwitch";
+import WrapUnMaskComponent from "./molecules/WrapUnMaskComponent";
+import UnMaskComponent from "./atoms/UnMaskComponent";
+
 import {
   AnnouncementIcon,
   ArrowDown,
@@ -145,6 +149,8 @@ import {
   AddNewIcon,
   InboxIcon,
   ViewReportIcon,
+  InfoIcon,
+  PrivacyMaskIcon,
 } from "./atoms/svgindex";
 import Table from "./atoms/Table";
 import TelePhone from "./atoms/TelePhone";
@@ -392,4 +398,9 @@ export {
   AddNewIcon,
   InboxIcon,
   ViewReportIcon,
+  InfoIcon,
+  ToggleSwitch,
+  WrapUnMaskComponent,
+  PrivacyMaskIcon,
+  UnMaskComponent,
 };

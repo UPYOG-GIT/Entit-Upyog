@@ -19,7 +19,7 @@ import {
   BackButton,
   KeyNote,
   CheckBox,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 const EdcrRuleEntry = () => {
   const { t } = useTranslation();

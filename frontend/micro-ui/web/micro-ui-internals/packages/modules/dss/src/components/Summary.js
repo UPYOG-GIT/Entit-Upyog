@@ -1,4 +1,4 @@
-import { Card, Details, Loader, Poll, PrintIcon } from "@egovernments/digit-ui-react-components";
+import { Card, Details, Loader, Poll, PrintIcon } from "@upyog/digit-ui-react-components";
 import { endOfMonth, getTime, startOfMonth } from "date-fns";
 import React from "react";
 import { useTranslation } from "react-i18next";

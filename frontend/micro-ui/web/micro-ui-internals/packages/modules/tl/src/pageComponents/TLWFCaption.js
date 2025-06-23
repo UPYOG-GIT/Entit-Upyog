@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { TelePhone } from "@egovernments/digit-ui-react-components";
+import { TelePhone } from "@upyog/digit-ui-react-components";
 //TODO: please find a better way to display in checkpoints
 import TLWFReason from "./TLWFReason";
 

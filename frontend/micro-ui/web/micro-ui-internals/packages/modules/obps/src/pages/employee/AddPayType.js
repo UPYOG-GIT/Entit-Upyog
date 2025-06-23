@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
 import {
   Card, Header, Modal, Dropdown, CardLabel, TextInput, SubmitBar, Toast, CloseSvg, Table, DeleteIcon, LabelFieldPair, Loader, Row, CheckBox, BackButton
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 
 const AddPayType = () => {

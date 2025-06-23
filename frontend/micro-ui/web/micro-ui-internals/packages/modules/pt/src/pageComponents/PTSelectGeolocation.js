@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { LocationSearchCard } from "@egovernments/digit-ui-react-components";
+import { LocationSearchCard } from "@upyog/digit-ui-react-components";
 import { cardBodyStyle } from "../utils";
 
 const PTSelectGeolocation = ({ t, config, onSelect, formData = {} }) => {

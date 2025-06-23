@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useParams, useHistory } from "react-router-dom";
 import {
   Card, Header, Modal, Dropdown, CardLabel, TextInput, SubmitBar, Table, CloseSvg, Toast, DeleteIcon, LabelFieldPair, Loader, Row, StatusTable, BackButton, CheckBox
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 
 
 const getDatafromLS = (id) => {

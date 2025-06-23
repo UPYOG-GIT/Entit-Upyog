@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Loader } from "@egovernments/digit-ui-react-components";
+import { Loader } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import StatusCount from "./StatusCount";
 
@@ -29,8 +29,8 @@ const Status = ({ onAssignmentChange, fsmfilters, mergedRoleDetails, statusMap }
       ))}
       {moreStatus
         ? moreApplicationWithCount?.map((option, index) => (
-            <StatusCount key={index} onAssignmentChange={onAssignmentChange} status={option} fsmfilters={fsmfilters} statusMap={statusMap} />
-          ))
+          <StatusCount key={index} onAssignmentChange={onAssignmentChange} status={option} fsmfilters={fsmfilters} statusMap={statusMap} />
+        ))
         : null}
       {mergedRoleDetails.fixed === false && moreApplicationWithCount.length > 0 ? (
         <div className="filter-button" onClick={() => showMoreStatus(!moreStatus)}>

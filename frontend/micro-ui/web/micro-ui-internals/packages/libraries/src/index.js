@@ -45,6 +45,7 @@ import { EDCRService } from "./services/elements/EDCR";
 import { OBPSService } from "./services/elements/OBPS";
 import { OBPSAdminService } from "./services/elements/OBPSAdmin";
 import { NOCService } from "./services/elements/NOC";
+import {CustomService} from "./services/elements/CustomService"; 
 
 const setupLibraries = (Library, props) => {
   window.Digit = window.Digit || {};
@@ -57,6 +58,8 @@ const initLibraries = () => {
   setupLibraries("PersistantStorage", PersistantStorage);
   setupLibraries("UserService", UserService);
   setupLibraries("ULBService", ULBService);
+
+  setupLibraries("CustomService", CustomService);
 
   setupLibraries("Config", { mergeConfig });
   setupLibraries("Services", { useStore });

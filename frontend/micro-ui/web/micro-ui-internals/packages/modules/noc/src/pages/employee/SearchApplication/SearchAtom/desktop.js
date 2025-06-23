@@ -4,7 +4,7 @@ import {
   Table,
   Card,
   Loader,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 

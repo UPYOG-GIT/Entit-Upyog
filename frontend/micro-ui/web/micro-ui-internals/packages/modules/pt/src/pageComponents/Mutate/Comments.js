@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextInput, FormStep, TextArea, LabelFieldPair, CardLabel } from "@egovernments/digit-ui-react-components";
+import { TextInput, FormStep, TextArea, LabelFieldPair, CardLabel } from "@upyog/digit-ui-react-components";
 
 const Comments = (props) => {
   const { t, config, onSelect, userType, formData } = props;

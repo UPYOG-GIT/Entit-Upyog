@@ -1,9 +1,9 @@
-import { LogoutIcon, NavBar, EditPencilIcon } from "@egovernments/digit-ui-react-components";
+import { LogoutIcon, NavBar, EditPencilIcon } from "@upyog/digit-ui-react-components";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import SideBarMenu from "../../../config/sidebar-menu";
-import { Phone } from "@egovernments/digit-ui-react-components";
+import { Phone } from "@upyog/digit-ui-react-components";
 import ChangeCity from "../../ChangeCity";
 
 const defaultImage =

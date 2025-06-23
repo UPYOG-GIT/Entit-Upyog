@@ -1,4 +1,4 @@
-import { BackButton } from "@egovernments/digit-ui-react-components";
+import { BackButton } from "@upyog/digit-ui-react-components";
 import React, { useContext } from "react";
 
 const CitizenHome = ({ modules }) => {

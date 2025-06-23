@@ -21,7 +21,7 @@ cd "$BASEDIR/packages/react-components" && yarn publish --access public
 
 # sleep 10
 # msg "Updating dependencies"
-# cd "$BASEDIR" && yarn upgrade -S @egovernments
+# cd "$BASEDIR" && yarn upgrade -S @upyog
 # sleep 5
 
 msg "Building and publishing PGR module"

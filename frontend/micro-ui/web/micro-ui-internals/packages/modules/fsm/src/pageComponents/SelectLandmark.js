@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FormStep, TextArea, LabelFieldPair, CardLabel } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextArea, LabelFieldPair, CardLabel } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 
 const SelectLandmark = ({ t, config, onSelect, formData, userType }) => {
@@ -53,7 +53,8 @@ const SelectLandmark = ({ t, config, onSelect, formData, userType }) => {
 
   return (
     <React.Fragment>
-      {window.location.href.includes("/tl") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
+    
+    {window.location.href.includes("/pt") ?  <Timeline currentStep={1} flow ="PT_APPLY"/> : window.location.href.includes("/tl") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
       <FormStep
         config={{ ...config, inputs }}
         value={landmark}
@@ -62,6 +63,7 @@ const SelectLandmark = ({ t, config, onSelect, formData, userType }) => {
         onSkip={onSkip}
         t={t}
         forcedError={t(error)}
+        isDisabled={landmark ? false : true}
       ></FormStep>
     </React.Fragment>
   );

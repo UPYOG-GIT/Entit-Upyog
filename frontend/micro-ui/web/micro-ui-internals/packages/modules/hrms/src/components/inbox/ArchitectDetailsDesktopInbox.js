@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ApplicationTable from "../inbox/ApplicationTable";
-import { Card, Header, Loader, Modal, LabelFieldPair, Dropdown, CardLabel, TextInput, KeyNote, Toast } from "@egovernments/digit-ui-react-components";
+import { Card, Header, Loader, Modal, LabelFieldPair, Dropdown, CardLabel, TextInput, KeyNote, Toast } from "@upyog/digit-ui-react-components";
 import InboxLinks from "../inbox/ApplicationLinks";
 import SearchApplication from "./search";
 

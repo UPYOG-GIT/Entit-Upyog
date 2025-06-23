@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { CardLabelError, TextInput, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { CardLabelError, TextInput, RadioButtons } from "@upyog/digit-ui-react-components";
 import { Controller, useFormContext } from "react-hook-form";
 
 const SurveySettingsForms = ({ t, controlSurveyForm, surveyFormState, disableInputs, enableEndDateTimeOnly }) => {

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRightInbox, ShippingTruck, EmployeeModuleCard } from "@egovernments/digit-ui-react-components";
-
+import { ArrowRightInbox, ShippingTruck, EmployeeModuleCard, AddNewIcon, ViewReportIcon, InboxIcon } from "@upyog/digit-ui-react-components";
+import { checkForEmployee } from "../utils";
 const ArrowRight = ({ to }) => (
   <Link to={to}>
     <ArrowRightInbox />
@@ -63,9 +63,13 @@ const FSMCard = () => {
     else return { uuid: { code: "ASSIGNED_TO_ME", name: t("ES_INBOX_ASSIGNED_TO_ME") } };
   };
 
-  const { data: inbox, isFetching: pendingApprovalRefetching } = Digit.Hooks.fsm.useInbox(tenantId, { ...filters, limit: 10, offset: 0, ...getUUIDFilter() }, {
-    enabled: !isFSTPOperator ? true : false,
-  });
+  const { data: inbox, isFetching: pendingApprovalRefetching } = Digit.Hooks.fsm.useInbox(
+    tenantId,
+    { ...filters, limit: 10, offset: 0, ...getUUIDFilter() },
+    {
+      enabled: !isFSTPOperator ? true : false,
+    }
+  );
 
   useEffect(() => {
     if (inbox) {
@@ -74,75 +78,100 @@ const FSMCard = () => {
     }
   }, [inbox]);
 
+  const moduleForSomeFSMAdmin = FSM_ADMIN
+    ? [
+        {
+          link: "/digit-ui/employee/fsm/registry?selectedTabs=VENDOR",
+          label: t("ES_TITLE_FSM_REGISTRY"),
+          icon: <AddNewIcon />,
+        },
+      ]
+    : [];
+
   const propsForFSTPO = {
     Icon: <ShippingTruck />,
     moduleName: t("ES_TITLE_VEHICLE_LOG"),
     // kpis: isSuccess ? Object.keys(info).map((key, index) => ({
-    // label: t(key),
-    // count: t(info[key]),
-    // link: "/digit-ui/employee/fsm/fstp-inbox"
-    // })): [],
+    //             label: t(key),
+    //             count: t(info[key]),
+    //             link: "/digit-ui/employee/fsm/fstp-inbox"
+    //         })): [],
     links: [
+      /*{
+        label: t("ES_COMMON_INBOX"),
+        link: "/digit-ui/employee/fsm/fstp-inbox",
+      },
+      {
+        label: t("ES_FSM_ADD_NEW_BUTTON"),
+        link: "/digit-ui/employee/fsm/fstp-add-vehicle",
+      },
+      {
+        label: t("ES_FSM_VIEW_REPORTS_BUTTON"),
+        link: "/employee/report/fsm/FSMFSTPPlantWithVehicleLogReport",
+        hyperlink: true,
+      }, */
       {
         label: t("ES_COMMON_HOME"),
-        link: "/digit-ui/employee/fsm/fstp-operations"
-      }
-    ]
-
-  }
+        link: "/digit-ui/employee/fsm/fstp-operations",
+      },
+    ],
+  };
 
   if (isFSTPOperator && isSuccess) {
-    return <EmployeeModuleCard {...propsForFSTPO} />
+    return <EmployeeModuleCard {...propsForFSTPO} />;
   }
 
-  const linksForSomeFSMEmployees = !DSO && !COLLECTOR && !FSM_EDITOR ? [
-    {
-      label: t("ES_TITLE_NEW_DESULDGING_APPLICATION"),
-      link: `/digit-ui/employee/fsm/new-application`
-    }
-  ] : []
+  const linksForSomeFSMEmployees =
+    !DSO && !COLLECTOR && !FSM_EDITOR
+      ? [
+          {
+            label: t("ES_TITLE_NEW_DESULDGING_APPLICATION"),
+            link: `/digit-ui/employee/fsm/new-application`,
+          },
+        ]
+      : [];
 
-  const propsForModuleCard = isFSTPOperator ?
-    {
-      Icon: <ShippingTruck />,
-      moduleName: t("ES_TITLE_VEHICLE_LOG"),
-      // kpis: isSuccess ? Object.keys(info).map((key, index) => ({
-      //             label: t(key),
-      //             count: t(info[key]),
-      //             link: "/digit-ui/employee/fsm/fstp-inbox"
-      //         })): [],
-      links: [
-        {
-          label: t("ES_COMMON_HOME"),
-          link: "/digit-ui/employee/fsm/fstp-operations"
-        }
-      ]
+  const propsForModuleCard = isFSTPOperator
+    ? {
+        Icon: <ShippingTruck />,
+        moduleName: t("ES_TITLE_VEHICLE_LOG"),
+        // kpis: isSuccess ? Object.keys(info).map((key, index) => ({
+        //             label: t(key),
+        //             count: t(info[key]),
+        //             link: "/digit-ui/employee/fsm/fstp-inbox"
+        //         })): [],
+        links: [
+          {
+            label: t("ES_COMMON_HOME"),
+            link: "/digit-ui/employee/fsm/fstp-operations",
+          },
+        ],
+      }
+    : {
+        Icon: <ShippingTruck />,
+        moduleName: t("ES_TITLE_FAECAL_SLUDGE_MGMT"),
+        kpis: [
+          {
+            count: total,
+            label: t("TOTAL_FSM"),
+            link: `/digit-ui/employee/fsm/inbox`,
+          },
+          {
+            label: t("TOTAL_NEARING_SLA"),
+            link: `/digit-ui/employee/fsm/inbox`,
+          },
+        ],
+        links: [
+          {
+            count: total,
+            label: t("ES_COMMON_INBOX"),
+            link: `/digit-ui/employee/fsm/inbox`,
+          },
+          ...linksForSomeFSMEmployees,
+          ...moduleForSomeFSMAdmin,
+        ],
+      };
 
-    } :
-    {
-      Icon: <ShippingTruck />,
-      moduleName: t("ES_TITLE_FAECAL_SLUDGE_MGMT"),
-      kpis: [
-        {
-          count: total,
-          label: t("TOTAL_FSM"),
-          link: `/digit-ui/employee/fsm/inbox`
-        },
-        {
-          label: t("TOTAL_NEARING_SLA"),
-          link: `/digit-ui/employee/fsm/inbox`
-        }
-      ],
-      links: [
-        {
-          count: total,
-          label: t("ES_COMMON_INBOX"),
-          link: `/digit-ui/employee/fsm/inbox`
-        },
-        ...linksForSomeFSMEmployees
-      ]
-    }
-
-  return <EmployeeModuleCard {...propsForModuleCard} FsmHideCount={true}/>
+  return <EmployeeModuleCard {...propsForModuleCard} FsmHideCount={true} />;
 };
 export default FSMCard;

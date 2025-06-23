@@ -11,7 +11,7 @@ const TopBar = ({ img, isMobile, logoUrl, onLogout, toggleSidebar, ulb, userDeta
         <img
           className="city"
           id="topbar-logo" 
-          src={img || "https://cdn.jsdelivr.net/npm/@egovernments/digit-ui-css@1.0.7/img/m_seva_white_logo.png"}
+          src={img || "https://cdn.jsdelivr.net/npm/@upyog/digit-ui-css@1.0.7/img/m_seva_white_logo.png"}
           alt="mSeva"
         />
         <h3>{cityOfCitizenShownBesideLogo}</h3>

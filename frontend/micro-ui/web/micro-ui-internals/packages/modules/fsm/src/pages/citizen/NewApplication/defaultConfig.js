@@ -1,15 +1,93 @@
 import SelectPropertySubtype from "./SelectPropertySubtype";
 import SelectPropertyType from "./SelectPropertyType";
-import SelectAddress from "./SelectAddress";
-import SelectStreet from "./SelectStreet";
-import SelectLandmark from "./SelectLandmark";
-import SelectPincode from "./SelectPincode";
+import SelectPropertyID from "../../../pageComponents/SelectPropertyID";
+// import SelectAddress from "./SelectAddress";
+import FSMSelectAddress from "./FSMSelectAddress";
+// import SelectStreet from "./SelectStreet";
+import FSMSelectStreet from "./FSMSelectStreet";
+// import SelectLandmark from "./SelectLandmark";
+import FSMSelectLandmark from "./FSMSelectLandmark";
+// import SelectPincode from "./SelectPincode";
+import CPTKnowYourProperty from "../../../../../commonPt/src/pages/pageComponents/KnowYourProperty";
+import CPTSearchProperty from "../../../../../commonPt/src/pages/citizen/SearchProperty";
+import CPTPropertySearchResults from "../../../../../commonPt/src/components/search/CPTPropertySearchResults"
+import CPTPropertyDetails from "../../../../../commonPt/src/pages/pageComponents/PropertyDetails"
+import CPTCreateProperty from "../../../../../commonPt/src/pages/pageComponents/createForm";
+import CPTAcknowledgement from "../../../../../commonPt/src/pages/pageComponents/PTAcknowledgement";
+//import PropertyDetails from "../../../../../commonPt/src/pages/pageComponents/PTAcknowledgement";
+import CPTSearchResults from "../../../../../commonPt/src/pages/citizen/SearchResults"
+import CPTPropertySearchNSummary from "../../../../../commonPt/src/pages/pageComponents/PropertySearchNSummary"
+import FSMSelectPincode from "./FSMSelectPincode";
 import SelectTankSize from "./SelectTankSize";
 import SelectPitType from "./SelectPitType";
-import SelectGeolocation from "./SelectGeolocation";
+// import SelectGeolocation from "./SelectGeolocation";
+import FSMSelectGeolocation from "./FSMSelectGeolocation";
 
 export const config = {
   routes: [
+        {
+          type: "component",
+          route: "search-property",
+          isMandatory: true,
+          component: CPTSearchProperty, 
+          key: "cptsearchproperty",
+          withoutLabel: true,
+          nextStep: 'search-results',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "search-results",
+          isMandatory: true,
+          component: CPTSearchResults, 
+          key: "cptsearchresults",
+          withoutLabel: true,
+          nextStep: 'property-type',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "create-property", 
+          isMandatory: true,
+          component: CPTCreateProperty, 
+          key: "cptcreateproperty",
+          withoutLabel: true,
+          isSkipEnabled : true,
+          nextStep: 'acknowledge-create-property',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "acknowledge-create-property", 
+          isMandatory: true,
+          component: CPTAcknowledgement, 
+          key: "cptacknowledgement",
+          withoutLabel: true,
+          nextStep: 'property-type',
+          hideInEmployee: true,
+        },
+        {
+          type: "component",
+          route: "property-details",
+          isMandatory: true,
+          component: CPTPropertyDetails, 
+          key: "propertydetails",
+          withoutLabel: true,
+          nextStep: 'property-type',
+          hideInEmployee: true,
+        },
+       
+        {
+          type: "component",
+          component: CPTPropertySearchNSummary,
+          withoutLabel: true,
+          key: "cpt",
+          hideInCitizen: true
+            
+          
+        },
+        
+  
     {
       route: "property-type",
       component: SelectPropertyType,
@@ -36,13 +114,13 @@ export const config = {
     },
     {
       route: "map",
-      component: SelectGeolocation,
+      component: FSMSelectGeolocation,
       nextStep: "pincode",
       hideInEmployee: true,
     },
     {
       route: "pincode",
-      component: SelectPincode,
+      component: FSMSelectPincode,
       groupKey: "ES_NEW_APPLICATION_LOCATION_DETAILS",
       texts: {
         headerCaption: "",
@@ -68,7 +146,7 @@ export const config = {
     },
     {
       route: "address",
-      component: SelectAddress,
+      component: FSMSelectAddress,
       groupKey: "ES_NEW_APPLICATION_LOCATION_DETAILS",
       texts: {
         headerCaption: "CS_FILE_APPLICATION_PROPERTY_LOCATION_LABEL",
@@ -80,7 +158,7 @@ export const config = {
     },
     {
       route: "street",
-      component: SelectStreet,
+      component: FSMSelectStreet,
       groupKey: "ES_NEW_APPLICATION_LOCATION_DETAILS",
       texts: {
         headerCaption: "CS_FILE_APPLICATION_PROPERTY_LOCATION_LABEL",
@@ -113,7 +191,7 @@ export const config = {
     },
     {
       route: "landmark",
-      component: SelectLandmark,
+      component: FSMSelectLandmark,
       groupKey: "ES_NEW_APPLICATION_LOCATION_DETAILS",
       texts: {
         headerCaption: "CS_FILE_APPLICATION_PROPERTY_LOCATION_LABEL",
@@ -143,6 +221,17 @@ export const config = {
         cardText: "CS_FILE_PROPERTY_PIT_TYPE_TEXT",
         nextText: "CS_COMMON_NEXT",
       },
+      nextStep: "road-details",
+    },
+    {
+      route: "road-details",
+      component: SelectRoadDetails,
+      groupKey: "CS_CHECK_PIT_SEPTIC_TANK_DETAILS",
+      texts: {
+        header: "CS_FILE_PROPERTY_ROAD_WIDTH",
+        cardText: "CS_FILE_PROPERTY_ROAD_WIDTH_TEXT",
+        nextText: "CS_COMMON_NEXT",
+      },
       nextStep: "tank-size",
     },
     {
@@ -159,5 +248,5 @@ export const config = {
       nextStep: null,
     },
   ],
-  indexRoute: "property-type",
+  indexRoute: "search-property",
 };

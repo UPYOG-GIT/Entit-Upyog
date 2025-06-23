@@ -1,4 +1,4 @@
-import { BackButton } from "@egovernments/digit-ui-react-components";
+import { BackButton } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Route, Switch, useRouteMatch } from "react-router-dom";

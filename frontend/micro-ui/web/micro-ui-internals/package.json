@@ -7,7 +7,7 @@
     "packages/*",
     "packages/modules/*"
   ],
-  "author": "Abhinav Kushwaha <abhinav.kushwaha@egovernments.org>",
+  "author": "Abhinav Kushwaha <abhinav.kushwaha@upyog.org>",
   "license": "MIT",
   "private": true,
   "engines": {

@@ -1,4 +1,4 @@
-import { Header, Loader, CardLabel, Table, LabelFieldPair, Card } from "@egovernments/digit-ui-react-components";
+import { Header, Loader, CardLabel, Table, LabelFieldPair, Card } from "@upyog/digit-ui-react-components";
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import ArchitectDetailsDesktopInbox from "../components/inbox/ArchitectDetailsDesktopInbox";

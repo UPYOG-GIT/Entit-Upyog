@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo, useState } from "react";
-import { PageBasedInput, CardHeader, BackButton, SearchOnRadioButtons, CardLabelError } from "@egovernments/digit-ui-react-components";
+import { PageBasedInput, CardHeader, BackButton, SearchOnRadioButtons, CardLabelError } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 

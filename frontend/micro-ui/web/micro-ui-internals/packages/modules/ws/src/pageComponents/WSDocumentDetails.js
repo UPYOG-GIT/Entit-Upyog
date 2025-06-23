@@ -6,7 +6,7 @@ import {
     Toast,
     Loader,
     FormStep
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 const WSDocumentDetails = ({ t, config, onSelect, userType, formData, setError: setFormError, clearErrors: clearFormErrors, formState }) => {

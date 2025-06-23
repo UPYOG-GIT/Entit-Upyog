@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { BackButton, Card, AddNewIcon, InboxIcon, ViewReportIcon, CardText, CardHeader, ULBHomeCard } from "@egovernments/digit-ui-react-components";
+import { BackButton, Card, AddNewIcon, InboxIcon, ViewReportIcon, CardText, CardHeader, ULBHomeCard } from "@upyog/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
@@ -18,7 +18,8 @@ const FstpOperations = () => {
         },
         {
             name: "ES_FSM_VIEW_REPORTS_BUTTON",
-            locate: "/employee/report/fsm/FSMFSTPPlantWithVehicleLogReport",
+            link: "/employee/report/fsm/FSMFSTPPlantWithVehicleLogReport",
+            hyperlink: true,
             icon: <ViewReportIcon />
         },
         {

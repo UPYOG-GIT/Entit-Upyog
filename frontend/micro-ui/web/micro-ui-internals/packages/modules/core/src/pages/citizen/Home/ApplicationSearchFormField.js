@@ -1,5 +1,5 @@
 
-import { StatusTable,BackButton, SearchField, TextInput, SubmitBar, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader,MultiLink, Loader } from "@egovernments/digit-ui-react-components";
+import { StatusTable,BackButton, SearchField, TextInput, SubmitBar, Header, Card, CardHeader, Row, PDFSvg, CardSectionHeader,MultiLink, Loader } from "@upyog/digit-ui-react-components";
 
 
 import React, { Fragment, useEffect, useState } from "react";

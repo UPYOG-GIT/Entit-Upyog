@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
     FormStep,
     RadioOrSelect
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import Timeline from "../components/Timeline";
 
 const WSPlumberPreference = ({ t, config, onSelect, formData }) => {

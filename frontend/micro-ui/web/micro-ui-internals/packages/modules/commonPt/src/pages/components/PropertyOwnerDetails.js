@@ -11,7 +11,7 @@ import {
   CardLabelError,
   LinkButton,
   DeleteIcon,
-} from "@egovernments/digit-ui-react-components";
+} from "@upyog/digit-ui-react-components";
 import _ from "lodash";
 import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";

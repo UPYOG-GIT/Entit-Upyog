@@ -1,4 +1,4 @@
-import { TextInput,Dropdown,RemoveableTag } from '@egovernments/digit-ui-react-components'
+import { TextInput,Dropdown,RemoveableTag } from '@upyog/digit-ui-react-components'
 import React,{useMemo} from 'react'
 
 const SurveyDetailsView = ({surveyTitle,surveyDesc,t}) => {

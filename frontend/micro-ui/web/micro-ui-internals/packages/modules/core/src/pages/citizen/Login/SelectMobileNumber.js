@@ -1,5 +1,5 @@
 import React from "react";
-import { CardText, FormStep, Card } from "@egovernments/digit-ui-react-components";
+import { CardText, FormStep, Card } from "@upyog/digit-ui-react-components";
 import { Link } from "react-router-dom";
 
 const SelectMobileNumber = ({ t, onSelect, showRegisterLink, mobileNumber, onMobileChange, config }) => {

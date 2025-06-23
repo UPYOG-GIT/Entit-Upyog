@@ -1,7 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { Card, Loader } from "@egovernments/digit-ui-react-components";
+import { Card, Loader } from "@upyog/digit-ui-react-components";
 import FSMLink from "./inbox/FSMLink";
 import ApplicationTable from "./inbox/ApplicationTable";
 import Filter from "./inbox/Filter";
@@ -135,7 +135,7 @@ const DesktopInbox = (props) => {
               let citizen_info = props?.fstprequest?.find((i) => row.original.tripDetails[0].referenceNo === i.applicationNo);
               return (
                 <div>
-                  <span>{t(`${citizen_info?.address?.locality?.code}`)}</span>
+                  <span>{t(`${citizen_info?.address?.locality?.name}`)}</span>
                 </div>
               );
             },
@@ -197,7 +197,7 @@ const DesktopInbox = (props) => {
           {
             Header: t("ES_INBOX_DSO_NAME"),
             disableSortBy: true,
-            accessor: (row) => `${row.dsoName} - ${row.tripOwner.name}`,
+            accessor: (row) => (row.dsoName ? `${row.dsoName} - ${row.tripOwner.name}` : `${row.tripOwner.name}`),
           },
           {
             Header: t("ES_INBOX_VEHICLE_STATUS"),

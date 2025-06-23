@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FormStep, TextInput, LabelFieldPair, CardLabel } from "@egovernments/digit-ui-react-components";
+import { FormStep, TextInput, LabelFieldPair, CardLabel } from "@upyog/digit-ui-react-components";
 
 const PropertyMarketValue = (props) => {
   const { t, config, onSelect, userType, formData, setError, clearErrors, errors } = props;

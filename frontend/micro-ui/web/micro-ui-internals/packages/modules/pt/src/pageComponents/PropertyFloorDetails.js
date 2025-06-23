@@ -1,4 +1,4 @@
-import { CardLabel, CitizenInfoLabel, Dropdown, FormStep, LabelFieldPair, RadioButtons } from "@egovernments/digit-ui-react-components";
+import { CardLabel, CitizenInfoLabel, Dropdown, FormStep, LabelFieldPair, RadioButtons } from "@upyog/digit-ui-react-components";
 import React, { useEffect, useState } from "react";
 
 const PropertyFloorsDetails = ({ t, config, onSelect, formData, userType }) => {

@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@egovernments/digit-ui-react-components";
+import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "@upyog/digit-ui-react-components";
 import { useLocation } from "react-router-dom";
 
 const SelectName = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
-  const stateId = Digit.ULBService.getStateId();
+    const stateId = Digit.ULBService.getStateId();
   const { data: GenderData, isLoading } = Digit.Hooks.fsm.useMDMS(stateId, "common-masters", "FSMGenderType");
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
   const [dropdownValue, setDropdownValue] = useState("");
-  const [genderTypes, setGenderTypes] = useState([])
+  const [genderTypes, setGenderTypes] = useState([]);
+  const [error, setError]=useState("");
   const inputs = [
-    {
+        {
       label: "ES_NEW_APPLICATION_APPLICANT_NAME",
       type: "text",
       name: "applicantName",
@@ -31,15 +32,20 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
         type: "tel",
         title: t("CORE_COMMON_APPLICANT_MOBILE_NUMBER_INVALID"),
       },
+      componentInFront: <div className="employee-card-input employee-card-input--front">+91</div>,
       isMandatory: true,
     },
     {
-      label: "COMMON_APPLICANT_GENDER",
-      type: "dropdown",
-      name: "applicantGender",
-      options: genderTypes,
-      isMandatory: false,
-    }
+      label: "ES_NEW_APPLICATION_MAIL_ID",
+      type: "text",
+      name: "emailId",
+      validation: {
+        //isRequired: true,
+        pattern: "/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/",
+        title: t("CORE_COMMON_EMAIL_ID_INVALID"),
+      },
+      isMandatory:false,
+    },
   ];
 
   useEffect(() => {
@@ -48,7 +54,16 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
     }
   }, [GenderData]);
 
-  function setValue(value, input) {
+  const setValue=(value, input)=> {
+    if(input==="emailId"){
+      const emailRegex=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
+      if(!emailRegex.test(value)){
+        setError(t("CORE_INVALID_EMAIL_ID_PATTERN"))
+      }
+      else{
+        setError("")
+      }
+    }
     onSelect(config.key, { ...formData[config.key], [input]: value });
   }
 
@@ -61,7 +76,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
     <div>
       {inputs?.map((input, index) => (
         <React.Fragment key={index}>
-          {input.type === "text" &&
+                  {input.type === "text" && (
             <React.Fragment>
               {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
               <LabelFieldPair>
@@ -69,7 +84,8 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
                   {t(input.label)}
                   {input.isMandatory ? " * " : null}
                 </CardLabel>
-                <div className="field">
+                <div className="field" style={{display:"flex"}}>
+                  {input.componentInFront ? input.componentInFront : null}
                   <TextInput
                     key={input.name}
                     value={formData && formData[config.key] ? formData[config.key][input.name] : null}
@@ -77,11 +93,14 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
                     disable={editScreen}
                     {...input.validation}
                   />
-                </div>
-              </LabelFieldPair>
+                                  </div>
+                              </LabelFieldPair>
+              {input.name==="emailId" && error && (
+                  <CardLabelError style={{color:"red"}}>{error}</CardLabelError>
+                )}
             </React.Fragment>
-          }
-          {input.type === "dropdown" &&
+          )}
+                    {input.type === "dropdown" && (
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
                 {t(input.label)}
@@ -89,10 +108,10 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
               </CardLabel>
               <div className="field">
                 <Dropdown
-                  option={input.options}
+                  option={input.options?.sort((a, b) => a.code.localeCompare(b.code))}
                   optionKey="i18nKey"
                   id="dropdown"
-                  selected={formData && formData[config.key] ? input.options.find((data)=> data.code === formData[config.key][input.name]) : null}
+                  selected={formData && formData[config.key] ? input.options.find((data) => data.code === formData[config.key][input.name]) : null}
                   select={selectDropdown}
                   t={t}
                   disable={editScreen}
@@ -100,7 +119,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
                 />
               </div>
             </LabelFieldPair>
-          }
+          )}
         </React.Fragment>
       ))}
     </div>

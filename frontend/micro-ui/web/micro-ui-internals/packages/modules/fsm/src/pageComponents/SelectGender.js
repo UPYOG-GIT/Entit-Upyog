@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FormStep, Loader, RadioOrSelect } from "@egovernments/digit-ui-react-components";
+import { Dropdown, FormStep, Loader, RadioOrSelect } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 
 const SelectGender = ({ config, onSelect, t, userType, formData }) => {
@@ -37,12 +37,28 @@ const SelectGender = ({ config, onSelect, t, userType, formData }) => {
     return <Loader />;
   }
 
+  if (userType === "employee") {
+    return (
+      <div>
+        <Dropdown
+          className="payment-form-text-input-correction"
+          isMandatory={config.isMandatory}
+          selected={genderType}
+          option={GenderData?.sort((a, b) => a.code.localeCompare(b.code))}
+          select={selectGenderType}
+          optionKey="i18nKey"
+          disable={config.disable}
+          t={t}
+        />
+      </div>
+    );
+  }
   return (
     <React.Fragment>
       <Timeline currentStep={2} flow="APPLY" />
       <FormStep config={config} onSelect={onSubmit} onSkip={onSkip} isDisabled={!genderType} t={t}>
         <RadioOrSelect
-          options={GenderData}
+          options={GenderData?.sort((a, b) => a.code.localeCompare(b.code))}
           selectedOption={genderType}
           optionKey="i18nKey"
           onSelect={selectGenderType}

@@ -1,4 +1,4 @@
-import { DownloadIcon, EmailIcon, Header, Loader, MultiLink, ShareIcon, WhatsappIcon } from "@egovernments/digit-ui-react-components";
+import { DownloadIcon, EmailIcon, Header, Loader, MultiLink, ShareIcon, WhatsappIcon } from "@upyog/digit-ui-react-components";
 import { format } from "date-fns";
 import React, { useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";

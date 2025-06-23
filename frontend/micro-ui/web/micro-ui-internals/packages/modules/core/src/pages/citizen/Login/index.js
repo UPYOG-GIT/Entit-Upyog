@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer, PageBasedInput, BackButton, Card, Toast, LabelPageBasedInput, CardHeader, CardText, SearchOnRadioButtons, CardLabelError, Dropdown } from "@egovernments/digit-ui-react-components";
+import { AppContainer, PageBasedInput, BackButton, Card, Toast, LabelPageBasedInput, CardHeader, CardText, SearchOnRadioButtons, CardLabelError, Dropdown } from "@upyog/digit-ui-react-components";
 import { Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
