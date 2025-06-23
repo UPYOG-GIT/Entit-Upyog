@@ -12,6 +12,7 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }
   const [selectedType, setSelectedType] = useState({});
   const [selectedCapacity, setSelectedCapacity] = useState("");
 
+  console.log("vehicleData: "+JSON.stringify(vehicleData))
   useEffect(() => {
     if (vehicleData) {
       const vehicleModal = vehicleData.filter((vehicle) => vehicle.code === (formData?.vehicle?.modal?.code || formData?.vehicle?.modal));
