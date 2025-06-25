@@ -1,6 +1,18 @@
 import React, { useEffect, useMemo, useState, Fragment } from "react";
 import { useTranslation } from "react-i18next";
-import { AppContainer, PageBasedInput, BackButton, Card, Toast, LabelPageBasedInput, CardHeader, CardText, SearchOnRadioButtons, CardLabelError, Dropdown } from "@upyog/digit-ui-react-components";
+import {
+  AppContainer,
+  PageBasedInput,
+  BackButton,
+  Card,
+  Toast,
+  LabelPageBasedInput,
+  CardHeader,
+  CardText,
+  SearchOnRadioButtons,
+  CardLabelError,
+  Dropdown,
+} from "@upyog/digit-ui-react-components";
 import { Route, Switch, useHistory, useRouteMatch, useLocation } from "react-router-dom";
 import { loginSteps } from "./config";
 import SelectMobileNumber from "./SelectMobileNumber";
@@ -11,7 +23,6 @@ import { TextField, Button, InputLabel, MenuItem, Box } from "@material-ui/core"
 import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import useInterval from "../../../hooks/useInterval";
-
 
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
@@ -30,15 +41,11 @@ const setCitizenDetail = (userObject, token, tenantId) => {
   localStorage.setItem("Citizen.token", token);
   localStorage.setItem("user-info", JSON.stringify(userObject));
   localStorage.setItem("Citizen.user-info", JSON.stringify(userObject));
-}
-
-const getFromLocation = (state, searchParams) => {
-
-  return state?.from || searchParams?.from || DEFAULT_REDIRECT_URL;
-
 };
 
-
+const getFromLocation = (state, searchParams) => {
+  return state?.from || searchParams?.from || DEFAULT_REDIRECT_URL;
+};
 
 const Login = ({ stateCode, isUserRegistered = true }) => {
   const { t } = useTranslation();
@@ -81,10 +88,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   const relationshipOptions = ["S/O", "D/O", "W/O"];
   const [relation, setRelation] = useState("");
 
-
   // console.log("city" + JSON.stringify(city))
   // console.log("cities" + JSON.stringify(cities))
-
 
   useEffect(() => {
     let errorTimeout;
@@ -109,7 +114,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     }
     Digit.SessionStorage.set("citizen.userRequestObject", user);
     Digit.UserService.setUser(user);
-    setCitizenDetail(user?.info, user?.access_token, selectedCity?.code)
+    setCitizenDetail(user?.info, user?.access_token, selectedCity?.code);
     const redirectPath = location.state?.from || DEFAULT_REDIRECT_URL;
     history.replace(redirectPath);
   }, [user]);
@@ -156,7 +161,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     } else {
       setError(false);
     }
-
   };
 
   const handleNameChange = (e) => {
@@ -164,7 +168,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     // setName(e.target.value);
 
     const value = e.target.value;
-    const trimmedValue = value.replace(/\s+/g, ' ');
+    const trimmedValue = value.replace(/\s+/g, " ");
     const isValid = /^[A-Za-z ]*$/.test(trimmedValue);
 
     if (isValid) {
@@ -182,7 +186,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     // setName(e.target.value);
 
     const value = e.target.value;
-    const trimmedValue = value.replace(/\s+/g, ' ');
+    const trimmedValue = value.replace(/\s+/g, " ");
     const isValid = /^[A-Za-z ]*$/.test(trimmedValue);
 
     if (isValid) {
@@ -193,9 +197,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       // Display an error message or handle invalid input
       title: t("TL_NAME_ERROR_MESSAGE");
     }
-
-   
-  
   };
 
   const selectMobileNumber = async () => {
@@ -231,11 +232,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         }
       }
       if (location.state?.role) {
-        setError(
-          location.state?.role === "FSM_DSO"
-            ? t("ES_ERROR_DSO_LOGIN")
-            : "User not registered."
-        );
+        setError(location.state?.role === "FSM_DSO" ? t("ES_ERROR_DSO_LOGIN") : "User not registered.");
       }
     } else {
       const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
@@ -251,11 +248,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     }
   };
 
-
-
-
   const selectName = async () => {
-
     let par = location?.state?.data;
     setParmas({ ...par, name });
     const data = {
@@ -263,7 +256,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       //tenantId: stateCode,
       tenantId: selectedCity?.code,
       userType: getUserType(),
-      name
+      name,
     };
 
     //setParmas({ ...par, name });
@@ -272,15 +265,11 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     if (res) {
       history.replace(`${path}/otp`, { from: getFromLocation(location.state, searchParams) });
     }
-
   };
 
-
-
   const concatGuardianName = relation + " " + guardianName;
-  // console.log("concatGuardianName" + concatGuardianName); 
+  // console.log("concatGuardianName" + concatGuardianName);
   const selectOtp = async () => {
-
     try {
       setIsOtpValid(true);
       const sentTimestamp = location.state?.sentTimestamp;
@@ -293,7 +282,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       //const { mobileNumber, otp, name } = params;
 
       if (isUserRegistered) {
-
         const requestData = {
           username: mobileNumber,
           password: otp,
@@ -302,29 +290,37 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
           userType: getUserType(),
         };
 
-
         const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
         // console.log("info :"+JSON.stringify(info));
         const usersResponse1 = await Digit.UserService.userSearch(info?.tenantId, { uuid: [info?.uuid] }, {});
 
         // console.log("usersResponse11: " + JSON.stringify(usersResponse1));
-        if (usersResponse1 && usersResponse1.user[0].roles.length > 1 && usersResponse1.user && usersResponse1.user.length) {
+        if (
+          usersResponse1 &&
+          usersResponse1.user[0].roles.length > 1 &&
+          usersResponse1.user &&
+          usersResponse1.user.length &&
+          usersResponse1?.user[0]?.validityDate != null
+        ) {
           const date = usersResponse1?.user[0]?.validityDate;
           const dateTimeParts = date.split(/[- :]/);
-          const dateTimeObject = new Date(dateTimeParts[2], dateTimeParts[1] - 1, dateTimeParts[0], dateTimeParts[3], dateTimeParts[4], dateTimeParts[5]);
+          const dateTimeObject = new Date(
+            dateTimeParts[2],
+            dateTimeParts[1] - 1,
+            dateTimeParts[0],
+            dateTimeParts[3],
+            dateTimeParts[4],
+            dateTimeParts[5]
+          );
           info.validityDate = dateTimeObject.getTime();
         } else {
           info.validityDate = null;
         }
 
-
         if (location.state?.role) {
-
           const roleInfo = info.roles.find((userRole) => userRole.code === location.state.role);
 
-
           if (!roleInfo || !roleInfo.code) {
-
             setError(t("ES_ERROR_USER_NOT_PERMITTED"));
             setTimeout(() => history.replace(DEFAULT_REDIRECT_URL), 5000);
             return;
@@ -336,7 +332,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         }
         // console.log("info1 :"+JSON.stringify(info));
         setUser({ info, ...tokens });
-
       } else if (!isUserRegistered) {
         const requestData = {
           name,
@@ -368,7 +363,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       //tenantId: stateCode,
       tenantId: selectedCity?.code,
       userType: getUserType(),
-
     };
     // console.log("data------" + JSON.stringify(data));
     if (!isUserRegistered) {
@@ -388,17 +382,14 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   };
   const handleLogin = (e) => {
     e.preventDefault();
-
   };
 
   const handleRegister = (e) => {
     e.preventDefault();
-
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
   };
   function onSubmit() {
     e.preventDefault();
@@ -411,8 +402,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
     }
   }
 
-
-
   const texts = useMemo(
     () => ({
       header: t("CS_COMMON_CHOOSE_LOCATION"),
@@ -424,26 +413,22 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
   function selectCity(city) {
     setSelectedCity(city);
     setShowError(false);
-
   }
 
- 
   return (
     <div
 
     //  style={{ paddingRight: '5000px'}}
     >
-      <BackButton
-        style={{ fontWeight: 'bold', fontSize: '1.5em', display: 'flex', justifyContent: 'center', alignItems: 'center' }} />
+      <BackButton style={{ fontWeight: "bold", fontSize: "1.5em", display: "flex", justifyContent: "center", alignItems: "center" }} />
       <Switch>
         {/* <AppContainer> */}
 
         <div>
-          <form >
+          <form>
             <Box
               display="flex"
               flexDirection={"column"}
-
               // width={400}
               // maxHeight='none'
               //  height='auto'
@@ -452,63 +437,58 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               margin="auto"
               marginTop={5}
               padding={5}
-
               borderRadius={1}
               boxShadow={"5px 5px 10px #ccc"}
               sx={{
                 ":hover": {
-                  boxShadow: '10px 10px 20px #ccc'
-                }, backgroundColor: "white", width: {
-                  xs: '100%', // 0px
-                  sm: '60%', // 600px
-                  md: '40.33%', // 900px
-                  lg: '28%', // 1200px
-                  xl: '20%', // 1536px
-                }
-
+                  boxShadow: "10px 10px 20px #ccc",
+                },
+                backgroundColor: "white",
+                width: {
+                  xs: "100%", // 0px
+                  sm: "60%", // 600px
+                  md: "40.33%", // 900px
+                  lg: "28%", // 1200px
+                  xl: "20%", // 1536px
+                },
               }}
-
             >
-
               <Box display="flex" alignItems="center">
                 <img src="https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/logo.png" alt="Logo" />
                 <Typography variant="h6">| Chhattisgarh</Typography>
               </Box>
-              <Typography variant="h6" padding={4} style={{ marginTop: 5, padding: 4, color: '#484848', fontWeight: 500, fontSize: 16 }}>{location.pathname === '/digit-ui/citizen/register/name' || location.pathname === '/digit-ui/citizen/register/otp' ? "Register" : "Login"}</Typography>
+              <Typography variant="h6" padding={4} style={{ marginTop: 5, padding: 4, color: "#484848", fontWeight: 500, fontSize: 16 }}>
+                {location.pathname === "/digit-ui/citizen/register/name" || location.pathname === "/digit-ui/citizen/register/otp"
+                  ? "Register"
+                  : "Login"}
+              </Typography>
 
-              {location.pathname === "/digit-ui/citizen/register/name" && <TextField fullWidth
-                label="Name"
-                variant="standard"
-                padding={5}
-                margin="normal"
-                value={name}
-                onChange={handleNameChange}
-              ></TextField>
-
-
-              }
-              {location.pathname === "/digit-ui/citizen/register/name" &&
+              {location.pathname === "/digit-ui/citizen/register/name" && (
+                <TextField fullWidth label="Name" variant="standard" padding={5} margin="normal" value={name} onChange={handleNameChange}></TextField>
+              )}
+              {location.pathname === "/digit-ui/citizen/register/name" && (
                 <Dropdown
                   selected={relation}
                   select={(val) => setRelation(val)}
-                  style={{ width: '100%', margin: 5 }}
+                  style={{ width: "100%", margin: 5 }}
                   option={relationshipOptions}
                   showArrow
                   placeholder="Select"
                   autoComplete="off"
-
                 ></Dropdown>
-              }
+              )}
 
-              {location.pathname === "/digit-ui/citizen/register/name" && <TextField fullWidth
-                label="Guardian Name"
-                variant="standard"
-                padding={5}
-                margin="normal"
-                value={guardianName}
-                onChange={handleGuardianNameChange}
-              ></TextField>
-              }
+              {location.pathname === "/digit-ui/citizen/register/name" && (
+                <TextField
+                  fullWidth
+                  label="Guardian Name"
+                  variant="standard"
+                  padding={5}
+                  margin="normal"
+                  value={guardianName}
+                  onChange={handleGuardianNameChange}
+                ></TextField>
+              )}
               <Route path={`${path}`} exact></Route>
 
               <TextField
@@ -526,33 +506,31 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                 helperText={error ? "Invalid Mobile Number" : ""}
                 inputProps={{
                   onInput: (e) => {
-                    e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 10)
-                  }
+                    e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 10);
+                  },
                 }}
               />
 
-
-
-
               {location.pathname === "/digit-ui/citizen/login/otp" || location.pathname === "/digit-ui/citizen/register/otp" ? (
-
-                <><TextField
-                  fullWidth
-                  required
-                  label="Enter OTP"
-                  style={{ padding: 5 }}
-                  type={"number"}
-                  variant="standard"
-                  margin="normal"
-                  padding={5}
-                  inputProps={{
-                    onInput: (e) => {
-                      e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 6)
-                    }
-                  }}
-
-                  value={otp}
-                  onChange={handleOtpChange} /> {timeLeft > 0 ? (
+                <>
+                  <TextField
+                    fullWidth
+                    required
+                    label="Enter OTP"
+                    style={{ padding: 5 }}
+                    type={"number"}
+                    variant="standard"
+                    margin="normal"
+                    padding={5}
+                    inputProps={{
+                      onInput: (e) => {
+                        e.target.value = Math.max(0, parseInt(e.target.value)).toString().slice(0, 6);
+                      },
+                    }}
+                    value={otp}
+                    onChange={handleOtpChange}
+                  />{" "}
+                  {timeLeft > 0 ? (
                     <CardText style={{ color: "red" }}>{`${t("CS_RESEND_ANOTHER_OTP")} ${timeLeft} ${t("CS_RESEND_SECONDS")}`}</CardText>
                   ) : (
                     <p className="card-text-button" onClick={resendOtp} style={{ color: "red" }}>
@@ -560,12 +538,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                     </p>
                   )}
                   {!isOtpValid && <CardLabelError>{t("CS_INVALID_OTP")}</CardLabelError>}
-
-
                 </>
-
               ) : (
-
                 <FormControl variant="standard" fullWidth required>
                   <InputLabel id="cities-label">Select Municipal Corporation</InputLabel>
                   <Select
@@ -578,33 +552,27 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                   >
                     {cities &&
                       cities.map((city) => (
-
                         <MenuItem key={city.code} value={city.code}>
                           {city.name} {"Municipal Corporation"}
                         </MenuItem>
                       ))}
                   </Select>
                   {showError && <CardLabelError>{t("CS_CITIZEN_DETAILS_ERROR_MSG1")}</CardLabelError>}
-
                 </FormControl>
-
-
               )}
-
 
               {location.pathname === "/digit-ui/citizen/login" ? (
                 <Button
                   fullWidth
                   variant="contained"
-
                   onClick={selectMobileNumber}
                   style={{
-                    backgroundColor: '#FE7A51',
-                    color: 'white',
-                    padding: '10px 20px',
-                    border: 'none',
-                    borderRadius: '5px',
-                    marginTop: '45px',
+                    backgroundColor: "#FE7A51",
+                    color: "white",
+                    padding: "10px 20px",
+                    border: "none",
+                    borderRadius: "5px",
+                    marginTop: "45px",
                     //marginBottom: '0px'
                   }}
                 >
@@ -614,15 +582,14 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                 <Button
                   fullWidth
                   variant="contained"
-
                   onClick={selectName}
                   style={{
-                    backgroundColor: '#FE7A51',
-                    color: 'white',
-                    padding: '10px 20px',
-                    border: 'none',
-                    borderRadius: '5px',
-                    margin: '25px',
+                    backgroundColor: "#FE7A51",
+                    color: "white",
+                    padding: "10px 20px",
+                    border: "none",
+                    borderRadius: "5px",
+                    margin: "25px",
                   }}
                 >
                   Register
@@ -633,19 +600,17 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                   variant="contained"
                   onClick={selectOtp}
                   style={{
-                    backgroundColor: '#FE7A51',
-                    color: 'white',
-                    padding: '10px 20px',
-                    border: 'none',
-                    borderRadius: '5px',
-                    margin: '25px',
+                    backgroundColor: "#FE7A51",
+                    color: "white",
+                    padding: "10px 20px",
+                    border: "none",
+                    borderRadius: "5px",
+                    margin: "25px",
                   }}
                 >
                   Continue
                 </Button>
               )}
-
-
 
               {/* <Button
                 onClick={handleButtonClick}
@@ -657,7 +622,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
               >
                 {isSignup ? 'Login' : 'Register'}
               </Button> */}
-
             </Box>
           </form>
         </div>
@@ -671,7 +635,6 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
             showRegisterLink={isUserRegistered && !location.state?.role}
             t={t}
           /> */}
-
         </Route>
         <Route path={`${path}/otp`}>
           {/* <SelectOtp
@@ -690,11 +653,8 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
         {error && <Toast error={true} label={error} onClose={() => setError(null)} />}
         {/* </AppContainer> */}
       </Switch>
-    </div >
-
-
+    </div>
   );
-
 };
 
 export default Login;

@@ -103,7 +103,8 @@ const FSMRegistry = () => {
     { enabled: false },
     t
   );
-  
+  console.log("vendorData: "+JSON.stringify(vendorData));
+  console.log("dsoData: "+JSON.stringify(dsoData))
   const inboxTotalCount = dsoData?.TotalCount || dsoData?.totalCount ;
 
   useEffect(() => {
@@ -304,6 +305,7 @@ const FSMRegistry = () => {
     refetchVendor();
   }, []);
 
+  console.log("isVendorLoading: "+isVendorLoading +", isLoading: "+isLoading)
   return (
     <div>
       <Header>{t("ES_FSM_REGISTRY")}</Header>

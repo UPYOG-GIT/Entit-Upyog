@@ -103,7 +103,7 @@ const AddVendor = ({ parentUrl, heading }) => {
           },
         },
         owner: {
-          tenantId: stateId,
+          tenantId: tenantId,
           name: name,
           fatherOrHusbandName: name,
           relationship: "OTHER",

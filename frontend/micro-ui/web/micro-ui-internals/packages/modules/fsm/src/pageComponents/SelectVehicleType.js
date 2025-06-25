@@ -12,13 +12,25 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }
   const [selectedType, setSelectedType] = useState({});
   const [selectedCapacity, setSelectedCapacity] = useState("");
 
-  console.log("vehicleData: "+JSON.stringify(vehicleData))
+  // useEffect(() => {
+  //   if (vehicleData) {
+  //     const vehicleModal = vehicleData.filter((vehicle) => vehicle.code === (formData?.vehicle?.modal?.code || formData?.vehicle?.modal));
+  //     const vehicleType = vehicleData.filter((vehicle) => vehicle.code === (formData?.vehicle?.type?.code || formData?.vehicle?.type));
+  //     setSelectedModal(...vehicleModal);
+  //     setSelectedType(...vehicleType);
+  //     setSelectedCapacity(formData?.vehicle?.tankCapacity);
+  //   }
+  // }, [vehicleData]);
+
   useEffect(() => {
-    if (vehicleData) {
-      const vehicleModal = vehicleData.filter((vehicle) => vehicle.code === (formData?.vehicle?.modal?.code || formData?.vehicle?.modal));
-      const vehicleType = vehicleData.filter((vehicle) => vehicle.code === (formData?.vehicle?.type?.code || formData?.vehicle?.type));
-      setSelectedModal(...vehicleModal);
-      setSelectedType(...vehicleType);
+    if (vehicleData?.Vehicle?.VehicleMakeModel) {
+      const makeModelArray = vehicleData.Vehicle.VehicleMakeModel;
+
+      const vehicleModal = makeModelArray.filter((vehicle) => vehicle.code === (formData?.vehicle?.modal?.code || formData?.vehicle?.modal));
+      const vehicleType = makeModelArray.filter((vehicle) => vehicle.code === (formData?.vehicle?.type?.code || formData?.vehicle?.type));
+
+      setSelectedModal(vehicleModal[0]); // Use [0] to extract the object
+      setSelectedType(vehicleType[0]);
       setSelectedCapacity(formData?.vehicle?.tankCapacity);
     }
   }, [vehicleData]);
@@ -35,20 +47,47 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }
     }
   }, [formData?.vehicle?.modal]);
 
+  // useEffect(() => {
+  //   if (vehicleData) {
+  //     const vehicleModals = vehicleData.filter((vehicle) => vehicle.make === undefined);
+  //     const types = vehicleData.filter((vehicle) => formData?.vehicle?.modal != undefined && vehicle?.make === formData?.vehicle?.modal?.code);
+  //     setTypes(types);
+  //     setModals(vehicleModals);
+  //   }
+  // }, [vehicleData]);
+
+  // const selectModal = (modal) => {
+  //   const types = vehicleData.filter((vehicle) => vehicle.make === modal.code);
+  //   setTypes(types);
+  //   setSelectedModal(modal);
+  //   onSelect(config.key, { ...formData[config.key], modal: modal, type: "" });
+  // };
+
   useEffect(() => {
-    if (vehicleData) {
-      const vehicleModals = vehicleData.filter((vehicle) => vehicle.make === undefined);
-      const types = vehicleData.filter((vehicle) => formData?.vehicle?.modal != undefined && vehicle?.make === formData?.vehicle?.modal?.code);
+    const makeModelArray = vehicleData?.Vehicle?.VehicleMakeModel;
+
+    if (makeModelArray) {
+      const vehicleModals = makeModelArray.filter((vehicle) => vehicle.make === undefined);
+      const types = makeModelArray.filter((vehicle) => formData?.vehicle?.modal !== undefined && vehicle?.make === formData?.vehicle?.modal?.code);
+
       setTypes(types);
       setModals(vehicleModals);
     }
   }, [vehicleData]);
 
   const selectModal = (modal) => {
-    const types = vehicleData.filter((vehicle) => vehicle.make === modal.code);
-    setTypes(types);
-    setSelectedModal(modal);
-    onSelect(config.key, { ...formData[config.key], modal: modal, type: "" });
+    const makeModelArray = vehicleData?.Vehicle?.VehicleMakeModel;
+
+    if (makeModelArray) {
+      const types = makeModelArray.filter((vehicle) => vehicle.make === modal.code);
+      setTypes(types);
+      setSelectedModal(modal);
+      onSelect(config.key, {
+        ...formData[config.key],
+        modal: modal,
+        type: "", // Reset type when modal changes
+      });
+    }
   };
 
   const selectType = (type) => {

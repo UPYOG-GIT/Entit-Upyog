@@ -7,22 +7,19 @@ const SelectTripNo = ({ config, formData, t, onSelect, userType }) => {
   const stateId = Digit.ULBService.getStateId();
   const selectedCity = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
   const { data: tripNumberData, isLoading } = Digit.Hooks.fsm.useMDMS(stateId, "FSM", "TripNumber");
- 
   const { data: dsoData, isLoading: isDsoLoading, isSuccess: isDsoSuccess, error: dsoError } = Digit.Hooks.fsm.useDsoSearch(selectedCity, {
     limit: -1,
     status: "ACTIVE",
   });
-
-   console.log("dsoData:"+JSON.stringify(dsoData));
   const { isLoading: isVehicleMenuLoading, data: vehicleData } = Digit.Hooks.fsm.useMDMS(state, "Vehicle", "VehicleType", {
     staleTime: Infinity,
   });
-
-  console.log("vehicleData:"+JSON.stringify(vehicleData));
   const [tripNo, setTripNo] = useState(formData?.tripNo);
   const [vehicleCapacity, setVehicleCapacity] = useState(formData?.capacity);
   const [vehicleMenu, setVehicleMenu] = useState([]);
 
+  console.log("dsoData : "+JSON.stringify(dsoData));
+  console.log("vehicleData: "+JSON.stringify(vehicleData));
   useEffect(() => {
     if (dsoData && vehicleData) {
       const allVehicles = dsoData.reduce((acc, curr) => {
