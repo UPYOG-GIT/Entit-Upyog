@@ -9,6 +9,7 @@ import SelectOtp from './pages/citizen/Login/SelectOtp';
 
 import getStore from "./redux/store";
 import ErrorBoundary from "./components/ErrorBoundaries";
+import { useState } from "react";
 
 const DigitUIWrapper = ({ stateCode, enabledModules, moduleReducers }) => {
   const { isLoading, data: initData } = Digit.Hooks.useInitStore(stateCode, enabledModules);
@@ -51,7 +52,11 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers })
     },
   });
 
+  const [privacy, setPrivacy] = useState(Digit.Utils.getPrivacyObject() || {});
+
   const ComponentProvider = Digit.Contexts.ComponentProvider;
+  const PrivacyProvider = Digit.Contexts.PrivacyProvider;
+
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]);
 
   return (
@@ -59,7 +64,42 @@ export const DigitUI = ({ stateCode, registry, enabledModules, moduleReducers })
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
           <ComponentProvider.Provider value={registry}>
-            <DigitUIWrapper stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />
+            <PrivacyProvider.Provider
+              value={{
+                privacy: privacy?.[window.location.pathname],
+                resetPrivacy: (_data) => {
+                  Digit.Utils.setPrivacyObject({});
+                  setPrivacy({});
+                },
+                getPrivacy: () => {
+                  const privacyObj = Digit.Utils.getPrivacyObject();
+                  setPrivacy(privacyObj);
+                  return privacyObj;
+                },
+                /*  Descoped method to update privacy object  */
+                updatePrivacyDescoped: (_data) => {
+                  const privacyObj = Digit.Utils.getAllPrivacyObject();
+                  const newObj = { ...privacyObj, [window.location.pathname]: _data };
+                  Digit.Utils.setPrivacyObject({ ...newObj });
+                  setPrivacy(privacyObj?.[window.location.pathname] || {});
+                },
+                /**
+                 * Main Method to update the privacy object anywhere in the application
+                 *
+                 * @author jagankumar-egov
+                 *
+                 * Feature :: Privacy
+                 *
+                 * @example
+                 *    const { privacy , updatePrivacy } = Digit.Hooks.usePrivacyContext();
+                 */
+                updatePrivacy: (uuid, fieldName) => {
+                  setPrivacy(Digit.Utils.updatePrivacy(uuid, fieldName) || {});
+                },
+              }}
+            >
+              <DigitUIWrapper stateCode={stateCode} enabledModules={enabledModules} moduleReducers={moduleReducers} />
+            </PrivacyProvider.Provider>
           </ComponentProvider.Provider>
         </QueryClientProvider>
       </ErrorBoundary>

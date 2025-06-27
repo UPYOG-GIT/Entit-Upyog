@@ -8,19 +8,22 @@ import javax.validation.Valid;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.fsm.config.FSMConfiguration;
-import org.egov.fsm.producer.Producer;
+import org.egov.fsm.fsmProducer.FSMProducer;
 import org.egov.fsm.repository.querybuilder.FSMAuditQueryBuilder;
 import org.egov.fsm.repository.querybuilder.FSMQueryBuilder;
 import org.egov.fsm.repository.rowmapper.FSMAuditRowMapper;
 import org.egov.fsm.repository.rowmapper.FSMRowMapper;
+import org.egov.fsm.repository.rowmapper.TripDetailRowMapper;
 import org.egov.fsm.util.FSMAuditUtil;
 import org.egov.fsm.util.FSMConstants;
-import org.egov.fsm.util.FSMUtil;
 import org.egov.fsm.web.model.FSM;
 import org.egov.fsm.web.model.FSMAuditSearchCriteria;
 import org.egov.fsm.web.model.FSMRequest;
 import org.egov.fsm.web.model.FSMResponse;
 import org.egov.fsm.web.model.FSMSearchCriteria;
+import org.egov.fsm.web.model.vehicle.trip.VehicleTrip;
+import org.egov.fsm.web.model.vehicle.trip.VehicleTripDetail;
+import org.egov.fsm.web.model.vehicle.trip.VehicleTripRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -37,7 +40,7 @@ public class FSMRepository {
 	private FSMConfiguration config;
 
 	@Autowired
-	private Producer producer;
+	private FSMProducer producer;
 
 	@Autowired
 	private FSMQueryBuilder fsmQueryBuilder;
@@ -46,20 +49,21 @@ public class FSMRepository {
 	private JdbcTemplate jdbcTemplate;
 
 	@Autowired
-	private FSMRowMapper FSMrowMapper;
+	private FSMRowMapper fsmRowMapper;
 
 	@Autowired
 	private FSMAuditQueryBuilder auditQueryBuilder;
 
 	@Autowired
 	private FSMAuditRowMapper auditRowMapper;
-	
-	@Autowired
-	private  FSMUtil fsmUtil;
 
-	public void save(FSMRequest fsmRequest) {
-		producer.push(config.getSaveTopic(), fsmRequest);
-	}
+	@Autowired
+	private TripDetailRowMapper detailMapper;
+
+		public void save(FSMRequest fsmRequest) {
+			producer.push(config.getSaveTopic(), fsmRequest);
+			producer.push(config.getFsmEventIndexKafkaTopic(), fsmRequest);
+		}
 
 	public void update(FSMRequest fsmRequest, boolean isStateUpdatable) {
 		RequestInfo requestInfo = fsmRequest.getRequestInfo();
@@ -74,20 +78,25 @@ public class FSMRepository {
 		} else {
 			fsmForStatusUpdate = fsm;
 		}
-		if (fsmForUpdate != null)
+		if (fsmForUpdate != null) {
 			producer.push(config.getUpdateTopic(), new FSMRequest(requestInfo, fsmForUpdate, fsmRequest.getWorkflow()));
+			producer.push(config.getFsmEventIndexKafkaTopic(), fsmRequest);
+		}
 
-		if (fsmForStatusUpdate != null)
-			producer.push(config.getUpdateWorkflowTopic(), new FSMRequest(requestInfo, fsmForStatusUpdate, fsmRequest.getWorkflow()));
+		if (fsmForStatusUpdate != null) {
+			producer.push(config.getUpdateWorkflowTopic(),
+					new FSMRequest(requestInfo, fsmForStatusUpdate, fsmRequest.getWorkflow()));
+			producer.push(config.getFsmEventIndexKafkaTopic(), fsmRequest);
+		}
+			
 
 	}
 
 	public FSMResponse getFSMData(FSMSearchCriteria fsmSearchCriteria, String dsoId) {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = fsmQueryBuilder.getFSMSearchQuery(fsmSearchCriteria, dsoId, preparedStmtList);
-		List<FSM> fsms = jdbcTemplate.query(query, preparedStmtList.toArray(), FSMrowMapper);
-		FSMResponse fsmResponse = FSMResponse.builder().fsm(fsms).totalCount(FSMrowMapper.getFull_count()).build();
-		return fsmResponse;
+		List<FSM> fsms = jdbcTemplate.query(query, preparedStmtList.toArray(), fsmRowMapper);
+		return FSMResponse.builder().fsm(fsms).totalCount(fsmRowMapper.getFullCount()).build();
 	}
 
 	public List<FSMAuditUtil> getFSMActualData(FSMAuditSearchCriteria criteria) {
@@ -107,62 +116,87 @@ public class FSMRepository {
 		List<Object> preparedStmtList = new ArrayList<>();
 		preparedStmtList.add(criteria.getOffset());
 		preparedStmtList.add(criteria.getLimit());
-
-		List<String> ids = jdbcTemplate.query("SELECT id from eg_fsm_application ORDER BY createdtime offset " +
-						" ? " +
-						"limit ? ",
-				preparedStmtList.toArray(),
-				new SingleColumnRowMapper<>(String.class));
-		return ids;
+		return jdbcTemplate.query(
+				"SELECT id from eg_fsm_application ORDER BY createdtime offset " + " ? " + "limit ? ",
+				preparedStmtList.toArray(), new SingleColumnRowMapper<>(String.class));
 	}
 
 	public List<FSM> getFsmPlainSearch(FSMSearchCriteria criteria) {
 
-		if(criteria.getIds() == null || criteria.getIds().isEmpty())
+		if (criteria.getIds() == null || criteria.getIds().isEmpty())
 			throw new CustomException("PLAIN_SEARCH_ERROR", "Search only allowed by ids!");
 
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = fsmQueryBuilder.getFSMLikeQuery(criteria, preparedStmtList);
-		log.info("Query: "+query);
-		log.info("PS: "+preparedStmtList);
-		return jdbcTemplate.query(query, preparedStmtList.toArray(), FSMrowMapper);
+		log.info("Query: " + query);
+		log.info("PS: " + preparedStmtList);
+		return jdbcTemplate.query(query, preparedStmtList.toArray(), fsmRowMapper);
+	}
+
+	public List<String> getPeriodicEligiableApplicationList(String tenantId, Long timeLimit) {
+
+		StringBuilder baseQuery = new StringBuilder(FSMQueryBuilder.GET_PERIODIC_ELGIABLE_APPLICATIONS);
+		baseQuery.append("where tenantid=? and lastmodifiedtime<? and applicationstatus=?");
+		List<Object> preparedStmtList = new ArrayList<>();
+		preparedStmtList.add(tenantId);
+		preparedStmtList.add(new Date().getTime() - timeLimit);
+		preparedStmtList.add(FSMConstants.COMPLETED);
+		return jdbcTemplate.queryForList(baseQuery.toString(), String.class,
+				preparedStmtList.toArray());
+
 	}
 	
 	
-	public List<String> getPeriodicEligiableApplicationList(String tenantId,Long timeLimit) {
-		
-	StringBuilder baseQuery=new StringBuilder(FSMQueryBuilder.GET_PERIODIC_ELGIABLE_APPLICATIONS);
-	baseQuery.append("where tenantid=? and lastmodifiedtime<? and applicationstatus=?");
-	List<Object> preparedStmtList=new ArrayList<>();
-	preparedStmtList.add(tenantId);
-	preparedStmtList.add(new Date().getTime()- timeLimit);
-	preparedStmtList.add(FSMConstants.COMPLETED);	
-	List<String> applicationNoList = jdbcTemplate.queryForList(baseQuery.toString(),String.class,preparedStmtList.toArray());
-    return applicationNoList;
-    
-	}
-	
+
 	/***
 	 * This method will return unique tenantid's
+	 * 
 	 * @return tenant list
 	 */
 
 	public List<String> getTenants() {
-		List<String> uniqueApplicationList = jdbcTemplate.query(FSMQueryBuilder.GET_UNIQUE_TENANTS,
+		return jdbcTemplate.query(FSMQueryBuilder.GET_UNIQUE_TENANTS,
 				new SingleColumnRowMapper<>(String.class));
-		return uniqueApplicationList;
 
 	}
 
-	
-	public List<String> getOldPeriodicApplications(String applicationNo,String tenantId) {
-		List<String> applicationNoList=new ArrayList<>();
-		StringBuilder baseQuery=new StringBuilder(FSMQueryBuilder.GET_APPLICATION_LIST);
-		List<Object> preparedStmtList=new ArrayList<>();
+	public List<String> getOldPeriodicApplications(String applicationNo, String tenantId) {
+		StringBuilder baseQuery = new StringBuilder(FSMQueryBuilder.GET_APPLICATION_LIST);
+		List<Object> preparedStmtList = new ArrayList<>();
 		preparedStmtList.add(applicationNo);
 		preparedStmtList.add(tenantId);
-		applicationNoList=jdbcTemplate.queryForList(baseQuery.toString(),String.class,preparedStmtList.toArray());
-		return applicationNoList;	
+		return jdbcTemplate.queryForList(baseQuery.toString(), String.class, preparedStmtList.toArray());
+	}
+
+	public List<VehicleTripDetail> getTrpiDetails(String tripId, int numOfRecords, Boolean waitingForDisposal) {
+		List<VehicleTripDetail> tripDetails = null;
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = null;
+		if (waitingForDisposal)
+			query = fsmQueryBuilder.getTripDetailSarchQuery(tripId, numOfRecords, preparedStmtList, waitingForDisposal);
+		else
+			query = fsmQueryBuilder.getTripDetailSarchQuery(tripId, numOfRecords, preparedStmtList);
+		log.info("query for decreseTrip:: " + numOfRecords + ":: query :: " + query);
+		try {
+			tripDetails = jdbcTemplate.query(query, preparedStmtList.toArray(), detailMapper);
+
+		} catch (Exception e) {
+			log.info("INVALID_VEHICLE_TRIP_DETAILS " + e.getMessage());
+			throw new CustomException("INVALID_VEHICLE_TRIP_DETAILS", "INVALID_VEHICLE_TRIP_DETAILS");
+		}
+
+		return tripDetails;
+	}
+/**
+ * This function is to update the trip status to inactive while decreasing the trips during trip update
+ * @param vehicleTripList
+ */
+	//commented as  vehicleTripList is handled while calling updateVehicleToInActive function
+	public void updateVehicleToInActive(List<VehicleTrip> vehicleTripList) {
+		if (vehicleTripList != null) {
+			producer.push(config.getVehicleUpdateTripToInactive(), new VehicleTripRequest(new RequestInfo(), vehicleTripList,null));
+		}
 	}
 	
+
 }

@@ -8,6 +8,9 @@ public class FSMErrorConstants {
 
 	// MDMS
 
+	private FSMErrorConstants() {
+		
+	}
 	public static final String INVALID_SEARCH = "INVALID SEARCH";
 	public static final String INVALID_SEARCH_1 = "INVALID SEARCH";
 	public static final String INVALID_ADDRES = "INVALID ADDRESS";
@@ -26,6 +29,7 @@ public class FSMErrorConstants {
 	public static final String INVALID_VEHICLE_TYPE = "INVALID_VEHICLE_TYPE";
 	public static final String NO_VEHICLE_VEHICLE_TYPE = "NO_VEHICLE_VEHICLE_TYPE";
 	public static final String INVALID_PAYMENT_PREFERENCE ="INVALID_PAYMENT_PREFERENCE";
+	public static final String INVALID_RECEIVED_PAYMENT_TYPE ="INVALID_RECEIVED_PAYMENT_TYPE";
 	
 	
 	public static final String INVALID_APPLICANT_ERROR ="INVALID_APPLICANT_ERROR";
@@ -76,6 +80,7 @@ public class FSMErrorConstants {
 	public static final String COMPLETED_DATE_NOT_NULL = "COMPLETED_DATE_NOT_NULL";
 	public static final String VEHICLE_NOT_FOUND = "VEHICLE_NOT_FOUND";
 	public static final String INVALID_DSO_VEHICLE = "INVALID_DSO_VEHICLE";
+	public static final String INVALID_DSO_WORKERS = "INVALID_DSO_WORKERS";
 	public static final String INVALID_CHECKLIST = "INVALID_CHECKLIST";
 	public static final String INVALID_SLUM = "INVALID_SLUM";
 	public static final String INVALID_NO_OF_TRIPS = "INVALID_NO_OF_TRIPS";
@@ -84,7 +89,12 @@ public class FSMErrorConstants {
 	public static final String FSTP_EMPLOYEE_INVALID_ERROR ="FSTP_EMPLOYEE_INVALID_ERROR";
 	public static final String INVALID_FSTP_CODE ="INVALID_FSTP_CODE";
 	public static final String INVALID_VEHICLE_ASSIGN_ACTION = "INVALID_VEHICLE_ASSIGN_ACTION";
+	public static final String INVALID_PAYMENT_ERROR ="INVALID_PAYMENT_ERROR";
+	public static final String BILL_IS_PENDING ="BILL IS PENDING";
+	public static final String SCHEDULING_TRIP_IS_PENDING ="SCHEDULING_TRIP_IS_PENDING";
+	public static final String VEHICLE_IS_NOT_ADDED_BEFORE ="VEHICLE IS NOT ADDED BEFORE TO DECREASE THE TRIP";
+	public static final String ILLEGAL_ARGUMENT_EXCEPTION ="IllegalArgumentException";
+	public static final String DECREASE_NOT_POSSIBLE = "DECREASE_NOT_POSSIBLE";
 
-	public static final String INVALID_RECEIVED_PAYMENT_TYPE = "INVALID_RECEIVED_PAYMENT_TYPE";
-
+	
 }

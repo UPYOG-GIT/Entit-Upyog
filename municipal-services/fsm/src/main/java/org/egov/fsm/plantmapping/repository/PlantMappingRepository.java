@@ -3,6 +3,7 @@ package org.egov.fsm.plantmapping.repository;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.egov.fsm.fsmProducer.FSMProducer;
 import org.egov.fsm.plantmapping.config.PlantMappingConfiguration;
 import org.egov.fsm.plantmapping.querybuilder.PlantMappingQueryBuilder;
 import org.egov.fsm.plantmapping.rowmapper.PlantMappingRowMapper;
@@ -10,7 +11,6 @@ import org.egov.fsm.plantmapping.web.model.PlantMapping;
 import org.egov.fsm.plantmapping.web.model.PlantMappingRequest;
 import org.egov.fsm.plantmapping.web.model.PlantMappingResponse;
 import org.egov.fsm.plantmapping.web.model.PlantMappingSearchCriteria;
-import org.egov.fsm.producer.Producer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -20,7 +20,7 @@ public class PlantMappingRepository {
 
 
 	@Autowired
-	private Producer producer;
+	private FSMProducer producer;
 	
 	@Autowired
 	private PlantMappingConfiguration config;
@@ -44,8 +44,7 @@ public class PlantMappingRepository {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getPlantMapSearchQuery(criteria, preparedStmtList);
 		List<PlantMapping> plantmaps = jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
-		PlantMappingResponse plantMapResponse = PlantMappingResponse.builder().plantMapping(plantmaps).build();
-		return plantMapResponse;
+		return PlantMappingResponse.builder().plantMapping(plantmaps).build();
 	}
 
 	public void update(PlantMappingRequest request) {

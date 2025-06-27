@@ -10,6 +10,7 @@ import org.egov.fsm.util.FSMConstants;
 import org.egov.fsm.util.FSMErrorConstants;
 import org.egov.fsm.web.model.FSM;
 import org.egov.fsm.web.model.FSMRequest;
+import org.egov.fsm.web.model.workflow.ProcessInstanceResponse;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.jayway.jsonpath.DocumentContext;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
@@ -48,7 +51,7 @@ public class WorkflowIntegrator {
 	private static final String ASSIGNEEKEY = "assignes";
 
 	private static final String MODULENAMEVALUE = "fsm";
-	
+
 	private static final String UUIDKEY = "uuid";
 
 	private static final String WORKFLOWREQUESTARRAYKEY = "ProcessInstances";
@@ -87,17 +90,27 @@ public class WorkflowIntegrator {
 		JSONObject obj = new JSONObject();
 		obj.put(BUSINESSIDKEY, fsm.getApplicationNo());
 		obj.put(TENANTIDKEY, wfTenantId);
-		if (FSMConstants.FSM_PAYMENT_PREFERENCE_POST_PAY.equalsIgnoreCase(
-				fsmRequest.getFsm().getPaymentPreference())) 
-			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_POST_PAY_BusinessService);	
-		else
-		obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_BusinessService);
-		
+
+		Double tripAmount = getAdditionalDetails(fsm.getAdditionalDetails());
+
+		if (FSMConstants.FSM_PAYMENT_PREFERENCE_POST_PAY.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference())) {
+			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_POST_PAY_BUSINESSSERVICE);
+		} else if (FSMConstants.FSM_PAYMENT_PREFERENCE_PRE_PAY
+				.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference())) {
+			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_BUSINESSSERVICE);
+		} else if (fsm.getAdvanceAmount() == null && fsm.getPaymentPreference() == null	&& tripAmount <= 0) {
+			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_ZERO_PRICE_SERVICE);
+		} else if (fsm.getAdvanceAmount() != null && fsm.getAdvanceAmount().intValue() > 0) {
+			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_ADVANCE_PAY_BUSINESSSERVICE);
+		} else {
+			obj.put(BUSINESSSERVICEKEY, FSMConstants.FSM_LATER_PAY_SERVICE);
+		}
+
 		obj.put(MODULENAMEKEY, MODULENAMEVALUE);
 		obj.put(ACTIONKEY, fsmRequest.getWorkflow().getAction());
 		obj.put(COMMENTKEY, fsmRequest.getWorkflow().getComments());
 		obj.put(RATING, fsmRequest.getWorkflow().getRating());
-		
+
 		if (!CollectionUtils.isEmpty(fsmRequest.getWorkflow().getAssignes())) {
 			List<Map<String, String>> uuidmaps = new LinkedList<>();
 			fsmRequest.getWorkflow().getAssignes().forEach(assignee -> {
@@ -107,16 +120,16 @@ public class WorkflowIntegrator {
 			});
 			obj.put(ASSIGNEEKEY, uuidmaps);
 		}
-		
+
 		obj.put(DOCUMENTSKEY, fsmRequest.getWorkflow().getVerificationDocuments());
 		array.add(obj);
 		JSONObject workFlowRequest = new JSONObject();
 		workFlowRequest.put(REQUESTINFOKEY, fsmRequest.getRequestInfo());
 		workFlowRequest.put(WORKFLOWREQUESTARRAYKEY, array);
-		String response = null;
+		ProcessInstanceResponse processInstanceResponse = null;
 		try {
-			response = rest.postForObject(config.getWfHost().concat(config.getWfTransitionPath()), workFlowRequest,
-					String.class);
+			processInstanceResponse = rest.postForObject(config.getWfHost().concat(config.getWfTransitionPath()), workFlowRequest, ProcessInstanceResponse.class);
+
 		} catch (HttpClientErrorException e) {
 
 			/*
@@ -139,19 +152,50 @@ public class WorkflowIntegrator {
 		}
 
 		/*
-		 * on success result from work-flow read the data and set the status
-		 * back to fsm object
+		 * on success result from work-flow read the data and set the status back to fsm
+		 * object
 		 */
-		DocumentContext responseContext = JsonPath.parse(response);
-		List<Map<String, Object>> responseArray = responseContext.read(PROCESSINSTANCESJOSNKEY);
-		Map<String, String> idStatusMap = new HashMap<>();
-		responseArray.forEach(object -> {
-
-			DocumentContext instanceContext = JsonPath.parse(object);
-			idStatusMap.put(instanceContext.read(BUSINESSIDJOSNKEY), instanceContext.read(STATUSJSONKEY));
-		});
+//		DocumentContext responseContext = JsonPath.parse(response);
+//		List<Map<String, Object>> responseArray = responseContext.read(PROCESSINSTANCESJOSNKEY);
+//		Map<String, String> idStatusMap = new HashMap<>();
+//		responseArray.forEach(object -> {
+//
+//			DocumentContext instanceContext = JsonPath.parse(object);
+//			idStatusMap.put(instanceContext.read(BUSINESSIDJOSNKEY), instanceContext.read(STATUSJSONKEY));
+//		});
 		// setting the status back to fsm object from wf response
-		fsm.setApplicationStatus(idStatusMap.get(fsm.getApplicationNo()));
-
+		fsm.setApplicationStatus(processInstanceResponse.getProcessInstances().get(0).getState().getApplicationStatus());
+		fsm.setProcessInstance(processInstanceResponse.getProcessInstances().get(0));
 	}
+
+	/**
+	 * Method to return additionalDetails as a Map
+	 *
+	 * @param additionalDetails
+	 */
+	public Double getAdditionalDetails(Object additionalDetails) {
+
+		ObjectMapper mapper = new ObjectMapper();
+		Map<String, Object> fsmAdditionalDetails = new HashMap<>();
+
+		if (additionalDetails instanceof ObjectNode) {
+			fsmAdditionalDetails = mapper.convertValue(additionalDetails, Map.class);
+		} else if (additionalDetails instanceof Map) {
+			fsmAdditionalDetails = (Map<String, Object>) additionalDetails;
+		}
+
+		Double tripAmount = Double.valueOf(0.0);
+
+		if (fsmAdditionalDetails != null && fsmAdditionalDetails.get("tripAmount") != null) {
+			Object tripAmountObj = fsmAdditionalDetails.get("tripAmount");
+			if (tripAmountObj instanceof String) {
+				tripAmount = Double.valueOf((String) tripAmountObj);
+			} else if (tripAmountObj instanceof Integer) {
+				tripAmount = Double.valueOf((Integer) tripAmountObj);
+			}
+		}
+
+		return tripAmount;
+	}
+
 }

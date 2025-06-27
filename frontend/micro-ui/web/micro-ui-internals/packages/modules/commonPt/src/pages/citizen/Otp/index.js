@@ -1,8 +1,11 @@
-import React, { useMemo,useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Route, Switch, useRouteMatch, useLocation, useHistory} from "react-router-dom";
+import { Route, Switch, useRouteMatch, useLocation, useHistory } from "react-router-dom";
 import SelectOtp from "./SelectOtp";
 import { loginSteps } from "./config";
+
+const TYPE_LOGIN = { type: "login" };
+const TYPE_REGISTER = { type: "register" };
 
 const CitizenOtp = (props) => {
   const { t } = useTranslation();
@@ -10,7 +13,7 @@ const CitizenOtp = (props) => {
   const location = useLocation();
   const history = useHistory();
 
-  const [params1, setParmas1] = useState({mobileNumber: location.state.mobileNumber, otp: ''});
+  const [params1, setParmas1] = useState({ mobileNumber: location.state.mobileNumber, otp: "" });
   const [isOtpValid, setIsOtpValid] = useState(true);
 
   const getUserType = () => Digit.UserService.getType();
@@ -28,25 +31,25 @@ const CitizenOtp = (props) => {
   const selectOtp = async () => {
     try {
       setIsOtpValid(true);
-      
+
       const { mobileNumber, otp, name } = params1;
 
-        const requestData = {
-          username: mobileNumber,
-          password: otp,
-          tenantId: props.stateCode,
-          userType: getUserType(),
-        };
-        
-        const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
-        
-        if (location.state?.redirectBackTo) {
-          history.replace(location.state?.redirectBackTo, {
-            data: location.state?.redirectData
-          });
-        } else {
-          history.replace('digit-ui/citizen/');
-        }
+      const requestData = {
+        username: mobileNumber,
+        password: otp,
+        tenantId: props.stateCode,
+        userType: getUserType(),
+      };
+
+      const { ResponseInfo, UserRequest: info, ...tokens } = await Digit.UserService.authenticate(requestData);
+
+      if (location.state?.redirectBackTo) {
+        history.replace(location.state?.redirectBackTo, {
+          data: location.state?.redirectData,
+        });
+      } else {
+        history.replace("digit-ui/citizen/");
+      }
     } catch (err) {
       setIsOtpValid(false);
     }
@@ -59,8 +62,17 @@ const CitizenOtp = (props) => {
       tenantId: props.stateCode,
       userType: getUserType(),
     };
-   
-    const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_LOGIN } });
+
+    const [res, err] = await sendOtp({ otp: { ...data, ...TYPE_REGISTER } });
+  };
+
+  const sendOtp = async (data, stateCode) => {
+    try {
+      const res = await Digit.UserService.sendOtp(data, stateCode);
+      return [res, null];
+    } catch (err) {
+      return [null, err];
+    }
   };
 
   const stepItems = useMemo(() =>
@@ -75,11 +87,11 @@ const CitizenOtp = (props) => {
       [loginSteps]
     )
   );
-  
+
   const handleOtpChange = (otp) => {
     setParmas1({ ...params1, otp });
   };
-  
+
   return (
     <SelectOtp
       config={{ ...stepItems[1], texts: { ...stepItems[1].texts, cardText: `${stepItems[1].texts.cardText} ${params1.mobileNumber || ""}` } }}

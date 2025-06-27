@@ -1,18 +1,15 @@
 package org.egov.fsm.web.model;
 
-import java.util.List;
-
-import org.hibernate.validator.constraints.SafeHtml;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @Getter
 @Setter
@@ -62,9 +59,10 @@ public class FSMSearchCriteria {
     
     @JsonProperty("ids")
     private List <String> ids;
-    
-    
-    
+
+    @JsonProperty("individualIds")
+    private List<String> individualIds;
+
     @JsonProperty("sortBy")
     private SortBy sortBy;
     
@@ -86,13 +84,11 @@ public class FSMSearchCriteria {
     }
     
     public boolean isEmpty() {
-		// TODO Auto-generated method stub
 		 return (this.tenantId == null && this.offset == null && this.limit == null && !StringUtils.hasText(this.mobileNumber)
 				 && CollectionUtils.isEmpty(this.applicationStatus)  && CollectionUtils.isEmpty(this.ownerIds) && this.fromDate == null && this.toDate == null && CollectionUtils.isEmpty(this.applicationNos) && CollectionUtils.isEmpty(this.ids));
 	}
 
 	public boolean tenantIdOnly() {
-		// TODO Auto-generated method stub
 		return (this.tenantId != null && !StringUtils.hasText(this.mobileNumber)
                 && CollectionUtils.isEmpty(this.applicationStatus) && CollectionUtils.isEmpty(this.ownerIds) && this.fromDate == null && this.toDate == null && CollectionUtils.isEmpty(this.applicationNos) && CollectionUtils.isEmpty(this.ids));
 	} 

@@ -63,7 +63,7 @@ const VendorDetails = (props) => {
     { ids: dsoId },
     { staleTime: Infinity }
   );
-
+  console.log("dsoData111 "+JSON.stringify(dsoData))
   const {
     data: vehicleData,
     isLoading: isVehicleDataLoading,

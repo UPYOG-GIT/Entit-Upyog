@@ -47,7 +47,6 @@ const DsoDashboard = () => {
     [t("ES_VEHICLE_ASSIGNMENT_PENDING")]: inbox?.statuses.filter(e => e.applicationstatus === "PENDING_DSO_APPROVAL")[0]?.count || 0,
   }),[inbox?.totalCount]);
 
-
   const links = useMemo(
     () => [
       {
