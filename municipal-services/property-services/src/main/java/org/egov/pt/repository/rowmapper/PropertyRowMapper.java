@@ -83,7 +83,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				String linkIdString = rs.getString("linkedProperties");
 				if (!StringUtils.isEmpty(linkIdString))
 					linkedProperties = Arrays.asList(linkIdString.split(","));
-				
+
 				currentProperty = Property.builder()
 						.source(org.egov.pt.models.enums.Source.fromValue(rs.getString("source")))
 						.creationReason(CreationReason.fromValue(rs.getString("creationReason")))
@@ -109,7 +109,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 						.address(address)
 						.build();
 
-				
+
 				addChildrenToProperty(rs, currentProperty);
 				propertyMap.put(propertyUuId, currentProperty);
 			}
@@ -262,6 +262,7 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 				.tenantId(rs.getString("owntenantid"))
 				.ownerType(rs.getString("ownerType"))
 				.isPrimaryOwner(isPrimaryOwner)
+				.additionalDetails(getadditionalDetail(rs, "oadditionaldetails"))
 				.uuid(uuid)
 				.build();
 		
@@ -276,7 +277,6 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 	 * Same document table is being used by both property and owner table, so id check is mandatory
 	 * 
 	 * @param rs
-	 * @param OwnerId
 	 * @param owner
 	 * @throws SQLException
 	 */
@@ -398,11 +398,35 @@ public class PropertyRowMapper implements ResultSetExtractor<List<Property>> {
 			throw new CustomException("PARSING ERROR", "The propertyAdditionalDetail json cannot be parsed");
 		}
 
-		if(propertyAdditionalDetails.isEmpty())
+		if(propertyAdditionalDetails!=null && propertyAdditionalDetails.isEmpty() )
 			propertyAdditionalDetails = null;
 		
 		return propertyAdditionalDetails;
 
+	}
+
+	/*
+	 *  method sets all the data for PropertyInfo
+	 *
+	 * @param currentProperty
+	 * @param rs
+	 * @param tenantId
+	 * @param propertyUuId
+	 *
+	 * @throws SQLException
+	* */
+	private void setPropertyInfo(Property currentProperty, ResultSet rs, String tenantId, String propertyUuId,
+								 List<String> linkedProperties, Address address)
+			throws SQLException {
+		currentProperty.setPropertyId(rs.getString("propertyid"));
+		currentProperty.setAddress(address);
+		currentProperty.setStatus(Status.fromValue(rs.getString("propertystatus")));
+		currentProperty.setOldPropertyId(rs.getString("oldPropertyId"));
+		currentProperty.setAccountId(rs.getString("accountid"));
+		currentProperty.setSurveyId(rs.getString("surveyId"));
+		currentProperty.setLinkedProperties(linkedProperties);
+		currentProperty.setTenantId(tenantId);
+		currentProperty.setId(propertyUuId);
 	}
 
 }

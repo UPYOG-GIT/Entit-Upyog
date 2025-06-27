@@ -1,4 +1,3 @@
-
 package org.egov.pt.repository;
 
 import java.util.ArrayList;
@@ -8,21 +7,26 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.validation.Valid;
-
+import lombok.extern.slf4j.Slf4j;
 import org.egov.common.contract.request.RequestInfo;
-import org.egov.pt.models.OwnerInfo;
-import org.egov.pt.models.Property;
-import org.egov.pt.models.PropertyCriteria;
+import org.egov.common.exception.InvalidTenantIdException;
+import org.egov.common.utils.MultiStateInstanceUtil;
+import org.egov.encryption.config.EncProperties;
+import org.egov.pt.config.PropertyConfiguration;
+import org.egov.pt.models.*;
 import org.egov.pt.models.user.User;
 import org.egov.pt.models.user.UserDetailResponse;
 import org.egov.pt.models.user.UserSearchRequest;
 import org.egov.pt.repository.builder.PropertyQueryBuilder;
+import org.egov.pt.repository.rowmapper.EncryptionCountRowMapper;
 import org.egov.pt.repository.rowmapper.OpenPropertyRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyAuditRowMapper;
 import org.egov.pt.repository.rowmapper.PropertyRowMapper;
+import org.egov.pt.repository.rowmapper.PropertySearchRowMapper;
+import org.egov.pt.repository.rowmapper.PropertyAuditEncRowMapper;
 import org.egov.pt.service.UserService;
 import org.egov.pt.util.PropertyUtil;
+import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -32,6 +36,7 @@ import org.springframework.util.ObjectUtils;
 
 import com.google.common.collect.Sets;
 
+@Slf4j
 @Repository
 public class PropertyRepository {
 
@@ -43,32 +48,68 @@ public class PropertyRepository {
 
 	@Autowired
 	private PropertyRowMapper rowMapper;
-	
+
+	@Autowired
+	private PropertySearchRowMapper rowSearchMapper;
+
 	@Autowired
 	private OpenPropertyRowMapper openRowMapper;
-	
+
 	@Autowired
 	private PropertyAuditRowMapper auditRowMapper;
-	
+
 	@Autowired
 	private PropertyUtil util;
+
+	@Autowired
+	private MultiStateInstanceUtil centralUtil;
+
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private EncryptionCountRowMapper encryptionCountRowMapper;
+
+	@Autowired
+	private PropertyAuditEncRowMapper propertyAuditEncRowMapper;
 	
-    @Autowired
-    private UserService userService;
-    
+	@Autowired
+	private PropertyConfiguration config;
+
 	public List<String> getPropertyIds(Set<String> ownerIds, String tenantId) {
 
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getPropertyIdsQuery(ownerIds, tenantId, preparedStmtList);
+		try {
+			query = centralUtil.replaceSchemaPlaceholder(query, tenantId);
+		} catch (InvalidTenantIdException e) {
+			throw new CustomException("EG_PT_TENANTID_ERROR",
+					"TenantId length is not sufficient to replace query schema in a multi state instance");
+		}
 		return jdbcTemplate.queryForList(query, preparedStmtList.toArray(), String.class);
 	}
 
 	public List<Property> getProperties(PropertyCriteria criteria, Boolean isApiOpen, Boolean isPlainSearch) {
 
 		List<Object> preparedStmtList = new ArrayList<>();
-		String query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false);
+		String query;
+		
+		if(criteria.getIsDefaulterNoticeSearch())
+		query=queryBuilder.getPropertySearchQueryForDeafauterNotice(criteria,preparedStmtList);
+		else
+		query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, isPlainSearch, false);
+		try {
+			query = centralUtil.replaceSchemaPlaceholder(query, criteria.getTenantId());
+		} catch (InvalidTenantIdException e) {
+			throw new CustomException("EG_PT_AS_TENANTID_ERROR",
+					"TenantId length is not sufficient to replace query schema in a multi state instance");
+		}
+		log.info("Query for Property search is " + query + " with parameters " +  preparedStmtList.toArray().toString());
+
 		if (isApiOpen)
-			return jdbcTemplate.query(query, preparedStmtList.toArray(), openRowMapper);
+			return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
+		if(criteria.getIsDefaulterNoticeSearch())
+			return jdbcTemplate.query(query, preparedStmtList.toArray(), rowSearchMapper);
 		else
 			return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
 	}
@@ -77,30 +118,31 @@ public class PropertyRepository {
 
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getPropertySearchQuery(criteria, preparedStmtList, false, true);
+		try {
+			query = centralUtil.replaceSchemaPlaceholder(query, criteria.getTenantId());
+		} catch (InvalidTenantIdException e) {
+			throw new CustomException("EG_PT_AS_TENANTID_ERROR",
+					"TenantId length is not sufficient to replace query schema in a multi state instance");
+		}
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>());
 	}
 
-	public List<Property> getPropertiesForBulkSearch(PropertyCriteria criteria, Boolean isPlainSearch) {
+	public List<Property> getPropertiesForBulkSearch(PropertyCriteria criteria, String schemaTenantId, Boolean isPlainSearch) {
 		List<Object> preparedStmtList = new ArrayList<>();
 		String query = queryBuilder.getPropertyQueryForBulkSearch(criteria, preparedStmtList, isPlainSearch);
+		try {
+			query = centralUtil.replaceSchemaPlaceholder(query, schemaTenantId);
+		} catch (InvalidTenantIdException e) {
+			throw new CustomException("EG_PT_AS_TENANTID_ERROR",
+					"TenantId length is not sufficient to replace query schema in a multi state instance");
+		}
 		return jdbcTemplate.query(query, preparedStmtList.toArray(), rowMapper);
 	}
 
-	private String createQuery(Set<String> ids) {
-		StringBuilder builder = new StringBuilder();
-		int length = ids.size();
-		for (int i = 0; i < length; i++) {
-			builder.append(" ?");
-			if (i != length - 1)
-				builder.append(",");
-		}
-		return builder.toString();
-	}
-
 	public List<String> fetchIds(PropertyCriteria criteria, Boolean isPlainSearch) {
-		
+
 		List<Object> preparedStmtList = new ArrayList<>();
-		String basequery = "select id from eg_pt_property";
+		String basequery = "select id from {schema}.eg_pt_property";
 		StringBuilder builder = new StringBuilder(basequery);
 		if(isPlainSearch)
 		{
@@ -108,7 +150,7 @@ public class PropertyRepository {
 			if(!ObjectUtils.isEmpty(tenantIds))
 			{
 				builder.append(" where tenantid IN (").append(createQuery(tenantIds)).append(")");
-				preparedStmtList.add(tenantIds);
+				addToPreparedStatement(preparedStmtList, tenantIds);
 			}
 		}
 		else
@@ -123,7 +165,14 @@ public class PropertyRepository {
 		builder.append(orderbyClause);
 		preparedStmtList.add(criteria.getOffset());
 		preparedStmtList.add(criteria.getLimit());
-		return jdbcTemplate.query(builder.toString(), preparedStmtList.toArray(), new SingleColumnRowMapper<>(String.class));
+		String query;
+		try {
+			query = centralUtil.replaceSchemaPlaceholder(builder.toString(), criteria.getTenantId());
+		} catch (InvalidTenantIdException e) {
+			throw new CustomException("EG_PT_AS_TENANTID_ERROR",
+					"TenantId length is not sufficient to replace query schema in a multi state instance");
+		}
+		return jdbcTemplate.query(query, preparedStmtList.toArray(), new SingleColumnRowMapper<>(String.class));
 	}
 	/**
 	 * Returns list of properties based on the given propertyCriteria with owner
@@ -137,6 +186,11 @@ public class PropertyRepository {
 
 		List<Property> properties;
 		
+		String stateLevelTenant=config.getStateLevelTenantId()!=null?config.getStateLevelTenantId():"pg";
+
+		if(criteria.getTenantId() == null)
+		{	criteria.setTenantId(stateLevelTenant); }
+
 		Boolean isOpenSearch = isInternal ? false : util.isPropertySearchOpen(requestInfo.getUserInfo());
 
 		if (criteria.isAudit() && !isOpenSearch) {
@@ -158,36 +212,42 @@ public class PropertyRepository {
 		util.enrichOwner(userDetailResponse, properties, isOpenSearch);
 		return properties;
 	}
-	
+
 	private List<Property> getPropertyAudit(PropertyCriteria criteria) {
 
 		String query = queryBuilder.getpropertyAuditQuery();
+		try {
+			query = centralUtil.replaceSchemaPlaceholder(query, criteria.getTenantId());
+		} catch (InvalidTenantIdException e) {
+			throw new CustomException("EG_PT_AS_TENANTID_ERROR",
+					"TenantId length is not sufficient to replace query schema in a multi state instance");
+		}
 		return jdbcTemplate.query(query, criteria.getPropertyIds().toArray(), auditRowMapper);
 	}
 
 
 	/**
-	 * 
+	 *
 	 * Method to enrich property search criteria with user based criteria info
-	 * 
-	 * If no info found based on user criteria boolean true will be returned so that empty list can be returned 
-	 * 
+	 *
+	 * If no info found based on user criteria boolean true will be returned so that empty list can be returned
+	 *
 	 * else returns false to continue the normal flow
-	 * 
+	 *
 	 * The enrichment of object is done this way(instead of directly applying in the search query) to fetch multiple owners related to property at once
-	 * 
+	 *
 	 * @param criteria
 	 * @param requestInfo
 	 * @return
 	 */
 	public Boolean enrichCriteriaFromUser(PropertyCriteria criteria, RequestInfo requestInfo) {
-		
+
 		Set<String> ownerIds = new HashSet<String>();
-		
+
 		if(!CollectionUtils.isEmpty(criteria.getOwnerIds()))
 			ownerIds.addAll(criteria.getOwnerIds());
 		criteria.setOwnerIds(null);
-		
+
 		String userTenant = criteria.getTenantId();
 		if(criteria.getTenantId() == null)
 			userTenant = requestInfo.getUserInfo().getTenantId();
@@ -203,16 +263,15 @@ public class PropertyRepository {
 
 		// fetching property id from owner table and enriching criteria
 		ownerIds.addAll(userDetailResponse.getUser().stream().map(User::getUuid).collect(Collectors.toSet()));
-		
+
 		if (criteria.getIsCitizen()!=null && criteria.getMobileNumber()!=null) {
 			for (OwnerInfo user : userDetailResponse.getUser()) {
 				if (user.getAlternatemobilenumber()!=null && user.getAlternatemobilenumber().equalsIgnoreCase(criteria.getMobileNumber())) {
 					ownerIds.remove(user.getUuid());
 				}
-				
+
 			}
 		}
-		
 
 		// only used to eliminate property-ids which does not have the owner
 		List<String> propertyIds = getPropertyIds(ownerIds, userTenant);
@@ -243,12 +302,58 @@ public class PropertyRepository {
 		return false;
 	}
 
-	public Integer getCount(@Valid PropertyCriteria propertyCriteria, RequestInfo requestInfo) {
-		Boolean isOpenSearch = false ? false : util.isPropertySearchOpen(requestInfo.getUserInfo());
-        List<Object> preparedStmtList = new ArrayList<>();
-        String query = queryBuilder.getCountQuery(propertyCriteria, preparedStmtList, isOpenSearch);
-        Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
-        return count;
-    }
+	public Integer getCount(PropertyCriteria propertyCriteria, RequestInfo requestInfo) {
 
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = queryBuilder.getPropertySearchQuery(propertyCriteria, preparedStmtList, false, false);
+		Integer count =  jdbcTemplate.queryForObject(query, preparedStmtList.toArray(), Integer.class);
+		return count;
+	}
+
+	/** Method to find the total count of applications present in dB */
+	public Integer getTotalApplications(PropertyCriteria criteria) {
+		String query = queryBuilder.getTotalApplicationsCountQueryString(criteria);
+		if (query == null)
+			return 0;
+		Integer count = jdbcTemplate.queryForObject(query, Integer.class);
+		return count;
+	}
+
+	private String createQuery(Set<String> ids) {
+		StringBuilder builder = new StringBuilder();
+		int length = ids.size();
+		for (int i = 0; i < length; i++) {
+			builder.append(" ?");
+			if (i != length - 1)
+				builder.append(",");
+		}
+		return builder.toString();
+	}
+
+	private void addToPreparedStatement(List<Object> preparedStmtList, Set<String> ids) {
+		ids.forEach(id -> {
+			preparedStmtList.add(id);
+		});
+	}
+
+	/* Method to find the last execution details in dB */
+	public EncryptionCount getLastExecutionDetail(PropertyCriteria criteria) {
+
+		List<Object> preparedStatement = new ArrayList<>();
+		String query = queryBuilder.getLastExecutionDetail(criteria, preparedStatement);
+
+		log.info("\nQuery executed:" + query);
+		if (query == null)
+			return null;
+		EncryptionCount encryptionCount = jdbcTemplate.query(query, preparedStatement.toArray(), encryptionCountRowMapper);
+		return encryptionCount;
+	}
+
+
+	public List<PropertyAudit> getPropertyAuditForEnc(PropertyCriteria criteria) {
+
+		String query = queryBuilder.getpropertyAuditEncQuery();
+		return jdbcTemplate.query(query, criteria.getPropertyIds().toArray(), propertyAuditEncRowMapper);
+	}
 }
+

@@ -1,7 +1,12 @@
 package org.egov.pt.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.*;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.annotation.PostConstruct;
+
 import org.egov.tracer.config.TracerConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,11 +15,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.TimeZone;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 
 @Import({TracerConfiguration.class})
@@ -46,6 +52,9 @@ public class PropertyConfiguration {
     @Value("${persister.save.property.topic}")
     private String savePropertyTopic;
 
+    @Value("${persister.save.property.fuzzy.topic}")
+    private String savePropertyFuzzyTopic;
+    
     @Value("${persister.update.property.topic}")
     private String updatePropertyTopic;
 
@@ -67,6 +76,9 @@ public class PropertyConfiguration {
     
     @Value("${egov.user.search.path}")
     private String userSearchEndpoint;
+
+    @Value("${egov.internal.microservice.user.uuid}")
+    private String egovInternalMicroserviceUserUuid;
 
 
     //IDGEN config
@@ -112,6 +124,9 @@ public class PropertyConfiguration {
     @Value("${kafka.topics.receipt.create}")
     private String receiptTopic;
 
+    @Value("${kafka.topics.receipt.create.pattern}")
+    private String receiptTopicPattern;
+
     @Value("${kafka.topics.notification.pg.save.txns}")
     private String pgTopic;
 
@@ -134,7 +149,9 @@ public class PropertyConfiguration {
     
     @Value("${egov.notif.view.mutation}")
     private String viewMutationLink;
-    
+
+    @Value("${egov.notif.citizen.feedback}")
+    private String citizenFeedbackLink;
 
     @Value("${egov.usr.events.view.history.link}")
     private String userEventViewPropertyLink;
@@ -177,8 +194,8 @@ public class PropertyConfiguration {
     @Value("${egov.localization.fallback.locale}")
     private String fallBackLocale;
     //USER EVENTS
-	@Value("${egov.ui.app.host}")
-	private String uiAppHost;
+	@Value("#{${egov.ui.app.host.map}}")
+	private Map<String, String> uiAppHostMap;
     
 	@Value("${egov.usr.events.create.topic}")
 	private String saveUserEventsTopic;
@@ -249,11 +266,11 @@ public class PropertyConfiguration {
     
     // ##### mdms 
     
-    @Value("${egov.mdms.host}")
+    @Value("${mdms.v2.host}")
     private String mdmsHost;
 
-    @Value("${egov.mdms.search.endpoint}")
-    private String mdmsEndpoint;
+    @Value("${mdms.v2.search.endpoint}")
+    private String mdmsEndPoint;
     
     // Billing-Service
     
@@ -356,5 +373,15 @@ public class PropertyConfiguration {
 
     @Value("${inbox.property.search.allowed}")
     private Boolean isInboxSearchAllowed;
+
+    //encryptOldDataStatus topic
+    @Value("${property.oldDataEncryptionStatus.topic}")
+    private String encryptionStatusTopic;
+
+    @Value("${persister.update.property.oldData.topic}")
+    private String updatePropertyEncTopic;
+
+    @Value("${persister.update.property.audit.oldData.topic}")
+    private String updatePropertyAuditEncTopic;
 
 }

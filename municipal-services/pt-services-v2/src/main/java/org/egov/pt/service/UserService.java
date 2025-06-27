@@ -99,7 +99,8 @@ public class UserService {
      */
     private void addUserDefaultFields(String tenantId,Role role,OwnerInfo owner){
         owner.setActive(true);
-        owner.setTenantId(tenantId.split("\\.")[0]);
+//        owner.setTenantId(tenantId.split("\\.")[0]);
+        owner.setTenantId(tenantId);
         owner.setRoles(Collections.singletonList(role));
         owner.setType("CITIZEN");
         owner.setCreatedDate(null);

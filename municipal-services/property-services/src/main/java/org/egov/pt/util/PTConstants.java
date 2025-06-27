@@ -11,6 +11,8 @@ public class PTConstants {
 
     public static final String PT_TYPE_VACANT = "VACANT";
     
+    public static String SCHEMA_REPLACE_STRING = "{schema}";
+
     public static final String PT_TYPE_SHAREDPROPERTY = "SHAREDPROPERTY";
     
     public static final String PT_TYPE_BUILTUP = "BUILTUP";
@@ -112,9 +114,19 @@ public class PTConstants {
 
     public static final String VARIABLE_OWNER = "ownerInfo";
 
+    public static final String VARIABLE_ID = "id";
+
+    public static final String VARIABLE_NAME = "name";
+
+    public static final String VARIABLE_DESIGNATION = "designation";
+
+    public static final String VARIABLE_AUTHORIZEDPERSON = "nameOfAuthorizedPerson";
+	
+    public static final String VARIABLE_TYPE = "type";
+
 
     public static final List<String> FIELDS_TO_IGNORE = Collections.unmodifiableList(Arrays.asList(VARIABLE_ACTION,VARIABLE_WFDOCUMENTS,
-            VARIABLE_CREATEDBY,VARIABLE_LASTMODIFIEDBY,VARIABLE_CREATEDTIME,VARIABLE_LASTMODIFIEDTIME));
+            VARIABLE_CREATEDBY,VARIABLE_LASTMODIFIEDBY,VARIABLE_CREATEDTIME,VARIABLE_LASTMODIFIEDTIME, VARIABLE_AUTHORIZEDPERSON, VARIABLE_ID, VARIABLE_DESIGNATION, VARIABLE_NAME, VARIABLE_TYPE));
 
     public static final List<String> FIELDS_FOR_OWNER_MUTATION = Collections.unmodifiableList(Arrays.asList("name","gender","fatherOrHusbandName"));
 
@@ -246,6 +258,11 @@ public class PTConstants {
     public static final String CREATED_STRING = "Created";
     
     public static final String UPDATED_STRING = "Updated";
+
+    public static final String MUTATED_STRING = "MUTATED";
+
+    public static final String PAYMENT_STRING = "PAYMENT";
+
 
     public static final String PT_BUSINESSSERVICE = "PT";
 
@@ -398,6 +415,8 @@ public class PTConstants {
 
     public static final String PAY_ONLINE_STRING = "Click on the URL to view the details and pay online {PAYMENT_LINK}";
 
+    public static final String TENANTID_MDC_STRING = "TENANTID";
+
     public static final String PT_ONLINE_STRING = "You can pay your Property Tax online here - {PAYMENT_LINK}";
 
     public static final String MT_TRACK_APPLICATION_STRING ="You can track your application on the link given below - {MTURL} Thank you";
@@ -413,6 +432,45 @@ public class PTConstants {
     public static final String PT_TAX_FULL = "Click on the link to download payment receipt {receipt download link}";
 
     public static final String PT_TAX_PARTIAL = "You can pay your Property Tax online here - {payLink} Click on the link to download payment receipt {receipt download link}";
+
+    public static final String TENANT_MASTER_MODULE = "tenant";
+
+    public static final String TENANTS_MASTER_ROOT = "tenants";
+
+    public static final String TENANTS_JSONPATH_ROOT = "$.MdmsRes.tenant.tenants";
+
+    public static final String PROPERTY_MODEL = "Property";
+
+    public static final String PROPERTY_DECRYPT_MODEL = "PropertyDecrypDisabled";
+
+    //Citizen Feedback Notifications
+
+    public static final String FEEDBACK_URL = "{FeedbackURL}";
+
+    public static final String PT_NOTIF_CF_CREATED = "PT_NOTIF_CF_CREATED";
+
+    public static final String PT_NOTIF_CF_UPDATED = "PT_NOTIF_CF_UPDATED";
+
+    public static final String PT_NOTIF_CF_MUTATED = "PT_NOTIF_CF_MUTATED";
+
+    public static final String PT_NOTIF_CF_PAYMENT_ONLINE = "PT_NOTIF_CF_PAYMENT_ONLINE";
+
+    public static final String CF_REDIRECT_REPLACE_CREATE = "pt/property/new-application/acknowledgement";
+    public static final String CF_REDIRECT_REPLACE_UPDATE = "pt/property/edit-application/acknowledgement";
+    public static final String CF_REDIRECT_REPLACE_MUTATE = "pt/property/property-mutation/acknowledgement";
+    public static final String CF_REDIRECT_REPLACE_PAYMENT = "digit-ui/citizen/payment/success";
+
+    public static final String TENANTID_REPLACE = "$tenantId";
+
+    public static final String PROPERTYID_REPLACE = "$propertyId";
+
+    public static final String ACKNOWLEDGEMENT_REPLACE = "$acknowldgementNumber";
+
+    public static final String REDIRECTLINK_REPLACE = "$redirectedFrom";
+
+    public static final String CREATIONREASON_REPLACE = "$creationReason";
+
+    public static final String TRANSACTIONID_REPLACE = "{TRANSACTION_ID}";
 
 }
 

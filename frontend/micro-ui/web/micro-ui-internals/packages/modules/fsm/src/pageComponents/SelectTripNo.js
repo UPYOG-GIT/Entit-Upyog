@@ -18,7 +18,9 @@ const SelectTripNo = ({ config, formData, t, onSelect, userType }) => {
   const [vehicleCapacity, setVehicleCapacity] = useState(formData?.capacity);
   const [vehicleMenu, setVehicleMenu] = useState([]);
 
-  console.log("dsoData : "+JSON.stringify(dsoData));
+  console.log("tripNumberData: "+JSON.stringify(tripNumberData));
+  console.log("vehicleMenu: "+JSON.stringify(vehicleMenu));
+  console.log("dsoData: "+JSON.stringify(dsoData));
   console.log("vehicleData: "+JSON.stringify(vehicleData));
   useEffect(() => {
     if (dsoData && vehicleData) {
@@ -27,7 +29,7 @@ const SelectTripNo = ({ config, formData, t, onSelect, userType }) => {
       }, []);
 
       const cpacityMenu = Array.from(new Set(allVehicles.map((a) => a.capacity))).map((capacity) => allVehicles.find((a) => a.capacity === capacity));
-
+      console.log("dsoData: "+JSON.stringify(dsoData))
       setVehicleMenu(cpacityMenu);
     }
   }, [dsoData, vehicleData]);

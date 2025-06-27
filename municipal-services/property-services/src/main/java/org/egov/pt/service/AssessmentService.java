@@ -17,7 +17,7 @@ import org.egov.pt.models.enums.Status;
 import org.egov.pt.models.workflow.BusinessService;
 import org.egov.pt.models.workflow.ProcessInstanceRequest;
 import org.egov.pt.models.workflow.State;
-import org.egov.pt.producer.Producer;
+import org.egov.pt.producer.PropertyProducer;
 import org.egov.pt.repository.AssessmentRepository;
 import org.egov.pt.util.AssessmentUtils;
 import org.egov.pt.validator.AssessmentValidator;
@@ -31,7 +31,7 @@ public class AssessmentService {
 
 	private AssessmentValidator validator;
 
-	private Producer producer;
+	private PropertyProducer producer;
 
 	private PropertyConfiguration props;
 
@@ -51,9 +51,9 @@ public class AssessmentService {
 
 
 	@Autowired
-	public AssessmentService(AssessmentValidator validator, Producer producer, PropertyConfiguration props, AssessmentRepository repository,
-							 AssessmentEnrichmentService assessmentEnrichmentService, PropertyConfiguration config, DiffService diffService,
-							 AssessmentUtils utils, WorkflowService workflowService, CalculationService calculationService) {
+	public AssessmentService(AssessmentValidator validator, PropertyProducer producer, PropertyConfiguration props, AssessmentRepository repository,
+                             AssessmentEnrichmentService assessmentEnrichmentService, PropertyConfiguration config, DiffService diffService,
+                             AssessmentUtils utils, WorkflowService workflowService, CalculationService calculationService) {
 		this.validator = validator;
 		this.producer = producer;
 		this.props = props;
@@ -73,6 +73,8 @@ public class AssessmentService {
 	 * @return
 	 */
 	public Assessment createAssessment(AssessmentRequest request) {
+
+		String tenantId = request.getAssessment().getTenantId();
 		Property property = utils.getPropertyForAssessment(request);
 		validator.validateAssessmentCreate(request, property);
 		assessmentEnrichmentService.enrichAssessmentCreate(request);
@@ -87,7 +89,7 @@ public class AssessmentService {
 		else {
 			calculationService.calculateTax(request, property);
 		}
-		producer.push(props.getCreateAssessmentTopic(), request);
+		producer.push(tenantId, props.getCreateAssessmentTopic(), request);
 
 		return request.getAssessment();
 	}
@@ -101,6 +103,7 @@ public class AssessmentService {
 	 */
 	public Assessment updateAssessment(AssessmentRequest request) {
 
+		String tenantId = request.getAssessment().getTenantId();
 		Assessment assessment = request.getAssessment();
 		RequestInfo requestInfo = request.getRequestInfo();
 		Property property = utils.getPropertyForAssessment(request);
@@ -124,7 +127,7 @@ public class AssessmentService {
 				assessmentEnrichmentService.enrichAssessmentUpdate(request, property);
 				/*
 				calculationService.getMutationFee();
-				producer.push(topic1,request);*/
+				producer.push(tenantId, topic1,request);*/
 			}
 			ProcessInstanceRequest workflowRequest = new ProcessInstanceRequest(requestInfo, Collections.singletonList(assessment.getWorkflow()));
 			State state = workflowService.callWorkFlow(workflowRequest);
@@ -135,7 +138,7 @@ public class AssessmentService {
 			if(assessment.getWorkflow().getState().getState().equalsIgnoreCase(config.getDemandTriggerState()))
 				calculationService.calculateTax(request, property);
 
-			producer.push(props.getUpdateAssessmentTopic(), request);
+			producer.push(tenantId, props.getUpdateAssessmentTopic(), request);
 
 
 			/*
@@ -146,7 +149,7 @@ public class AssessmentService {
 				*  }
 				*
 				*  else {
-				*  	producer.push(stateUpdateTopic, request);
+				*  	producer.push(tenantId, stateUpdateTopic, request);
 				*
 				*  }
 				*
@@ -157,7 +160,7 @@ public class AssessmentService {
 		}
 		else if(!config.getIsAssessmentWorkflowEnabled()){
 			calculationService.calculateTax(request, property);
-			producer.push(props.getUpdateAssessmentTopic(), request);
+			producer.push(tenantId, props.getUpdateAssessmentTopic(), request);
 		}
 		return request.getAssessment();
 	}

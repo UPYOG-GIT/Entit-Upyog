@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.User;
+import org.egov.common.utils.MultiStateInstanceUtil;
 import org.egov.pt.config.PropertyConfiguration;
 import org.egov.pt.models.ConstructionDetail;
 import org.egov.pt.models.GeoLocation;
@@ -27,6 +28,7 @@ import org.egov.pt.models.workflow.State;
 import org.egov.pt.service.DiffService;
 import org.egov.pt.service.PropertyService;
 import org.egov.pt.service.WorkflowService;
+import org.egov.pt.util.EncryptionDecryptionUtil;
 import  org.egov.pt.util.PTConstants;
 import org.egov.pt.util.PropertyUtil;
 import org.egov.pt.web.contracts.PropertyRequest;
@@ -55,6 +57,9 @@ public class PropertyValidator {
     private PropertyConfiguration configs;
     
     @Autowired
+    private MultiStateInstanceUtil centralInstanceUtil;
+    
+    @Autowired
     private PropertyService service;
     
     @Autowired
@@ -66,7 +71,9 @@ public class PropertyValidator {
     
     @Autowired
     private WorkflowService workflowService;
-	
+
+	@Autowired
+	EncryptionDecryptionUtil encryptionDecryptionUtil;
 
     /**
      * Validate the masterData and ctizenInfo of the given propertyRequest
@@ -157,7 +164,7 @@ public class PropertyValidator {
             validateAssessees(request,propertyFromSearch, errorMap);
 
         Boolean isstateUpdatable =  false;
-        
+
 		// third variable is needed only for mutation
 		List<String> fieldsUpdated = diffService.getUpdatedFields(property, propertyFromSearch, "");
 		
@@ -223,22 +230,14 @@ public class PropertyValidator {
 	 * @param request
 	 * @return
 	 */
-	public Property validateCommonUpdateInformation(PropertyRequest request) {
+	public void validateCommonUpdateInformation(PropertyRequest request, Property propertyFromSearch) {
 
 		Map<String, String> errorMap = new HashMap<>();
 		Property property = request.getProperty();
 		validateIds(request, errorMap);
 		validateMobileNumber(request, errorMap);
 
-        PropertyCriteria criteria = getPropertyCriteriaForSearch(request);
-        List<Property> propertiesFromSearchResponse = service.searchProperty(criteria, request.getRequestInfo());
-        boolean ifPropertyExists=PropertyExists(propertiesFromSearchResponse);
-		if (!ifPropertyExists) {
-			throw new CustomException("EG_PT_PROPERTY_NOT_FOUND", "The property to be updated does not exist in the system");
-		}
 
-		Property propertyFromSearch = propertiesFromSearchResponse.get(0);
-		
 		CreationReason reason = property.getCreationReason();
 		if (!propertyFromSearch.getStatus().equals(Status.ACTIVE)
 				&& !propertyFromSearch.getCreationReason().equals(reason)) {
@@ -248,8 +247,8 @@ public class PropertyValidator {
 			throw new CustomException("EG_PT_ERROR_CREATION_REASON",
 					"The Creation reason sent in the update Request is Invalid, The Creationg reason cannot be create for an ACTIVE record");
 		}
-
-		property.getAddress().setId(propertiesFromSearchResponse.get(0).getAddress().getId());
+		
+		property.getAddress().setId(propertyFromSearch.getAddress().getId());
         validateMasterData(request, errorMap);
 
 		if (propertyFromSearch.getStatus().equals(Status.INWORKFLOW) && (property.getAcknowldgementNumber() == null
@@ -259,8 +258,6 @@ public class PropertyValidator {
 
 		if (!errorMap.isEmpty())
 			throw new CustomException(errorMap);
-		
-		return propertyFromSearch;
 	}
 
     /**
@@ -454,6 +451,7 @@ public class PropertyValidator {
 
 		PropertyCriteria propertyCriteria = new PropertyCriteria();
 		propertyCriteria.setTenantId(property.getTenantId());
+		propertyCriteria.setIsSearchInternal(true);
 
 		if (null != property.getPropertyId()) {
 
@@ -565,6 +563,16 @@ public class PropertyValidator {
     	
 		List<String> allowedParams = null;
 		
+		if (centralInstanceUtil.getIsEnvironmentCentralInstance() && criteria.getTenantId() == null) {
+			
+			throw new CustomException("EG_PT_INVALID_SEARCH", " TenantId is mandatory for search ");
+		} else if (centralInstanceUtil.getIsEnvironmentCentralInstance()
+				&& criteria.getTenantId().split("\\.").length < centralInstanceUtil.getStateLevelTenantIdLength()) {
+			
+			throw new CustomException("EG_PT_INVALID_SEARCH",
+					" TenantId should be mandatorily " + centralInstanceUtil.getStateLevelTenantIdLength() + " levels for search");
+		}
+
 		User user = requestInfo.getUserInfo();
 		String userType = user.getType();
 		Boolean isUserCitizen = "CITIZEN".equalsIgnoreCase(userType);
@@ -574,12 +582,11 @@ public class PropertyValidator {
 			throw new CustomException("EG_PT_INVALID_SEARCH", "Inbox search has been disabled for property service");
 		}
 		
-		if (propertyUtil.isPropertySearchOpen(user)) {
+		if (propertyUtil.isPropertySearchOpen(user) && !criteria.getIsRequestForCount()) {
 
-			if (StringUtils.isEmpty(criteria.getMobileNumber()) && CollectionUtils.isEmpty(criteria.getPropertyIds())
-					&& StringUtils.isEmpty(criteria.getLocality()))
+			if (StringUtils.isEmpty(criteria.getMobileNumber()) && CollectionUtils.isEmpty(criteria.getPropertyIds()))
 				throw new CustomException("EG_PT_INVALID_SEARCH",
-						" locality is mandatory for open search when PropertyId OR MobileNumber is not provided");
+						"PropertyId OR MobileNumber are mandatory for open search");
 		}
 
 		if ((criteria.getFromDate() != null && criteria.getToDate() == null) || (criteria.getToDate() != null && criteria.getFromDate() == null))
@@ -592,8 +599,11 @@ public class PropertyValidator {
 				&& CollectionUtils.isEmpty(criteria.getUuids())
 				&& null == criteria.getMobileNumber()
 				&& null == criteria.getName()
+				&& null == criteria.getDocumentNumbers()
+				&& null == criteria.getPropertyType()
 				&& null == criteria.getDoorNo()
 				&& null == criteria.getOldPropertyId()
+				&& null == criteria.getLocality()
 				&& (null == criteria.getFromDate() && null == criteria.getToDate());
 		
 		if (isUserCitizen) {
@@ -606,9 +616,6 @@ public class PropertyValidator {
 		}
 		
 		else {
-			
-			if(criteria.getTenantId() == null)
-				throw new CustomException("EG_PT_INVALID_SEARCH"," TenantId is mandatory for search by " + userType);
 			
 			if(criteria.getTenantId() != null && isCriteriaEmpty)
 				throw new CustomException("EG_PT_INVALID_SEARCH"," Search is not allowed on empty Criteria, Atleast one criteria should be provided with tenantId for " + userType);
@@ -677,6 +684,7 @@ public class PropertyValidator {
 		List<String> fieldsUpdated = diffService.getUpdatedFields(property, propertyFromSearch, PTConstants.MUTATION_PROCESS_CONSTANT);
 		// only editable field in mutation other than owners, additional details.
 		fieldsUpdated.remove("ownershipCategory");
+		fieldsUpdated.remove("institution");
 		
 		if (configs.getIsMutationWorkflowEnabled()) {
 			if (request.getProperty().getWorkflow() == null)
@@ -825,18 +833,12 @@ public class PropertyValidator {
 			throw new CustomException(errorMap);
 	}
 
-	public Property validateAlternateMobileNumberInformation(PropertyRequest request) {
+	public void validateAlternateMobileNumberInformation(PropertyRequest request, Property propertyFromSearch) {
 		
 		Map<String, String> errorMap = new HashMap<>();
 		Property property = request.getProperty();
 		validateIds(request, errorMap);	
-		
-		PropertyCriteria criteria = getPropertyCriteriaForSearch(request);
-        List<Property> propertiesFromSearchResponse = service.searchProperty(criteria, request.getRequestInfo());
-        boolean ifPropertyExists=PropertyExists(propertiesFromSearchResponse);
-		if (!ifPropertyExists) {
-			throw new CustomException("EG_PT_PROPERTY_NOT_FOUND", "The property to be updated does not exist in the system");
-		}
+	
 
 		List <String> alternateNumbersinRequest = new ArrayList<String>();
 		for(OwnerInfo owner : property.getOwners()) {
@@ -849,8 +851,6 @@ public class PropertyValidator {
 			throw new CustomException("EG_PT_ALTERNATE_NUMBERS_NOT_FOUND", "The alternate mobile number details are null");
 		}
 		
-		Property propertyFromSearch = propertiesFromSearchResponse.get(0);	
-
 		Map<String, String> userToAlternateNumberMap = new HashMap<String,String>(); 
 		
 		for(OwnerInfo owner : propertyFromSearch.getOwners()) {
@@ -888,8 +888,6 @@ public class PropertyValidator {
 		}
 		
 		if(!property.getStatus().equals(Status.ACTIVE)) {throw new CustomException("EG_PT_ALTERNATE_INACTIVE","Alternate number details cannot be updated if status is not active");}
-		
-		return propertyFromSearch;
 	}
 
 }

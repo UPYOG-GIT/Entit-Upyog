@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.tracer.model.CustomException;
+import org.egov.vendor.config.VendorConfiguration;
 import org.egov.vendor.driver.repository.DriverRepository;
 import org.egov.vendor.driver.web.model.Driver;
 import org.egov.vendor.driver.web.model.DriverRequest;
@@ -28,40 +29,50 @@ public class DriverService {
 
 	@Autowired
 	private DriverEnrichmentService enrichmentService;
-	
+
 	@Autowired
 	private DriverUserService userService;
-	
-		
+
+	@Autowired
+	private VendorConfiguration config;
+
 	public Driver create(DriverRequest driverRequest) {
-		
+
 		if (driverRequest.getDriver().getTenantId().split("\\.").length == 1) {
 			throw new CustomException("Invalid TenantId", " Application cannot be create at StateLevel");
 		}
-		userService.manageDrivers(driverRequest);
+		driverRequest.getDriver().getOwner()
+				.setMobileNumber(driverRepository.getdriverSeqMobileNum(getSeqDriverMobileNumber()));
+		userService.manageDrivers(driverRequest, true);
 		enrichmentService.enrichCreate(driverRequest);
 		driverRepository.save(driverRequest);
 		return driverRequest.getDriver();
 
 	}
 
+	/*
+	 * This method is to increment mobile number each time driver is created
+	 */
+	private String getSeqDriverMobileNumber() {
+		return config.getDriverMobileNumberIncrement();
+	}
+
 	public Driver update(DriverRequest driverRequest) {
-			
+
 		if (driverRequest.getDriver().getTenantId().split("\\.").length == 1) {
 			throw new CustomException("Invalid TenantId", " Application cannot be updated at StateLevel");
 		}
-		userService.manageDrivers(driverRequest);
+		userService.manageDrivers(driverRequest, false);
 		enrichmentService.enrichUpdate(driverRequest);
 		driverRepository.update(driverRequest);
 		return driverRequest.getDriver();
 
 	}
-	
+
 	public DriverResponse search(DriverSearchCriteria criteria, RequestInfo requestInfo) {
 
-		List<String> uuids = new ArrayList<String>();
 		UserDetailResponse userDetailResponse;
-		
+
 		if (criteria.isDriverWithNoVendor()) {
 			List<String> driverIds = driverRepository.fetchDriverIdsWithNoVendor(criteria);
 			if (CollectionUtils.isEmpty(criteria.getIds())) {
@@ -71,34 +82,34 @@ public class DriverService {
 			}
 
 		}
-		
-		if(criteria.getMobileNumber() !=null) {
+
+		if (criteria.getMobileNumber() != null) {
 			userDetailResponse = userService.getOwner(criteria, requestInfo);
-			if(userDetailResponse !=null && userDetailResponse.getUser() != null && userDetailResponse.getUser().size() >0) {
-				uuids = userDetailResponse.getUser().stream().map(User::getUuid).collect(Collectors.toList());
-				if(CollectionUtils.isEmpty(criteria.getOwnerIds())) {
+			if (userDetailResponse != null && userDetailResponse.getUser() != null
+					&& !userDetailResponse.getUser().isEmpty()) {
+				List<String> uuids = userDetailResponse.getUser().stream().map(User::getUuid)
+						.collect(Collectors.toList());
+				if (CollectionUtils.isEmpty(criteria.getOwnerIds())) {
 					criteria.setOwnerIds(uuids);
-				}else {
+				} else {
 					criteria.getOwnerIds().addAll(uuids);
 				}
 			}
 		}
-		
-		DriverResponse driverResponse =driverRepository.getDriverData(criteria);
-		if (driverResponse!=null && !driverResponse.getDriver().isEmpty()) {
-			enrichmentService.enrichDriverSearch(driverResponse.getDriver(), requestInfo, criteria.getTenantId());
-		}
-		
-		if (driverResponse!=null && driverResponse.getDriver().isEmpty()) {
-			List<Driver> drivers=new ArrayList<Driver>();
-			driverResponse.setDriver(drivers);
-			return driverResponse;
-		}
-		
-		return driverResponse;
+		return getDriverResponse(criteria, requestInfo);
 
 	}
 
-	
-	
+	private DriverResponse getDriverResponse(DriverSearchCriteria criteria, RequestInfo requestInfo) {
+		DriverResponse driverResponse = driverRepository.getDriverData(criteria);
+		if (driverResponse != null && !driverResponse.getDriver().isEmpty()) {
+			enrichmentService.enrichDriverSearch(driverResponse.getDriver(), requestInfo, criteria.getTenantId());
+		}
+		if (driverResponse != null && driverResponse.getDriver().isEmpty()) {
+			List<Driver> drivers = new ArrayList<>();
+			driverResponse.setDriver(drivers);
+			return driverResponse;
+		}
+		return driverResponse;
+	}
 }

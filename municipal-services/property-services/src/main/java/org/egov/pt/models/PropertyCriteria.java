@@ -54,13 +54,31 @@ public class PropertyCriteria {
 	private String doorNo;
 
 	private String oldPropertyId;
+	
+	private String propertyType;
 
 	private Set<String> creationReason;
+	
+	private Set<String> documentNumbers;
+	
+	@Builder.Default
+	private Boolean isSearchInternal = false;
 
 	@Builder.Default
 	private Boolean isInboxSearch = false;
 	
+	@Builder.Default
+	private Boolean isDefaulterNoticeSearch = false;
+	
+	@Builder.Default
+	private Boolean isRequestForDuplicatePropertyValidation = false;
+	
 	private Boolean isCitizen;
-	
-	
+
+	@Builder.Default
+	private Boolean isRequestForCount = false;
+
+	@Builder.Default
+	private Boolean isRequestForOldDataEncryption = false;
+
 }
