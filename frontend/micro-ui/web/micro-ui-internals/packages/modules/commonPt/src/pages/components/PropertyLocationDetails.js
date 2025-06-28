@@ -6,6 +6,16 @@ import { Controller, useForm } from "react-hook-form";
 const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, formState, ownerIndex, setError, clearErrors }) => {
   let validation = {};
   let allCities = Digit.Hooks.pt.useTenants() ? Digit.Hooks.pt.useTenants() : Digit.Hooks.tl.useTenants();
+  if(window.location.href.includes("obps"))
+  {
+    allCities = Digit.SessionStorage.get("OBPS_TENANTS")
+
+  }
+  if(window.location.href.includes("fsm"))
+  {
+    allCities = Digit.SessionStorage.get("FSM_TENANTS")
+    console.log("allc", allCities)
+  }
   // if called from tl module get tenants from tl usetenants
   const userInfo = Digit.UserService.getUser()?.info;
   userType = userInfo?.type == "EMPLOYEE" ? "employee" : "citizen";
@@ -82,7 +92,7 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
               className="form-field"
               selected={value}
               disable={userType === "employee"}
-              option={allCities}
+              option={allCities.sort((a,b) => (a.name > b.name)? 1 : (b.name>a.name)? -1 : 0)}
               select={(value)=>{
                 onChange(value);
                 setLocationDetails({...locationDetails, cityCode: value})
@@ -155,7 +165,7 @@ const PropertyLocationDetails = ({ t, config, onSelect, userType, formData, form
       <CardLabelError style={errorStyle}>{touched?.houseDoorNo ? errors?.houseDoorNo?.message : ""}</CardLabelError>
 
       <LabelFieldPair>
-        <CardLabel>{`${t("PT_BUILDING_COLONY_NAME")}*`}</CardLabel>
+        <CardLabel>{`${t("PT_PROPERTY_ADDRESS_STREET_NAME")}*`}</CardLabel>
         <div className="form-field">
           <Controller
             name="buildingColonyName"

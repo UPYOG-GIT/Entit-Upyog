@@ -4,33 +4,22 @@ import { TickMark } from "@upyog/digit-ui-react-components";
 
 let actions = [];
 
-const getAction = (flow) => {
-  switch (flow) {
-    case "STAKEHOLDER": actions = []
-      break;
+const getAction = (businessService) => {
+ switch(businessService){
     case "WS" : actions = [
       'WS_COMMON_PROPERTY_DETAILS',
       'WS_COMMON_CONNECTION_DETAIL',
       'WS_COMMON_DOCUMENT_DETAILS',
       'WS_COMMON_SUMMARY',
     ]
-      break;
-    case "TL":  actions = [
-      'TL_COMMON_TR_DETAILS',
-      'TL_LOCATION_AND_OWNER_DETAILS',
-      'TL_DOCUMENT_DETAIL',
-      'TL_COMMON_SUMMARY',
-    ]
-    default: actions = []
-      break;
-  }
+ }
 }
-const CPTTimeline = ({ currentStep = 1, flow = "" }) => {
+const Timeline = ({ currentStep = 1, businessService="" }) => {
   const { t } = useTranslation();
   const isMobile = window.Digit.Utils.browser.isMobile();
-  getAction(flow);
+  getAction(businessService);
   return (
-    <div className="timeline-container" style={isMobile ? {} : { maxWidth: "960px", minWidth: "640px", marginRight: "auto" }} >
+    <div className="timeline-container" style={isMobile?{}:{maxWidth:"960px",minWidth:"640px",marginRight:"auto"}} >
       {actions.map((action, index, arr) => (
         <div className="timeline-checkpoint" key={index}>
           <div className="timeline-content">
@@ -44,4 +33,4 @@ const CPTTimeline = ({ currentStep = 1, flow = "" }) => {
   )
 }
 
-export default CPTTimeline; 
+export default Timeline; 
