@@ -12,6 +12,7 @@ import WSSewerageConnectionDetails from "./pageComponents/WSSewerageConnectionDe
 import WSPlumberPreference from "./pageComponents/WSPlumberPreference";
 import ConnectionHolder from "./pageComponents/WSConnectionHolder";
 import WSCheckPage from "./pages/citizen/WSCreate/CheckPage";
+import WSInfoLabel from "./pageComponents/WSInfoLabel";
 
 
 const WSModule = ({ stateCode, userType, tenants }) => {
@@ -69,7 +70,8 @@ const componentsToRegister = {
   WSSewerageConnectionDetails,
   WSPlumberPreference,
   ConnectionHolder,
-  WSCheckPage
+  WSCheckPage,
+  WSInfoLabel
 }
 
 export const initWSComponents = () => {

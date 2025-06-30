@@ -95,18 +95,20 @@ public class CalculationService {
 	 */
 	public BigDecimal advanceCalculate(BigDecimal totalTripAmount, String tenantId, RequestInfo requestInfo) {
 		Object mdmsData = mdmsService.mDMSCall(requestInfo, tenantId);
+		log.info("mdmsData: " + mdmsData.toString());
 		BigDecimal advanceAmount = new BigDecimal(0);
 		List<Map> advancePayment = JsonPath.read(mdmsData, CalculatorConstants.ADVANCE_PAYMENT_MODEL_JSON_PATH);
 		for (Map advancePayemntMap : advancePayment) {
 			if (advancePayemntMap.get(CalculatorConstants.CODE).equals(CalculatorConstants.FIXED_VALUE)
-					&& (boolean)advancePayemntMap.get(CalculatorConstants.ACTIVE)) {
+					&& (boolean) advancePayemntMap.get(CalculatorConstants.ACTIVE)) {
 				log.debug((String) advancePayemntMap.get("name"));
 				advanceAmount = new BigDecimal((String) advancePayemntMap.get(CalculatorConstants.ADVANCEAMOUNT));
 				break;
 			} else if (advancePayemntMap.get(CalculatorConstants.CODE).equals(CalculatorConstants.PERCENTAGE_VALUE)
-					&& (boolean)advancePayemntMap.get(CalculatorConstants.ACTIVE)) {
+					&& (boolean) advancePayemntMap.get(CalculatorConstants.ACTIVE)) {
 				final BigDecimal ONE_HUNDRED = new BigDecimal(100);
-				BigDecimal percentageValue = new BigDecimal((String) advancePayemntMap.get(CalculatorConstants.ADVANCEPERCENTAGE));
+				BigDecimal percentageValue = new BigDecimal(
+						(String) advancePayemntMap.get(CalculatorConstants.ADVANCEPERCENTAGE));
 				advanceAmount = totalTripAmount.multiply(percentageValue).divide(ONE_HUNDRED);
 				log.debug("Total Amount:: " + advancePayemntMap.get("advanceAmount"));
 				break;
@@ -127,13 +129,15 @@ public class CalculationService {
 		List<Map> cancellationFee = JsonPath.read(mdmsData, CalculatorConstants.CANCELLATION_FEE_MODEL_JSON_PATH);
 		for (Map cancellationFeeMap : cancellationFee) {
 			if (cancellationFeeMap.get(CalculatorConstants.CODE).equals(CalculatorConstants.FIXED_VALUE)
-					&& (boolean)cancellationFeeMap.get(CalculatorConstants.ACTIVE)) {
-				cancellationAmount = new BigDecimal((String) cancellationFeeMap.get(CalculatorConstants.CANCELLATIONAMOUNT));
+					&& (boolean) cancellationFeeMap.get(CalculatorConstants.ACTIVE)) {
+				cancellationAmount = new BigDecimal(
+						(String) cancellationFeeMap.get(CalculatorConstants.CANCELLATIONAMOUNT));
 				break;
 			} else if (cancellationFeeMap.get(CalculatorConstants.CODE).equals(CalculatorConstants.PERCENTAGE_VALUE)
-					&& (boolean)cancellationFeeMap.get(CalculatorConstants.ACTIVE)) {
+					&& (boolean) cancellationFeeMap.get(CalculatorConstants.ACTIVE)) {
 				final BigDecimal oneHundred = new BigDecimal(100);
-				BigDecimal percentageValue = new BigDecimal((String) cancellationFeeMap.get(CalculatorConstants.CANCELLATIONPERCENTAGE));
+				BigDecimal percentageValue = new BigDecimal(
+						(String) cancellationFeeMap.get(CalculatorConstants.CANCELLATIONPERCENTAGE));
 				cancellationAmount = totalTripAmount.multiply(percentageValue).divide(oneHundred);
 				break;
 			}
