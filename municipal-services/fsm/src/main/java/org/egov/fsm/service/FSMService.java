@@ -216,7 +216,7 @@ public class FSMService {
 		wfIntegrator.callWorkFlow(fsmRequest);
 		notificationService.process(fsmRequest, oldFSM);
 
-		createOrUpdateFsmApplicationWorkers(fsmRequest);
+//		createOrUpdateFsmApplicationWorkers(fsmRequest);
 		repository.update(fsmRequest, workflowService.isStateUpdatable(fsm.getApplicationStatus(), businessService));
 //		fSMInboxService.inboxEvent( fsmRequest);
 		return fsmRequest.getFsm();
