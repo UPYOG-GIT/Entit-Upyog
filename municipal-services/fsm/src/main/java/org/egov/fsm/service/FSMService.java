@@ -622,9 +622,9 @@ public class FSMService {
 
 		fsmResponse = repository.getFSMData(criteria, dsoId);
 		fsmList = fsmResponse.getFsm();
-		if (!fsmList.isEmpty()) {
-			enrichmentService.enrichFSMSearch(fsmList, requestInfo, criteria.getTenantId());
-		}
+//		if (!fsmList.isEmpty()) {
+//			enrichmentService.enrichFSMSearch(fsmList, requestInfo, criteria.getTenantId());
+//		}
 
 		return fsmResponse;
 	}
