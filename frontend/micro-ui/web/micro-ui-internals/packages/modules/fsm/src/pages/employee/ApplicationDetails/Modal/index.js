@@ -76,7 +76,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     "PropertyType",
     { staleTime: Infinity }
   );
-
+  // console.log("dsoData "+JSON.stringify(dsoData))
   const { data: propertySubList, isLoading: isPropertySubData, isSuccess: isPropertySubDataLoaded } = Digit.Hooks.fsm.useMDMS(
     stateCode,
     "FSM",
@@ -141,7 +141,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     return worker?.individualId  
   })?.filter(id => id)
 
-  console.log(applicationDetails,"applicationDetails")
+  // console.log(applicationDetails,"applicationDetails")
 
   const {
     data: workerData,
@@ -176,7 +176,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       },
     },
   });
-
+  // console.log("workerData "+JSON.stringify(workerData))
+  console.log("drivers "+JSON.stringify(drivers))
   const [defaultValues, setDefautValue] = useState({
     capacity: vehicle?.capacity,
     wasteCollected: vehicle?.capacity,
@@ -242,7 +243,17 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       setDsoList(dsoList);
     }
   }, [vehicle, isDsoSuccess]);
+  
+  // useEffect(() => {
+  //   if (dsoData && isDsoSuccess) {
+  //     // console.log("settttt")
+  //     // setDrivers(dsoData?.[0]?.activeDrivers?.map(driver => driver?.name));
+      
+  //     setDrivers(dsoData?.flatMap(item => item?.activeDrivers?.map(driver => driver?.name))?.filter(Boolean));
+  //   }
+  // }, [dsoData, isDsoSuccess]);
 
+  // console.log("dsoData........activeDrivers", dsoData?.[0]?.activeDrivers);
   useEffect(() => {
     if (isSuccess && isDsoSuccess && applicationData && applicationData.dsoId) {
       const [dso] = dsoData.filter((dso) => dso.id === applicationData.dsoId);
@@ -250,10 +261,11 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       const vehicleNoList = tempList?.sort((a,b) => (a?.registrationNumber > b?.registrationNumber ? 1 : -1 ));
       const tempDriverList = dso?.drivers
       setVehicleDriverList(tempDriverList)
+      setDrivers(dso?.activeDrivers);
       setVehicleNoList(vehicleNoList);
     }
   }, [isSuccess, isDsoSuccess]);
-
+  // console.log("vehicleNoList "+JSON.stringify(vehicleNoList))
   useEffect(() => {
     reassignReason || (actionData && actionData[0] && actionData[0].comment?.length > 0 && actionData[0]?.status === "DSO_REJECTED")
       ? setFormValve(true)
@@ -386,7 +398,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         setTimeout(closeToast, 5000);
         return
       }
-      const workersList = [selectedDriver,...tempSelectedWorkers]
+      // const workersList = [selectedDriver,...tempSelectedWorkers]
+      const workersList = [selectedDriver]
       // workerList?.filter(worker => worker?.userDetails?.roles?.some(role=> role?.code === "FSM_DRIVER"))
       const workerPayload = workersList?.map((worker,idx)=> {
         return {
@@ -431,7 +444,8 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         );
       case "DSO_ACCEPT":
          //TODO: add accept UI
-         setFormValve(vehicleNo && selectedDriver?.optionsKey ? true : false);
+         console.log("vehicleNo "+JSON.stringify(vehicleNo)+", selectedDriver?.optionsKey "+JSON.stringify(selectedDriver))
+         setFormValve(vehicleNo && selectedDriver ? true : false);
          return setConfig(
            configAcceptDso({
              t,
@@ -598,9 +612,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         break;
     }
   }, [action, reassignReason, isDsoLoading, dso, vehicleMenu, rejectionReason, vehicleNo, vehicleNoList, Reason, fstpoRejectionReason]);
-
+  // console.log("config "+JSON.stringify(config))
   const hiddenFileInput = React.useRef(null);
-
+  console.log("isDsoLoading: "+isDsoLoading+", isReasonLoading: "+isReasonLoading+", isVehicleDataLoaded: "+isVehicleDataLoaded)
   return action && config.form && !isDsoLoading && !isReasonLoading && isVehicleDataLoaded ? (
     <Modal
       popupStyles={mobileView ? { height: 'fit-content', minHeight: '100vh' } : { height: "fit-content" }}
