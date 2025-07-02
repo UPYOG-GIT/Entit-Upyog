@@ -216,7 +216,7 @@ public class FSMService {
 		wfIntegrator.callWorkFlow(fsmRequest);
 		notificationService.process(fsmRequest, oldFSM);
 
-		createOrUpdateFsmApplicationWorkers(fsmRequest);
+//		createOrUpdateFsmApplicationWorkers(fsmRequest);
 		repository.update(fsmRequest, workflowService.isStateUpdatable(fsm.getApplicationStatus(), businessService));
 //		fSMInboxService.inboxEvent( fsmRequest);
 		return fsmRequest.getFsm();
@@ -622,9 +622,9 @@ public class FSMService {
 
 		fsmResponse = repository.getFSMData(criteria, dsoId);
 		fsmList = fsmResponse.getFsm();
-		if (!fsmList.isEmpty()) {
-			enrichmentService.enrichFSMSearch(fsmList, requestInfo, criteria.getTenantId());
-		}
+//		if (!fsmList.isEmpty()) {
+//			enrichmentService.enrichFSMSearch(fsmList, requestInfo, criteria.getTenantId());
+//		}
 
 		return fsmResponse;
 	}
