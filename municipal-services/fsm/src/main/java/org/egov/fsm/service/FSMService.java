@@ -354,7 +354,7 @@ public class FSMService {
 		fsm.setDso(vendor);
 
 		validateDSOVehicle(fsm, vendor, fsmRequest);
-		validateDSOWorkers(fsm, vendor, fsmRequest);
+//		validateDSOWorkers(fsm, vendor, fsmRequest);
 		callVehicleTripService(fsmRequest, fsm, oldFSM);
 
 	}
