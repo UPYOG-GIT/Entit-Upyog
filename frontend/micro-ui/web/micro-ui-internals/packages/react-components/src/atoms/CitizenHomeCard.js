@@ -23,7 +23,7 @@ const CitizenHomeCard = ({ header, links, state, Icon, Info, isInfo = false, sty
         ))}
       </div>
 
-      {location.pathname === "/digit-ui/citizen/obps-home" && (
+      {(location.pathname === "/digit-ui/citizen/obps-home" || location.pathname === "/digit-ui/citizen/fsm-home") && (
         <div className="links">
           <a href="/digit-ui/employee">Employee Login</a>
         </div>
