@@ -68,35 +68,41 @@ public class UserService {
 					Boolean foundUser = Boolean.FALSE;
 					for (int j = 0; j < userDetailResponse.getUser().size(); j++) {
 						User user = userDetailResponse.getUser().get(j);
-						if (!user.getUserName().equalsIgnoreCase(user.getMobileNumber())
-								&& user.getName().equalsIgnoreCase(applicant.getName())) {
-							// found user with mobilenumber and username not same and name as equal to the
-							// applicnat name provided by ui
-							// then consider that user as applicant
-							if (applicant != null && applicant.getGender() != null) {
-								user.setGender(applicant.getGender());
-							}
+						if (user.getUserName().equalsIgnoreCase(user.getMobileNumber())) {
 							applicant = user;
 							foundUser = Boolean.TRUE;
 							break;
 						}
+						/*
+						 * if (!user.getUserName().equalsIgnoreCase(user.getMobileNumber()) &&
+						 * user.getName().equalsIgnoreCase(applicant.getName())) { // found user with
+						 * mobilenumber and username not same and name as equal to the // applicnat name
+						 * provided by ui // then consider that user as applicant if (applicant != null
+						 * && applicant.getGender() != null) { user.setGender(applicant.getGender()); }
+						 * applicant = user; foundUser = Boolean.TRUE; break; }
+						 */
 					}
 					// users exists with mobile number but non of them have the same name, then
 					// create new user
-					if (foundUser) {
+
+					if (!foundUser) {
 						applicantDetailResponse = createApplicant(applicant, fsmRequest.getRequestInfo(),
-								Boolean.FALSE);
+								Boolean.TRUE);
 						applicant = applicantDetailResponse.getUser().get(0);
 
 					}
-				} else {
-					// User exists but only one user with the mobile number and username as same, So
-					// create new user
-
-					applicantDetailResponse = createApplicant(applicant, fsmRequest.getRequestInfo(), Boolean.FALSE);
-					applicant = applicantDetailResponse.getUser().get(0);
 
 				}
+				/*
+				 * else { // User exists but only one user with the mobile number and username
+				 * as same, So // create new user
+				 * 
+				 * applicantDetailResponse = createApplicant(applicant,
+				 * fsmRequest.getRequestInfo(), Boolean.FALSE); applicant =
+				 * applicantDetailResponse.getUser().get(0);
+				 * 
+				 * }
+				 */
 
 			} else {
 				// User with mobile number itself not found then create new user and consider
@@ -168,7 +174,7 @@ public class UserService {
 	/**
 	 * Checks if the user exists in the database
 	 * 
-	 * @param applicant   The applicant from the FSM Application
+	 * @param applicant The applicant from the FSM Application
 	 * @return The search response from the user service
 	 */
 	private UserDetailResponse userExists(User applicant) {
@@ -177,9 +183,11 @@ public class UserService {
 //		userSearchRequest.setTenantId(applicant.getTenantId().split("\\.")[0]);
 		userSearchRequest.setTenantId(applicant.getTenantId());
 		userSearchRequest.setMobileNumber(applicant.getMobileNumber());
-		if (!StringUtils.isEmpty(applicant.getName())) {
-			userSearchRequest.setName(applicant.getName());
-		}
+		// Below line commented, only search on mobile number
+		// Name not consider for user Searching
+//		if (!StringUtils.isEmpty(applicant.getName())) {
+//			userSearchRequest.setName(applicant.getName());
+//		}
 
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
 		return userCall(userSearchRequest, uri);
