@@ -2,6 +2,7 @@ package org.egov.fsm.service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -27,7 +28,6 @@ import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -314,6 +314,33 @@ public class UserService {
 		userSearchRequest.setUserType(FSMConstants.CITIZEN);
 		if (!CollectionUtils.isEmpty(criteria.getOwnerIds()))
 			userSearchRequest.setUuid(criteria.getOwnerIds());
+		return userSearchRequest;
+	}
+	
+	
+	public UserDetailResponse getUserSearch(String uuid, String tenantId, RequestInfo requestInfo) {
+		UserSearchRequest userSearchRequest = getUserSearchRequest1(uuid, tenantId, requestInfo);
+		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
+		return userCall(userSearchRequest, uri);
+	}
+
+	/**
+	 * Creates userSearchRequest from fsmSearchCriteria
+	 * 
+	 * @param criteria    The fsmSearch criteria
+	 * @param requestInfo The requestInfo of the request
+	 * @return The UserSearchRequest based on ownerIds
+	 */
+	private UserSearchRequest getUserSearchRequest1(String uuid, String tenantId, RequestInfo requestInfo) {
+		List<String> uuidList = new ArrayList<>();
+		uuidList.add(uuid);
+		
+		UserSearchRequest userSearchRequest = new UserSearchRequest();
+		userSearchRequest.setRequestInfo(requestInfo);
+		userSearchRequest.setUuid(uuidList);
+		userSearchRequest.setTenantId(tenantId);
+		userSearchRequest.setActive(true);
+		userSearchRequest.setUserType(FSMConstants.CITIZEN);
 		return userSearchRequest;
 	}
 

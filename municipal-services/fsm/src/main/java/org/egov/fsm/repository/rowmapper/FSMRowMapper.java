@@ -119,11 +119,11 @@ public class FSMRowMapper implements ResultSetExtractor<List<FSM>> {
 				.additionalDetails(getAdditionalDetail("fsm_pit_additionalDetails", rs))
 				.tenantId(rs.getString(FSMConstants.TENANT_ID)).auditDetails(auditdetails).build();
 
-		User user = User.builder().name(rs.getString("name")).mobileNumber(rs.getString("mobilenumber"))
-				.emailId(rs.getString("emailid")).gender(rs.getString("gender")).uuid(rs.getString("uuid"))
-				.tenantId(rs.getString("tenantid")).build();
+//		User user = User.builder().name(rs.getString("name")).mobileNumber(rs.getString("mobilenumber"))
+//				.emailId(rs.getString("emailid")).gender(rs.getString("gender")).uuid(rs.getString("uuid"))
+//				.tenantId(rs.getString("tenantid")).build();
 		
-		fsm.setCitizen(user);
+//		fsm.setCitizen(user);
 		fsm.setAddress(address);
 		fsm.setPitDetail(pitDetail);
 		fsm.setAuditDetails(auditdetails);

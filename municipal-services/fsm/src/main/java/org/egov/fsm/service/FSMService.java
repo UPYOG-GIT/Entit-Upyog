@@ -108,7 +108,7 @@ public class FSMService {
 
 	@Autowired
 	FSMRepository fsmRepository;
-	
+
 	@Autowired
 	private FSMProducer producer;
 
@@ -117,10 +117,10 @@ public class FSMService {
 
 	@Autowired
 	private NotificationService notificationService;
-	
+
 	@Autowired
 	BillingService billingService;
-	
+
 	@Autowired
 	FSMInboxService fSMInboxService;
 
@@ -144,7 +144,7 @@ public class FSMService {
 				|| tripAmount > 0) {
 			calculationService.addCalculation(fsmRequest, FSMConstants.APPLICATION_FEE);
 		}
-		
+
 //		fSMInboxService.inboxEvent(fsmRequest);
 		return fsmRequest.getFsm();
 	}
@@ -226,13 +226,11 @@ public class FSMService {
 		List<Worker> existingWorkers = fsmWorkerRepository.getWorkersData(WorkerSearchCriteria.builder()
 				.tenantId(fsmRequest.getFsm().getTenantId())
 				.applicationIds(Collections.singletonList(fsmRequest.getFsm().getId()))
-				.status(Arrays.asList(WorkerStatus.ACTIVE.toString(), WorkerStatus.INACTIVE.toString()))
-				.build());
+				.status(Arrays.asList(WorkerStatus.ACTIVE.toString(), WorkerStatus.INACTIVE.toString())).build());
 
 		List<Worker> workersToBeInserted = new ArrayList<>();
 		List<Worker> workersToBeUpdate = new ArrayList<>();
-		Set<String> existingWorkerIds = existingWorkers.stream().map(Worker::getId)
-				.collect(Collectors.toSet());
+		Set<String> existingWorkerIds = existingWorkers.stream().map(Worker::getId).collect(Collectors.toSet());
 		for (Worker worker : fsmRequest.getFsm().getWorkers()) {
 			if (existingWorkerIds.contains(worker.getId())) {
 				workersToBeUpdate.add(worker);
@@ -241,15 +239,14 @@ public class FSMService {
 			}
 		}
 
-		if(!CollectionUtils.isEmpty(workersToBeInserted)){
+		if (!CollectionUtils.isEmpty(workersToBeInserted)) {
 			fsmWorkerRepository.create(workersToBeInserted);
 		}
 
-		if(!CollectionUtils.isEmpty(workersToBeUpdate)){
+		if (!CollectionUtils.isEmpty(workersToBeUpdate)) {
 			fsmWorkerRepository.update(workersToBeUpdate);
 		}
 	}
-
 
 	private void callDSORejectCompleteFeedBackPaySend(FSMRequest fsmRequest, Object mdmsData) {
 		if (fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_DSO_REJECT)) {
@@ -379,15 +376,15 @@ public class FSMService {
 	}
 
 	private void validateDSOWorkers(FSM fsm, Vendor vendor, FSMRequest fsmRequest) {
-		if(CollectionUtils.isEmpty(fsm.getWorkers()) || fsm.getWorkers().stream()
-				.filter(worker -> worker.getStatus().equals(WorkerStatus.ACTIVE))
-				.filter(worker -> worker.getWorkerType().equals(WorkerType.DRIVER)).count() != 1){
+		if (CollectionUtils.isEmpty(fsm.getWorkers())
+				|| fsm.getWorkers().stream().filter(worker -> worker.getStatus().equals(WorkerStatus.ACTIVE))
+						.filter(worker -> worker.getWorkerType().equals(WorkerType.DRIVER)).count() != 1) {
 			log.info("Invalid worker error ::: {}", fsm.getWorkers());
 			throw new CustomException(FSMErrorConstants.INVALID_DSO_WORKERS,
 					"Valid workers should be assigned to accept the Request !");
 		} else {
 
-			if(CollectionUtils.isEmpty(vendor.getWorkers())){
+			if (CollectionUtils.isEmpty(vendor.getWorkers())) {
 				throw new CustomException(FSMErrorConstants.INVALID_DSO_WORKERS, " Worker(s) Does not belong to DSO!");
 			}
 
@@ -399,8 +396,7 @@ public class FSMService {
 
 			if (filteredList.size() != fsm.getWorkers().stream()
 					.filter(worker -> worker.getStatus().equals(WorkerStatus.ACTIVE)).count()) {
-				throw new CustomException(FSMErrorConstants.INVALID_DSO_WORKERS,
-						" Worker(s) Does not belong to DSO!");
+				throw new CustomException(FSMErrorConstants.INVALID_DSO_WORKERS, " Worker(s) Does not belong to DSO!");
 			}
 		}
 	}
@@ -427,11 +423,10 @@ public class FSMService {
 		}
 		if (fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_UPDATE)) {
 			Double tripAmount = wfIntegrator.getAdditionalDetails(fsmRequest.getFsm().getAdditionalDetails());
-			
+
 			if (fsmRequest.getFsm().getNoOfTrips() < oldFSM.getNoOfTrips()) {
 				vehicleTripService.ValidatedecreaseTripWhileUpdate(fsmRequest, oldFSM);
 			}
-				
 
 			if (fsmRequest.getFsm().getAdvanceAmount() != null || tripAmount > 0) {
 				calculationService.addCalculation(fsmRequest, FSMConstants.APPLICATION_FEE);
@@ -622,6 +617,11 @@ public class FSMService {
 
 		fsmResponse = repository.getFSMData(criteria, dsoId);
 		fsmList = fsmResponse.getFsm();
+		for (FSM fsm : fsmList) {
+//			String accountId = fsm.getAccountId();
+			fsm.setCitizen(
+					userService.getUserSearch(fsm.getAccountId(), fsm.getTenantId(), requestInfo).getUser().get(0));
+		}
 //		if (!fsmList.isEmpty()) {
 //			enrichmentService.enrichFSMSearch(fsmList, requestInfo, criteria.getTenantId());
 //		}
@@ -630,12 +630,11 @@ public class FSMService {
 	}
 
 	private List<String> setApplicationIdsWithWorkers(FSMSearchCriteria criteria) {
-		List<Worker> workers = fsmWorkerRepository.getWorkersData(WorkerSearchCriteria.builder()
-				.workerTypes(Collections.singletonList(WorkerType.DRIVER.toString()))
-				.individualIds(criteria.getIndividualIds())
-				.status(Collections.singletonList(WorkerStatus.ACTIVE.toString()))
-				.tenantId(criteria.getTenantId())
-				.build());
+		List<Worker> workers = fsmWorkerRepository.getWorkersData(
+				WorkerSearchCriteria.builder().workerTypes(Collections.singletonList(WorkerType.DRIVER.toString()))
+						.individualIds(criteria.getIndividualIds())
+						.status(Collections.singletonList(WorkerStatus.ACTIVE.toString()))
+						.tenantId(criteria.getTenantId()).build());
 		return workers.stream().map(Worker::getApplicationId).collect(Collectors.toList());
 	}
 
