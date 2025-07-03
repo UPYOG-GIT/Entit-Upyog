@@ -325,8 +325,10 @@ public class FSMService {
 
 		String dsoOwnerId = null;
 
+//		Boolean isDso = util.isRoleAvailale(dsoUser, FSMConstants.ROLE_FSM_DSO,
+//				fsmRequest.getRequestInfo().getUserInfo().getTenantId().split("\\.")[0]);
 		Boolean isDso = util.isRoleAvailale(dsoUser, FSMConstants.ROLE_FSM_DSO,
-				fsmRequest.getRequestInfo().getUserInfo().getTenantId().split("\\.")[0]);
+				fsmRequest.getRequestInfo().getUserInfo().getTenantId());
 		if (isDso) {
 			dsoOwnerId = dsoUser.getUuid();
 		} else if (!util.isRoleAvailale(dsoUser, FSMConstants.FSM_EDITOR_EMP,
