@@ -16,6 +16,7 @@ import org.egov.fsm.web.model.PitDetail;
 import org.egov.fsm.web.model.location.Address;
 import org.egov.fsm.web.model.location.Boundary;
 import org.egov.fsm.web.model.location.GeoLocation;
+import org.egov.fsm.web.model.user.User;
 import org.egov.tracer.model.CustomException;
 import org.postgresql.util.PGobject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,6 @@ public class FSMRowMapper implements ResultSetExtractor<List<FSM>> {
 	private ObjectMapper mapper;
 
 	private int fullCount = 0;
-
-	
 
 	public int getFullCount() {
 		return fullCount;
@@ -110,15 +109,21 @@ public class FSMRowMapper implements ResultSetExtractor<List<FSM>> {
 				.plotNo(rs.getString("plotno")).district(rs.getString("district")).region(rs.getString("region"))
 				.state(rs.getString("state")).country(rs.getString("country")).landmark(rs.getString("landmark"))
 				.geoLocation(geoLocation).pincode(rs.getString("pincode")).doorNo(rs.getString("doorno"))
-				.id(rs.getString("fsm_address_id")).additionalDetails(getAdditionalDetail("addressAdditionalDetails", rs))
-				.street(rs.getString("street")).slumName(rs.getString("slumname"))
-				.tenantId(rs.getString(FSMConstants.TENANT_ID)).locality(locality).auditDetails(auditdetails).build();
+				.id(rs.getString("fsm_address_id"))
+				.additionalDetails(getAdditionalDetail("addressAdditionalDetails", rs)).street(rs.getString("street"))
+				.slumName(rs.getString("slumname")).tenantId(rs.getString(FSMConstants.TENANT_ID)).locality(locality)
+				.auditDetails(auditdetails).build();
 		PitDetail pitDetail = PitDetail.builder().height(rs.getDouble("height")).width(rs.getDouble("width"))
 				.diameter(rs.getDouble("diameter")).length(rs.getDouble("length"))
 				.distanceFromRoad(rs.getDouble("distanceFromRoad")).id(rs.getString("fsm_pit_id"))
 				.additionalDetails(getAdditionalDetail("fsm_pit_additionalDetails", rs))
 				.tenantId(rs.getString(FSMConstants.TENANT_ID)).auditDetails(auditdetails).build();
 
+		User user = User.builder().name(rs.getString("name")).mobileNumber(rs.getString("mobilenumber"))
+				.emailId(rs.getString("emailid")).gender(rs.getString("gender")).uuid(rs.getString("uuid"))
+				.tenantId(rs.getString("tenantid")).build();
+		
+		fsm.setCitizen(user);
 		fsm.setAddress(address);
 		fsm.setPitDetail(pitDetail);
 		fsm.setAuditDetails(auditdetails);

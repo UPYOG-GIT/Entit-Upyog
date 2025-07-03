@@ -5,9 +5,12 @@ import { useTranslation } from "react-i18next";
 
 export const MyApplications = () => {
   const { t } = useTranslation();
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  // const tenantId = Digit.ULBService.getCurrentTenantId();
   const { info: userInfo } = Digit.UserService.getUser();
-
+  // console.log("Digit.ULBService "+JSON.stringify(Digit.ULBService))
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  // const tenantId = userInfo?.tenantId;
+  // console.log("userInfo "+JSON.stringify(userInfo))
   const { isLoading, isError, error, data: { data: { table: applicationsList } = {} } = {} } = Digit.Hooks.fsm.useSearchAll(tenantId, {
     uuid: userInfo.uuid,
     limit: 100,
