@@ -22,7 +22,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
     clearSuccessData();
     clearError();
   }, []);
-
+  
   var defaultValues = {
     channel: channelMenu.filter((channel) => channel.code === applicationData.source)[0],
     applicationData: {
@@ -61,6 +61,7 @@ const EditForm = ({ tenantId, applicationData, channelMenu, vehicleMenu, sanitat
     paymentPreference: applicationData.paymentPreference,
     advanceAmount: applicationData.advanceAmount,
   };
+
 
   if (
     (applicationData && applicationData?.address?.additionalDetails?.boundaryType === "Village") ||

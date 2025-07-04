@@ -152,13 +152,13 @@ const CheckPage = ({ onSubmit, value }) => {
               actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/tank-size" />}
             />
           )}
-          {(selectPaymentPreference?.advanceAmount || selectPaymentPreference?.advanceAmount === 0) && (
+          {/* {(selectPaymentPreference?.advanceAmount || selectPaymentPreference?.advanceAmount === 0) && (
             <Row
               label={t("ADV_AMOUNT")}
               text={"₹ " + t(selectPaymentPreference?.advanceAmount)}
               actionButton={<ActionButton jumpTo="/digit-ui/citizen/fsm/new-application/select-payment-preference" />}
             />
-          )}
+          )} */}
         </StatusTable>
         {/* <CitizenInfoLabel info={t("CS_FILE_APPLICATION_INFO_LABEL")} text={t("CS_CHECK_INFO_TEXT")} /> */}
         <SubmitBar label={t("CS_COMMON_SUBMIT")} onSubmit={onSubmit} />

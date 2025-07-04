@@ -190,7 +190,7 @@ export const Search = {
             title: "ES_PAYMENT_DETAILS_TOTAL_AMOUNT",
             value: totalAmount === "N/A" ? (amountPerTrip === "N/A" ? "N/A" : "₹ " + response?.noOfTrips * amountPerTrip) : "₹ " + totalAmount,
           },
-          { title: "ES_PAYMENT_DETAILS_ADV_AMOUNT", value: response?.advanceAmount === null ? "N/A" : "₹ " + response?.advanceAmount },
+          // { title: "ES_PAYMENT_DETAILS_ADV_AMOUNT", value: response?.advanceAmount === null ? "N/A" : "₹ " + response?.advanceAmount },
         ],
       },
       {

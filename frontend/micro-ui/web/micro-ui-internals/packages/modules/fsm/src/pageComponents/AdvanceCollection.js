@@ -42,7 +42,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
         title: t("ES_NEW_APPLICATION_AMOUNT_INVALID"),
       },
 
-      default: formData?.advanceAmount,
+      default: formData?.TotalAmount,
       isMandatory: true,
     },
   ];
@@ -87,10 +87,14 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
           Digit.SessionStorage.set("total_amount", totaltripAmount);
           Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
           setTotalAmount(totaltripAmount);
-          setAdvanceAmounts(advanceBalanceAmount);
+          // setAdvanceAmounts(advanceBalanceAmount);
+          setAdvanceAmounts(totaltripAmount);
           if (!url.includes("modify") || (url.includes("modify") && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)) {
+            // setValue({
+            //   advanceAmount: advanceBalanceAmount,
+            // });
             setValue({
-              advanceAmount: advanceBalanceAmount,
+              advanceAmount: totaltripAmount,
             });
           }
 
@@ -117,8 +121,11 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
         setTotalAmount(totaltripAmount);
         setAdvanceAmounts(advanceBalanceAmount);
         if (!url.includes("modify") || (url.includes("modify") && advanceBalanceAmount > formData?.advancepaymentPreference?.advanceAmount)) {
+          // setValue({
+          //   advanceAmount: advanceBalanceAmount,
+          // });
           setValue({
-            advanceAmount: advanceBalanceAmount,
+            advanceAmount: totaltripAmount,
           });
         }
 
@@ -177,8 +184,8 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
                     </CardLabelError>
                   )}
                   {url.includes("modify-application") &&
-                    Number(AdvanceAmount) === 0 &&
-                    applicationData?.advanceAmount > 0 &&
+                    Number(TotalAmount) === 0 &&
+                    applicationData?.TotalAmount > 0 &&
                     Number(currentValue) === 0 && (
                       <CardLabelError
                         style={{

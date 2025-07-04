@@ -30,7 +30,8 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
         isRequired: true,
       },
       disable: true,
-      default: formData?.selectPaymentPreference?.advanceAmount,
+      // default: formData?.selectPaymentPreference?.advanceAmount,
+      default: formData?.selectPaymentPreference?.totalAmount,
       isMandatory: true,
     },
   ];
@@ -77,14 +78,17 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
               {
                 totalTripAmount: totaltripAmount,
               });
-          setMinAmount(advanceBalanceAmount);
+          // setMinAmount(advanceBalanceAmount);
+          setMinAmount(totaltripAmount);
           setTotalAmount(totaltripAmount);
+          
           Digit.SessionStorage.set("total_amount", totaltripAmount);
-          Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
-          formData?.selectPaymentPreference?.advanceAmount
-            ? setAdvanceAmount(Math.ceil(formData?.selectPaymentPreference?.advanceAmount))
-            : setAdvanceAmount(Math.ceil(advanceBalanceAmount));
-
+          // Digit.SessionStorage.set("advance_amount", advanceBalanceAmount);
+          Digit.SessionStorage.set("advance_amount", totaltripAmount);
+          // formData?.selectPaymentPreference?.advanceAmount
+          //   ? setAdvanceAmount(Math.ceil(formData?.selectPaymentPreference?.advanceAmount))
+          //   : setAdvanceAmount(Math.ceil(advanceBalanceAmount));
+              setAdvanceAmount(Math.ceil(totaltripAmount));
           setError(false);
         } else if (billSlab?.price === 0) {
           Digit.SessionStorage.set("total_amount", 0);
