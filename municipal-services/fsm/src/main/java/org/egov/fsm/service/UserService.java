@@ -92,6 +92,10 @@ public class UserService {
 
 					}
 
+				} else {
+					applicantDetailResponse = createApplicant(applicant, fsmRequest.getRequestInfo(),
+							Boolean.TRUE);
+					applicant = applicantDetailResponse.getUser().get(0);
 				}
 				/*
 				 * else { // User exists but only one user with the mobile number and username
