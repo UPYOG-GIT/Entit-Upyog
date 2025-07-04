@@ -258,7 +258,8 @@ public class NotificationService {
 	 * @return
 	 */
 	private UserDetailResponse getUserList(FSMRequest fsmRequest) {
-		String tenantId = fsmRequest.getFsm().getTenantId().split("\\.")[0];
+//		String tenantId = fsmRequest.getFsm().getTenantId().split("\\.")[0];
+		String tenantId = fsmRequest.getFsm().getTenantId();
 		String stakeUUID = fsmRequest.getFsm().getAccountId();
 		List<String> ownerId = new ArrayList<>();
 		ownerId.add(stakeUUID);

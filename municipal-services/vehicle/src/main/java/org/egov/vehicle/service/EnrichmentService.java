@@ -38,8 +38,8 @@ public class EnrichmentService {
 
 		vehicleRequest.getVehicle().setId(UUID.randomUUID().toString());
 		if (vehicleRequest.getVehicle().getOwner().getId() == null) {
-//			vehicleRequest.getVehicle().getOwner().setId(Long.parseLong(UUID.randomUUID().toString()));
-			vehicleRequest.getVehicle().getOwner().setUuid(UUID.randomUUID().toString());
+			vehicleRequest.getVehicle().getOwner().setId(Long.parseLong(UUID.randomUUID().toString()));
+//			vehicleRequest.getVehicle().getOwner().setUuid(UUID.randomUUID().toString());
 		}
 
 	}
