@@ -30,14 +30,15 @@ public class PropertyService {
 	public List<Property> getPropertiesById(PropertyCriteria criteria) {
 
 		String propertyUrl = "https://mcraipur.in/api/getPropertyDetails?PROP_UID=" + criteria.getPropertyIds();
+		List<Property> properties = null;
 
 		try {
 			Map<String, Object> propertySearchResponse = restTemplate.getForObject(propertyUrl, Map.class);
-			
-			
+
 			Map<String, Object> propertyDetails = ((List<Map<String, Object>>) propertySearchResponse
 					.get("GETPROPDETAILSResult")).get(0);
-			
+
+			log.info("RMC propertyDetails: " + propertyDetails.toString());
 //			Property currentProperty = new Property();
 
 			String area = propertyDetails.get("TOTAL_PLOT_AREA").toString();
@@ -51,24 +52,22 @@ public class PropertyService {
 					.name(propertyDetails.get("WARD_NAME").toString()).label("Locality").build();
 
 			Map<String, Object> addressAdditional = new HashMap<>();
-			
+
 			addressAdditional.put("colonyName", propertyDetails.get("COLONY_NAME"));
 			addressAdditional.put("houseNo", propertyDetails.get("HOUSE_NO"));
 			addressAdditional.put("wardNo", propertyDetails.get("WARD_NO"));
 			addressAdditional.put("address", propertyDetails.get("ADDRESS"));
 			addressAdditional.put("zoneNo", propertyDetails.get("ZONE_NO"));
-			
+
 			Address address = Address.builder().city("Raipur").tenantId("cg.raipur")
-					.wardNo(propertyDetails.get("WARD_NO").toString())
-					.zoneNo(propertyDetails.get("ZONE_NO").toString())
+					.wardNo(propertyDetails.get("WARD_NO").toString()).zoneNo(propertyDetails.get("ZONE_NO").toString())
 					.locality(locality).build();
 
 			List<String> owners = Arrays.asList(propertyDetails.get("PROPERTY_OWNER").toString().split(","));
 			String ownershipcategory = owners.size() == 1 ? "INDIVIDUAL.SINGLEOWNER" : "INDIVIDUAL.MULTIPLEOWNERS";
-			
+
 			Property currentProperty = Property.builder().source(Source.fromValue("MUNICIPAL_RECORDS"))
-					.ownershipCategory(ownershipcategory)
-					.channel(Channel.fromValue("SYSTEM"))
+					.ownershipCategory(ownershipcategory).channel(Channel.fromValue("SYSTEM"))
 					.superBuiltUpArea((BigDecimal) propertyDetails.get("TOTAL_COVERED_AREA"))
 					.usageCategory(propertyDetails.get("PROPERTY_USE").toString())
 //					.propertyType(rs.getString("propertytype"))
@@ -76,25 +75,23 @@ public class PropertyService {
 //					.auditDetails(auditdetails)
 					.landArea(landArea).address(address).propertyId(propertyDetails.get("PROP_UID").toString())
 					.tenantId("cg.raipur").status(Status.fromValue("ACTIVE"))
-					.dueAmount(propertyDetails.get("DUE_AMOUNT").toString())
-					.build();
+					.dueAmount(propertyDetails.get("DUE_AMOUNT").toString()).build();
 
-			OwnerInfo owner = OwnerInfo.builder()
-					.status(Status.fromValue("ACTIVE"))
-					.tenantId("cg.raipur")
-					.mobileNumber(propertyDetails.get("MOBILE").toString())
-					.build();
-			
+			OwnerInfo owner = OwnerInfo.builder().status(Status.fromValue("ACTIVE")).tenantId("cg.raipur")
+					.mobileNumber(propertyDetails.get("MOBILE").toString()).build();
+
 			currentProperty.addOwnersItem(owner);
-			
+
+			properties.add(currentProperty);
+
 		} catch (Exception ex) {
 			log.error("Error : " + ex.toString());
 		}
-		Property properties = new Property();
+//		Property properties = new Property();
 //		= getPropertiesPlainSearch(criteria, requestInfo);
 		// enrichmentService.enrichBoundary(new PropertyRequest(requestInfo,
 		// properties));
-		return (List<Property>) properties;
+		return properties;
 	}
 
 }
