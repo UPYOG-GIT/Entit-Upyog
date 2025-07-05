@@ -57,6 +57,8 @@ const Urls = {
     vehicleTripCreate: "/vehicle/trip/v1/_create",
     advanceBalanceCalculate: "/fsm-calculator/v1/_advancebalancecalculate",
     workerSearch: "/individual/v1/_search",
+    rmcPtSearchbyId: "https://mcraipur.in/api/getPropertyDetails",
+    rmcPtSearchbyMoNo: "",
   },
 
   payment: {
