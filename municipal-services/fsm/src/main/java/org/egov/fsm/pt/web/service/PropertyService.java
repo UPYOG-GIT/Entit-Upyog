@@ -34,7 +34,7 @@ public class PropertyService {
 		String propertyId = criteria.getPropertyIds().isEmpty() ? null : criteria.getPropertyIds().iterator().next();
 
 		String propertyUrl = "https://mcraipur.in/api/getPropertyDetails?PROP_UID=" + propertyId;
-		
+
 		List<Property> properties = null;
 
 		try {
@@ -42,7 +42,9 @@ public class PropertyService {
 			String response = restTemplate.getForObject(propertyUrl, String.class);
 			log.info("RMC response : " + response);
 			ObjectMapper objectMapper = new ObjectMapper();
-			Map<String, Object> propertySearchResponse = objectMapper.readValue(response, new TypeReference<Map<String, Object>>() {});
+			Map<String, Object> propertySearchResponse = objectMapper.readValue(response,
+					new TypeReference<Map<String, Object>>() {
+					});
 
 			Map<String, Object> propertyDetails = ((List<Map<String, Object>>) propertySearchResponse
 					.get("GETPROPDETAILSResult")).get(0);
@@ -50,15 +52,18 @@ public class PropertyService {
 			log.info("RMC propertyDetails: " + propertyDetails.toString());
 //			Property currentProperty = new Property();
 
-			String area = propertyDetails.get("TOTAL_PLOT_AREA").toString();
+			Object area = propertyDetails.get("TOTAL_PLOT_AREA");
 			Double landArea = 0.0;
 			if (area == null) {
 				landArea = null;
 			} else {
-				landArea = Double.valueOf(area);
+				landArea = Double.valueOf(area.toString());
 			}
-			Locality locality = Locality.builder().code("RMCLC" + propertyDetails.get("WARD_NO"))
-					.name(propertyDetails.get("WARD_NAME").toString()).label("Locality").build();
+			Object wardNo = propertyDetails.get("WARD_NO");
+			Object wardName = propertyDetails.get("WARD_NAME");
+			Object zoneNO = propertyDetails.get("ZONE_NO");
+			Locality locality = Locality.builder().code(wardNo != null ? "RMCLC" + wardNo.toString() : null)
+					.name(wardName != null ? wardName.toString() : null).label("Locality").build();
 
 			Map<String, Object> addressAdditional = new HashMap<>();
 
@@ -69,7 +74,7 @@ public class PropertyService {
 			addressAdditional.put("zoneNo", propertyDetails.get("ZONE_NO"));
 
 			Address address = Address.builder().city("Raipur").tenantId("cg.raipur")
-					.wardNo(propertyDetails.get("WARD_NO").toString()).zoneNo(propertyDetails.get("ZONE_NO").toString())
+					.wardNo(wardNo != null ? wardNo.toString() : null).zoneNo(wardNo != null ? zoneNO.toString() : null)
 					.locality(locality).build();
 
 			List<String> owners = Arrays.asList(propertyDetails.get("PROPERTY_OWNER").toString().split(","));
