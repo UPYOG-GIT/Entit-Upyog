@@ -28,12 +28,15 @@ public class PropertyService {
 	private RestTemplate restTemplate;
 
 	public List<Property> getPropertiesById(PropertyCriteria criteria) {
+		String propertyId = criteria.getPropertyIds().isEmpty() ? null : criteria.getPropertyIds().iterator().next();
 
-		String propertyUrl = "https://mcraipur.in/api/getPropertyDetails?PROP_UID=" + criteria.getPropertyIds();
+		String propertyUrl = "https://mcraipur.in/api/getPropertyDetails?PROP_UID=" + propertyId;
+		
 		List<Property> properties = null;
 
 		try {
 			Map<String, Object> propertySearchResponse = restTemplate.getForObject(propertyUrl, Map.class);
+			log.info("RMC propertySearchResponse : " + propertySearchResponse.toString());
 
 			Map<String, Object> propertyDetails = ((List<Map<String, Object>>) propertySearchResponse
 					.get("GETPROPDETAILSResult")).get(0);
