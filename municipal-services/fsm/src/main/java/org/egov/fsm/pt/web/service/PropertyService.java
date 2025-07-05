@@ -80,9 +80,12 @@ public class PropertyService {
 			List<String> owners = Arrays.asList(propertyDetails.get("PROPERTY_OWNER").toString().split(","));
 			String ownershipcategory = owners.size() == 1 ? "INDIVIDUAL.SINGLEOWNER" : "INDIVIDUAL.MULTIPLEOWNERS";
 
+			Object coveredArea = propertyDetails.get("TOTAL_COVERED_AREA");
+			BigDecimal superBuiltUpArea = coveredArea != null ? new BigDecimal(coveredArea.toString()) : BigDecimal.ZERO;
+			
 			Property currentProperty = Property.builder().source(Source.fromValue("MUNICIPAL_RECORDS"))
 					.ownershipCategory(ownershipcategory).channel(Channel.fromValue("SYSTEM"))
-					.superBuiltUpArea((BigDecimal) propertyDetails.get("TOTAL_COVERED_AREA"))
+					.superBuiltUpArea(superBuiltUpArea)
 					.usageCategory(propertyDetails.get("PROPERTY_USE").toString())
 //					.propertyType(rs.getString("propertytype"))
 					.noOfFloors((Long) propertyDetails.get("TOTAL_FLOORS"))
@@ -92,7 +95,8 @@ public class PropertyService {
 					.dueAmount(propertyDetails.get("DUE_AMOUNT").toString()).build();
 
 			OwnerInfo owner = OwnerInfo.builder().status(Status.fromValue("ACTIVE")).tenantId("cg.raipur")
-					.mobileNumber(propertyDetails.get("MOBILE").toString()).build();
+					.mobileNumber(propertyDetails.get("MOBILE").toString())
+					.name(propertyDetails.get("PROPERTY_OWNER").toString().split(",")[1]).build();
 
 			currentProperty.addOwnersItem(owner);
 
