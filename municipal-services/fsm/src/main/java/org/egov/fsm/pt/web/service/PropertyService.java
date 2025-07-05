@@ -82,13 +82,16 @@ public class PropertyService {
 
 			Object coveredArea = propertyDetails.get("TOTAL_COVERED_AREA");
 			BigDecimal superBuiltUpArea = coveredArea != null ? new BigDecimal(coveredArea.toString()) : BigDecimal.ZERO;
+			Long noOfFloors = propertyDetails.get("TOTAL_FLOORS") != null
+				    ? ((Number) propertyDetails.get("TOTAL_FLOORS")).longValue()
+				    : null;
 			
 			Property currentProperty = Property.builder().source(Source.fromValue("MUNICIPAL_RECORDS"))
 					.ownershipCategory(ownershipcategory).channel(Channel.fromValue("SYSTEM"))
 					.superBuiltUpArea(superBuiltUpArea)
 					.usageCategory(propertyDetails.get("PROPERTY_USE").toString())
 //					.propertyType(rs.getString("propertytype"))
-					.noOfFloors((Long) propertyDetails.get("TOTAL_FLOORS"))
+					.noOfFloors(noOfFloors)
 //					.auditDetails(auditdetails)
 					.landArea(landArea).address(address).propertyId(propertyDetails.get("PROP_UID").toString())
 					.tenantId("cg.raipur").status(Status.fromValue("ACTIVE"))
