@@ -18,6 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Service
@@ -35,8 +38,11 @@ public class PropertyService {
 		List<Property> properties = null;
 
 		try {
-			Map<String, Object> propertySearchResponse = restTemplate.getForObject(propertyUrl, Map.class);
-			log.info("RMC propertySearchResponse : " + propertySearchResponse.toString());
+//			Map<String, Object> propertySearchResponse = restTemplate.getForObject(propertyUrl, Map.class);
+			String response = restTemplate.getForObject(propertyUrl, String.class);
+			log.info("RMC response : " + response);
+			ObjectMapper objectMapper = new ObjectMapper();
+			Map<String, Object> propertySearchResponse = objectMapper.readValue(response, new TypeReference<Map<String, Object>>() {});
 
 			Map<String, Object> propertyDetails = ((List<Map<String, Object>>) propertySearchResponse
 					.get("GETPROPDETAILSResult")).get(0);
