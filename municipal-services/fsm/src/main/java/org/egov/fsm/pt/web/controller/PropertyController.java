@@ -1,5 +1,6 @@
 package org.egov.fsm.pt.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -35,7 +36,7 @@ public class PropertyController {
 	@RequestMapping(value = "/_rmcpropertybyid", method = RequestMethod.POST)
 	public ResponseEntity<PropertyResponse> getPropertiesById(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute PropertyCriteria propertyCriteria) {
-		List<Property> properties = null;
+		List<Property> properties = new ArrayList<>();
 		try {
 			properties = propertyService.getPropertiesById(propertyCriteria);
 		} catch (Exception e) {
