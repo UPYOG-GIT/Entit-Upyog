@@ -19,6 +19,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 @RequestMapping("/rmcproperty")
 public class PropertyController {
@@ -29,11 +32,17 @@ public class PropertyController {
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
 
-
 	@RequestMapping(value = "/_rmcpropertybyid", method = RequestMethod.POST)
 	public ResponseEntity<PropertyResponse> getPropertiesById(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
 			@Valid @ModelAttribute PropertyCriteria propertyCriteria) {
-		List<Property> properties = propertyService.getPropertiesById(propertyCriteria);
+		List<Property> properties = null;
+		try {
+			properties = propertyService.getPropertiesById(propertyCriteria);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			log.error("Error : " + e.toString());
+			e.printStackTrace();
+		}
 		PropertyResponse response = PropertyResponse.builder().properties(properties).responseInfo(
 				responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
 				.build();

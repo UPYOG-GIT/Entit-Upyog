@@ -18,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,14 +32,14 @@ public class PropertyService {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	public List<Property> getPropertiesById(PropertyCriteria criteria) {
+	public List<Property> getPropertiesById(PropertyCriteria criteria) throws Exception {
 		String propertyId = criteria.getPropertyIds().isEmpty() ? null : criteria.getPropertyIds().iterator().next();
 
 		String propertyUrl = "https://mcraipur.in/api/getPropertyDetails?PROP_UID=" + propertyId;
 
 		List<Property> properties = null;
 
-		try {
+//		try {
 //			Map<String, Object> propertySearchResponse = restTemplate.getForObject(propertyUrl, Map.class);
 			String response = restTemplate.getForObject(propertyUrl, String.class);
 			log.info("RMC response : " + response);
@@ -105,9 +107,9 @@ public class PropertyService {
 
 			properties.add(currentProperty);
 
-		} catch (Exception ex) {
-			log.error("Error : " + ex.toString());
-		}
+//		} catch (Exception ex) {
+//			log.error("Error : " + ex.toString());
+//		}
 //		Property properties = new Property();
 //		= getPropertiesPlainSearch(criteria, requestInfo);
 		// enrichmentService.enrichBoundary(new PropertyRequest(requestInfo,
