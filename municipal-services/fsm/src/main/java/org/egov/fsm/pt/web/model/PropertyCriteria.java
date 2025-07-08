@@ -22,7 +22,7 @@ public class PropertyCriteria {
 	private String tenantId;
 
 //	private Set<String> propertyIds;
-	private String propertyId;
+	private String propertyIds;
 
 	private Set<String> tenantIds;
 	

@@ -35,7 +35,7 @@ public class PropertyService {
 
 	public List<Property> getPropertiesById(PropertyCriteria criteria) throws Exception {
 
-		String propertyId = criteria.getPropertyId();
+		String propertyId = criteria.getPropertyIds();
 		String mobileNumber = criteria.getMobileNumber();
 
 		String propertyUrl;
