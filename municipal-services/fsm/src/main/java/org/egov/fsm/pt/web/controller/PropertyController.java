@@ -45,7 +45,7 @@ public class PropertyController {
 			e.printStackTrace();
 		}
 		PropertyResponse response = PropertyResponse.builder().properties(properties).responseInfo(
-				responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true))
+				responseInfoFactory.createResponseInfoFromRequestInfo(requestInfoWrapper.getRequestInfo(), true)).count(properties.size())
 				.build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

@@ -56,7 +56,7 @@ public class PropertyService {
 					.get("SearchPropertyResult");
 			for (Map<String, Object> details : propertyDetails) {
 				String propertyUid = details.get("PROPERTY_UID").toString();
-				properties = searchPropertyResult(propertyId);
+				properties = searchPropertyResult(propertyUid);
 			}
 		}
 
