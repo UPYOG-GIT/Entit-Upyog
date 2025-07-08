@@ -34,8 +34,9 @@ public class PropertyService {
 	private RestTemplate restTemplate;
 
 	public List<Property> getPropertiesById(PropertyCriteria criteria) throws Exception {
-		String propertyId = (criteria.getPropertyIds().isEmpty() || criteria.getPropertyIds().size() == 0) ? null
-				: criteria.getPropertyIds().iterator().next();
+//		String propertyId = (criteria.getPropertyId() ) ? null
+//				: criteria.getPropertyId();
+		String propertyId = criteria.getPropertyId();
 		String mobileNumber = criteria.getMobileNumber();
 
 		String propertyUrl = "";
