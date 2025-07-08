@@ -35,15 +35,14 @@ public class PropertyService {
 
 	public List<Property> getPropertiesById(PropertyCriteria criteria) throws Exception {
 		String propertyId = criteria.getPropertyIds().isEmpty() ? null : criteria.getPropertyIds().iterator().next();
-        String mobileno =  criteria.getMobileNumber();
-        
-        String propertyUrl=""; 
-        if(propertyId != null) {
-		     propertyUrl = "https://mcraipur.in/api/getPropertyDetails?PROP_UID=" + propertyId;
-        }else if(propertyId == null && mobileno != null)
-        {
-        	 propertyUrl = "https://apis.mcraipur.in/api/searchPropertyList?MOBILE=" + mobileno;
-        }
+		String mobileNumber = criteria.getMobileNumber();
+
+		String propertyUrl = "";
+		if (propertyId != null) {
+			propertyUrl = "https://mcraipur.in/api/getPropertyDetails?PROP_UID=" + propertyId;
+		} else if (mobileNumber != null) {
+			propertyUrl = "https://apis.mcraipur.in/api/searchPropertyList?MOBILE=" + mobileNumber;
+		}
 
 		List<Property> properties = new ArrayList<>();
 
