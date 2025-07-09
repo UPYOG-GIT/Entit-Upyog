@@ -183,18 +183,19 @@ public class FSMService {
 
 		Double tripAmount = wfIntegrator.getAdditionalDetails(fsm.getAdditionalDetails());
 
-		if (FSMConstants.FSM_PAYMENT_PREFERENCE_POST_PAY.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference()))
-			businessServiceName = FSMConstants.FSM_POST_PAY_BUSINESSSERVICE;
-		else if (FSMConstants.FSM_PAYMENT_PREFERENCE_PRE_PAY
-				.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference()))
-			businessServiceName = FSMConstants.FSM_BUSINESSSERVICE;
-		else if (fsm.getAdvanceAmount() == null && fsm.getPaymentPreference() == null && tripAmount <= 0)
-			businessServiceName = FSMConstants.FSM_ZERO_PRICE_SERVICE;
-		else if (fsm.getAdvanceAmount() != null && fsm.getAdvanceAmount().intValue() > 0)
-			businessServiceName = FSMConstants.FSM_ADVANCE_PAY_BUSINESSSERVICE;
-		else
-			businessServiceName = FSMConstants.FSM_LATER_PAY_SERVICE;
+//		if (FSMConstants.FSM_PAYMENT_PREFERENCE_POST_PAY.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference()))
+//			businessServiceName = FSMConstants.FSM_POST_PAY_BUSINESSSERVICE;
+//		else if (FSMConstants.FSM_PAYMENT_PREFERENCE_PRE_PAY
+//				.equalsIgnoreCase(fsmRequest.getFsm().getPaymentPreference()))
+//			businessServiceName = FSMConstants.FSM_BUSINESSSERVICE;
+//		else if (fsm.getAdvanceAmount() == null && fsm.getPaymentPreference() == null && tripAmount <= 0)
+//			businessServiceName = FSMConstants.FSM_ZERO_PRICE_SERVICE;
+//		else if (fsm.getAdvanceAmount() != null && fsm.getAdvanceAmount().intValue() > 0)
+//			businessServiceName = FSMConstants.FSM_ADVANCE_PAY_BUSINESSSERVICE;
+//		else
+//			businessServiceName = FSMConstants.FSM_LATER_PAY_SERVICE;
 
+		businessServiceName = FSMConstants.FSM_BUSINESSSERVICE;
 		BusinessService businessService = workflowService.getBusinessService(fsm, fsmRequest.getRequestInfo(),
 				businessServiceName, null);
 		actionValidator.validateUpdateRequest(fsmRequest, businessService);
