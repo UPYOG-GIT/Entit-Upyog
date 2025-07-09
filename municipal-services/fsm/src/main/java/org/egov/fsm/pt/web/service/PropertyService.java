@@ -42,7 +42,7 @@ public class PropertyService {
 		List<Property> properties = new ArrayList<>();
 
 		if (propertyId != null) {
-			properties = searchPropertyResult(propertyId);
+			properties.add(searchPropertyResult(propertyId));
 		} else if (mobileNumber != null) {
 			propertyUrl = propertyUrl = "https://apis.mcraipur.in/api/searchPropertyList?MOBILE=" + mobileNumber;
 			String response = restTemplate.getForObject(propertyUrl, String.class);
@@ -56,14 +56,14 @@ public class PropertyService {
 					.get("SearchPropertyResult");
 			for (Map<String, Object> details : propertyDetails) {
 				String propertyUid = details.get("PROPERTY_UID").toString();
-				properties = searchPropertyResult(propertyUid);
+				properties.add(searchPropertyResult(propertyUid));
 			}
 		}
 
 		return properties;
 	}
 
-	public List<Property> searchPropertyResult(String propertyId) throws Exception {
+	public Property searchPropertyResult(String propertyId) throws Exception {
 
 		String propertyUrl = "https://mcraipur.in/api/getPropertyDetails?PROP_UID=" + propertyId;
 		/*
@@ -141,9 +141,10 @@ public class PropertyService {
 
 		currentProperty.addOwnersItem(owner);
 
-		properties.add(currentProperty);
-
-		return properties;
+//		properties.add(currentProperty);
+//
+//		return properties;
+		return currentProperty;
 	}
 
 	/*
