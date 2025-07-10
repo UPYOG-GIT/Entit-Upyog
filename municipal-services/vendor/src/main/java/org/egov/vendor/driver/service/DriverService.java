@@ -41,8 +41,8 @@ public class DriverService {
 		if (driverRequest.getDriver().getTenantId().split("\\.").length == 1) {
 			throw new CustomException("Invalid TenantId", " Application cannot be create at StateLevel");
 		}
-		driverRequest.getDriver().getOwner()
-				.setMobileNumber(driverRepository.getdriverSeqMobileNum(getSeqDriverMobileNumber()));
+//		driverRequest.getDriver().getOwner()
+//				.setMobileNumber(driverRepository.getdriverSeqMobileNum(getSeqDriverMobileNumber()));
 		userService.manageDrivers(driverRequest, true);
 		enrichmentService.enrichCreate(driverRequest);
 		driverRepository.save(driverRequest);
