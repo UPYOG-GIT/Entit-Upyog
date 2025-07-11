@@ -101,6 +101,10 @@ public class FSMRowMapper implements ResultSetExtractor<List<FSM>> {
 		Double longitude = rs.getDouble("longitude");
 
 		Boundary locality = Boundary.builder().code(rs.getString("locality")).build();
+		
+		Boundary zone = Boundary.builder().code(rs.getString("zone")).build();
+		
+		Boundary ward = Boundary.builder().code(rs.getString("ward")).build();
 
 		GeoLocation geoLocation = GeoLocation.builder().id(rs.getString("fsm_geo_id")).latitude(latitude)
 				.longitude(longitude).build();
@@ -112,7 +116,7 @@ public class FSMRowMapper implements ResultSetExtractor<List<FSM>> {
 				.id(rs.getString("fsm_address_id"))
 				.additionalDetails(getAdditionalDetail("addressAdditionalDetails", rs)).street(rs.getString("street"))
 				.slumName(rs.getString("slumname")).tenantId(rs.getString(FSMConstants.TENANT_ID)).locality(locality)
-				.auditDetails(auditdetails).build();
+				.auditDetails(auditdetails).zone(zone).ward(ward).build();
 		PitDetail pitDetail = PitDetail.builder().height(rs.getDouble("height")).width(rs.getDouble("width"))
 				.diameter(rs.getDouble("diameter")).length(rs.getDouble("length"))
 				.distanceFromRoad(rs.getDouble("distanceFromRoad")).id(rs.getString("fsm_pit_id"))

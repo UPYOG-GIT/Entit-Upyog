@@ -97,5 +97,10 @@ public class Address   {
   @JsonProperty("geoLocation")
   private GeoLocation geoLocation ;
 
+  @JsonProperty("zone")
+  private Boundary zone ;
+  
+  @JsonProperty("ward")
+  private Boundary ward ;
  
 }
