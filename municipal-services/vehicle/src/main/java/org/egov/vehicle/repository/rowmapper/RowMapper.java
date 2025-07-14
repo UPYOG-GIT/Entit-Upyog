@@ -61,6 +61,7 @@ public class RowMapper implements ResultSetExtractor<List<Vehicle>> {
 			String source = rs.getString("source");
 			String status = rs.getString("status");
 			String ownerId = rs.getString("owner_id");
+			String vendorId = rs.getString("vendor_id");
 			this.setFullCount(rs.getInt("full_count"));
 
 			if (currentVehicle == null) {
@@ -75,7 +76,7 @@ public class RowMapper implements ResultSetExtractor<List<Vehicle>> {
 						.InsuranceCertValidTill(insuranceCertValidTill).fitnessValidTill(fitnessValidTill)
 						.roadTaxPaidTill(roadTaxPaidTill).gpsEnabled(gpsEnabled).source(source).ownerId(ownerId)
 						.status(Vehicle.StatusEnum.valueOf(status))
-						.additionalDetails(getAdditionalDetail("additionalDetails", rs)).id(id).build();
+						.additionalDetails(getAdditionalDetail("additionalDetails", rs)).id(id).vendorId(vendorId).build();
 
 				vehicleMap.put(id, currentVehicle);
 			}
