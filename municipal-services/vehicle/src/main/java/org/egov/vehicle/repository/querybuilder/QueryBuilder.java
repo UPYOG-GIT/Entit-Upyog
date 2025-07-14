@@ -291,6 +291,12 @@ public class QueryBuilder {
 			builder.append(" vehicle.status IN (").append(createQuery(status)).append(")");
 			addToPreparedStatement(preparedStmtList, status);
 		}
+		
+		if (criteria.getVendorId() != null) {
+			addClauseIfRequired(preparedStmtList, builder);
+			builder.append(" vehicle.vendor_id=? ");
+			preparedStmtList.add(criteria.getVendorId());
+		}
 
 		addClauseIfRequired(preparedStmtList, builder);
 		builder.append(" vendor_vehicle.vendor_id IS NULL OR vendorvehiclestatus='INACTIVE'");

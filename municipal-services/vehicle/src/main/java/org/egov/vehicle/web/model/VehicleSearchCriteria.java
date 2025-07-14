@@ -71,6 +71,9 @@ public class VehicleSearchCriteria {
 
 	@JsonProperty("vendorVehicleStatus")
 	private List<String> vendorVehicleStatus;
+	
+	@JsonProperty("vendorId")
+	private String vendorId;
 
 	public enum SortOrder {
 		ASC, DESC
