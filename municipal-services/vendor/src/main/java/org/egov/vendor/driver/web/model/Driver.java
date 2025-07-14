@@ -72,6 +72,10 @@ public class Driver {
 	@JsonProperty("vehicleId")
 	private String vehicleId = null;
 	
+	@SafeHtml
+	@JsonProperty("vendorId")
+	private String vendorId = null;
+	
 	/*
 	 * @JsonProperty("vendor")
 	 * 
