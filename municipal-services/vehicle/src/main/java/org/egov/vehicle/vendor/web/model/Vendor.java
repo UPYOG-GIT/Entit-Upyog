@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 import org.egov.vehicle.web.model.AuditDetails;
-import org.egov.vehicle.web.model.Vehicle;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.validation.annotation.Validated;
 

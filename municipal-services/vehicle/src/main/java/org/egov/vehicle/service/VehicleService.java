@@ -14,10 +14,10 @@ import org.egov.vehicle.repository.VehicleRepository;
 import org.egov.vehicle.util.VehicleErrorConstants;
 import org.egov.vehicle.util.VehicleUtil;
 import org.egov.vehicle.validator.Validator;
+import org.egov.vehicle.vendor.web.model.Vehicle.StatusEnum;
 import org.egov.vehicle.vendor.web.model.Vendor;
 import org.egov.vehicle.vendor.web.model.VendorRequest;
 import org.egov.vehicle.web.model.Vehicle;
-import org.egov.vehicle.web.model.Vehicle.StatusEnum;
 import org.egov.vehicle.web.model.VehicleRequest;
 import org.egov.vehicle.web.model.VehicleResponse;
 import org.egov.vehicle.web.model.VehicleSearchCriteria;
@@ -67,9 +67,9 @@ public class VehicleService {
 	}
 
 	private VendorRequest processVendorDriver(VehicleRequest vehicleRequest) {
-		Vehicle vehicle = Vehicle.builder().registrationNumber(vehicleRequest.getVehicle().getRegistrationNumber()).id(vehicleRequest.getVehicle().getId())
+		org.egov.vehicle.vendor.web.model.Vehicle vehicle = org.egov.vehicle.vendor.web.model.Vehicle.builder().id(vehicleRequest.getVehicle().getId())
 				.vendorVehicleStatus(StatusEnum.valueOf("ACTIVE")).build();
-		List<Vehicle> vehicles = new ArrayList<>();
+		List<org.egov.vehicle.vendor.web.model.Vehicle> vehicles = new ArrayList<>();
 		vehicles.add(vehicle);
 		Vendor vendor = Vendor.builder().id(vehicleRequest.getVehicle().getVendorId()).vehicles(vehicles).build();
 		VendorRequest vendorRequest = VendorRequest.builder().requestInfo(vehicleRequest.getRequestInfo())
