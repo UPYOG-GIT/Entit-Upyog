@@ -9,9 +9,12 @@ import org.egov.tracer.model.CustomException;
 import org.egov.vendor.config.VendorConfiguration;
 import org.egov.vendor.driver.repository.DriverRepository;
 import org.egov.vendor.driver.web.model.Driver;
+import org.egov.vendor.driver.web.model.Driver.StatusEnum;
 import org.egov.vendor.driver.web.model.DriverRequest;
 import org.egov.vendor.driver.web.model.DriverResponse;
 import org.egov.vendor.driver.web.model.DriverSearchCriteria;
+import org.egov.vendor.web.model.Vendor;
+import org.egov.vendor.web.model.VendorRequest;
 import org.egov.vendor.web.model.user.User;
 import org.egov.vendor.web.model.user.UserDetailResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,7 @@ public class DriverService {
 
 	@Autowired
 	private VendorConfiguration config;
+	
 
 	public Driver create(DriverRequest driverRequest) {
 
@@ -45,9 +49,18 @@ public class DriverService {
 //				.setMobileNumber(driverRepository.getdriverSeqMobileNum(getSeqDriverMobileNumber()));
 		userService.manageDrivers(driverRequest, true);
 		enrichmentService.enrichCreate(driverRequest);
+		
 		driverRepository.save(driverRequest);
+		driverRepository.saveVendorDriver(processVendorDriver(driverRequest));
 		return driverRequest.getDriver();
 
+	}
+	
+	private VendorRequest processVendorDriver(DriverRequest driverRequest) {
+		Driver driver=Driver.builder().id(driverRequest.getDriver().getId()).status(StatusEnum.valueOf("ACTIVE")).build();
+		Vendor vendor=Vendor.builder().id(driverRequest.getDriver().getVendorId()).drivers((List<Driver>) driver).build();
+		VendorRequest vendorRequest=VendorRequest.builder().requestInfo(driverRequest.getRequestInfo()).vendor(vendor).build();
+		return vendorRequest;
 	}
 
 	/*

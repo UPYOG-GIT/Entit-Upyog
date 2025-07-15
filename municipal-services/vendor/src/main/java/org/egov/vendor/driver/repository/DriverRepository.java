@@ -13,6 +13,7 @@ import org.egov.vendor.driver.web.model.DriverRequest;
 import org.egov.vendor.driver.web.model.DriverResponse;
 import org.egov.vendor.driver.web.model.DriverSearchCriteria;
 import org.egov.vendor.producer.Producer;
+import org.egov.vendor.web.model.VendorRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SingleColumnRowMapper;
@@ -45,6 +46,10 @@ public class DriverRepository {
 
 	public void update(DriverRequest driverRequest) {
 		producer.push(configuration.getUpdateDriverTopic(), driverRequest);
+	}
+	
+	public void saveVendorDriver(VendorRequest vendorRequest) {
+		producer.push(configuration.getSaveVendorVehicleDriverTopic(), vendorRequest);
 	}
 
 	public DriverResponse getDriverData(DriverSearchCriteria driverSearchCriteria) {
