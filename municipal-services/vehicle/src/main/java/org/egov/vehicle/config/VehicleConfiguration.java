@@ -39,6 +39,9 @@ public class VehicleConfiguration {
 	@Value("${egov.hrms.update.path}")
 	private String employeeUpdateEndpoint;
 	
+	@Value("${persister.save.vendordrivervehicledetail.topic}")
+	private String saveVendorVehicleDriverDetailTopic;
+	
 	// User Configuration
 		@Value("${egov.user.host}")
 		private String userHost;

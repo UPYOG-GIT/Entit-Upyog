@@ -98,6 +98,9 @@ public class Vehicle {
     @SafeHtml
 	@JsonProperty("vendorId")
 	private String vendorId = null;
+    
+    @JsonProperty("vendorVehicleStatus")
+	private StatusEnum vendorVehicleStatus = null;
 
     public enum StatusEnum {
         ACTIVE("ACTIVE"),

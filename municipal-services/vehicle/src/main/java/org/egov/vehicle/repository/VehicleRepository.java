@@ -15,6 +15,7 @@ import org.egov.vehicle.trip.repository.rowmapper.TripDetailRowMapper;
 import org.egov.vehicle.trip.web.model.VehicleTripDetail;
 import org.egov.vehicle.trip.web.model.VehicleTripSearchCriteria;
 import org.egov.vehicle.util.ErrorConstants;
+import org.egov.vehicle.vendor.web.model.VendorRequest;
 import org.egov.vehicle.web.model.Vehicle;
 import org.egov.vehicle.web.model.VehicleRequest;
 import org.egov.vehicle.web.model.VehicleResponse;
@@ -56,6 +57,10 @@ public class VehicleRepository {
 
 	public void save(VehicleRequest vehicleRequest) {
 		vehicleProducer.push(config.getSaveTopic(), vehicleRequest);
+	}
+	
+	public void saveVendorVehicle(VendorRequest vendorRequest) {
+		vehicleProducer.push(config.getSaveVendorVehicleDriverDetailTopic(), vendorRequest);
 	}
 
 	public void update(VehicleRequest vehicleRequest) {
