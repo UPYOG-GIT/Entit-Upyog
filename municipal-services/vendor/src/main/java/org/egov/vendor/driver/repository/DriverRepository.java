@@ -49,7 +49,7 @@ public class DriverRepository {
 	}
 	
 	public void saveVendorDriver(VendorRequest vendorRequest) {
-		producer.push(configuration.getSaveVendorVehicleDriverTopic(), vendorRequest);
+		producer.push(configuration.getSaveVendorVehicleDriverDetailTopic(), vendorRequest);
 	}
 
 	public DriverResponse getDriverData(DriverSearchCriteria driverSearchCriteria) {
