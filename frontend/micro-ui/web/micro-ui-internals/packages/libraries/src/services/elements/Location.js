@@ -19,4 +19,13 @@ export const LocationService = {
     });
     return response;
   },
+  getRevenueLocalitiesZone: async (tenantId) => {
+    const response = await ServiceRequest({
+      serviceName: "getRevenueLocalities",
+      url: Urls.location.revenue_localities_zone,
+      params: { tenantId: tenantId },
+      useCache: true,
+    });
+    return response;
+  },
 };

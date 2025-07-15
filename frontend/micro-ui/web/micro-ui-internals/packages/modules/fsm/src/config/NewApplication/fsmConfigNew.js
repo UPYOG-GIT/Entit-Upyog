@@ -1,4 +1,24 @@
 export const newConfig =    [
+  // {
+  //   type: "component",
+  //   route: "search-property",
+  //   isMandatory: true,
+  //   component: "CPTRMCSearchProperty",
+  //   key: "cptsearchproperty",
+  //   withoutLabel: true,
+  //   nextStep: "search-results",
+  //   hideInEmployee: true,
+  // },
+  // {
+  //   type: "component",
+  //   route: "search-results",
+  //   isMandatory: true,
+  //   component: "CPTRMCSearchResults",
+  //   key: "cptsearchresults",
+  //   withoutLabel: true,
+  //   nextStep: "property-type",
+  //   hideInEmployee: true,
+  // },
   {
     head: "ES_NEW_APPLICATION_PROPERTY_DETAILS",
     body: [
@@ -11,6 +31,7 @@ export const newConfig =    [
         type: "component",
         hideInCitizen: true,
       },
+      
       {
         label: "ES_NEW_APPLICATION_PROPERTY_TYPE",
         isMandatory: true,
@@ -43,17 +64,23 @@ export const newConfig =    [
       },
     ],
   },
+  // {
+  //   route: "map",
+  //   component: "FSMSelectGeolocation",
+  //   nextStep: "pincode",
+  //   key: "address",
+  // },
   {
     head: "ES_TITLE_APPLICANT_DETAILS",
     body: [
-      {
-        label: "ES_NEW_APPLICATION_APPLICATION_CHANNEL",
-        isMandatory: true,
-        type: "component",
-        key: "channel",
-        component: "SelectChannel",
-        nextStep: "applicantName",
-      },
+      // {
+      //   label: "ES_NEW_APPLICATION_APPLICATION_CHANNEL",
+      //   isMandatory: true,
+      //   type: "component",
+      //   key: "channel",
+      //   component: "SelectChannel",
+      //   nextStep: "applicantName",
+      // },
       {
         type: "component",
         key: "applicationData",
@@ -110,34 +137,34 @@ export const newConfig =    [
         nextStep: "check-slum",
         type: "component",
       },
-      {
-        type: "component",
-        route: "check-slum",
-        isMandatory: true,
-        component: "CheckSlum",
-        texts: {
-          header: "ES_NEW_APPLICATION_SLUM_CHECK",
-          submitBarLabel: "CS_COMMON_NEXT",
-        },
-        key: "address",
-        withoutLabel: true,
-        nextStep: "slum-details",
-        hideInEmployee: true,
-      },
-      {
-        type: "component",
-        route: "slum-details",
-        isMandatory: true,
-        component: "SelectSlumName",
-        texts: {
-          header: "CS_NEW_APPLICATION_SLUM_NAME",
-          cardText: "CS_NEW_APPLICATION_SLUM_TEXT",
-          submitBarLabel: "CS_COMMON_NEXT",
-        },
-        withoutLabel: true,
-        key: "address",
-        nextStep: "street",
-      },
+      // {
+      //   type: "component",
+      //   route: "check-slum",
+      //   isMandatory: true,
+      //   component: "CheckSlum",
+      //   texts: {
+      //     header: "ES_NEW_APPLICATION_SLUM_CHECK",
+      //     submitBarLabel: "CS_COMMON_NEXT",
+      //   },
+      //   key: "address",
+      //   withoutLabel: true,
+      //   nextStep: "slum-details",
+      //   hideInEmployee: true,
+      // },
+      // {
+      //   type: "component",
+      //   route: "slum-details",
+      //   isMandatory: true,
+      //   component: "SelectSlumName",
+      //   texts: {
+      //     header: "CS_NEW_APPLICATION_SLUM_NAME",
+      //     cardText: "CS_NEW_APPLICATION_SLUM_TEXT",
+      //     submitBarLabel: "CS_COMMON_NEXT",
+      //   },
+      //   withoutLabel: true,
+      //   key: "address",
+      //   nextStep: "street",
+      // },
       {
         type: "component",
         route: "street",

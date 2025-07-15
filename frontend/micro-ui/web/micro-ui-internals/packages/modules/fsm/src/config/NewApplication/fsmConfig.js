@@ -3,7 +3,7 @@ export const newConfig = [
     type: "component",
     route: "search-property",
     isMandatory: true,
-    component: "CPTSearchProperty",
+    component: "CPTRMCSearchProperty",
     key: "cptsearchproperty",
     withoutLabel: true,
     nextStep: "search-results",
@@ -13,7 +13,7 @@ export const newConfig = [
     type: "component",
     route: "search-results",
     isMandatory: true,
-    component: "CPTSearchResults",
+    component: "CPTRMCSearchResults",
     key: "cptsearchresults",
     withoutLabel: true,
     nextStep: "property-type",
@@ -103,7 +103,7 @@ export const newConfig = [
   },
   {
     route: "pincode",
-    component: "FSMSelectPincode",
+    component: "FSMAddress",
     texts: {
       headerCaption: "",
       header: "CS_FILE_APPLICATION_PINCODE_LABEL",

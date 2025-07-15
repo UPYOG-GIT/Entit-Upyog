@@ -97,7 +97,7 @@ const DriverConfig = (t, disabled = false) => {
             className: "payment-form-text-input-correction",
           },
         },
-       /* {
+        {
           label: "ES_FSM_REGISTRY_DRIVER_PHONE",
           isMandatory: true,
           type: "mobileNumber",
@@ -114,7 +114,39 @@ const DriverConfig = (t, disabled = false) => {
             className: "payment-form-text-input-correction",
             labelStyle: { border: "1px solid black", borderRight: "none" },
           },
-        }, */
+        }, 
+        {
+          label: "ES_FSM_REGISTRY_SELECT_VENDOR",
+          isMandatory: true,
+          type: "component",
+          route: "select-vendor",
+          hideInEmployee: false,
+          key: "selectvendor",
+          component: "SelectVendorSearch",
+          texts: {
+            headerCaption: "",
+            header: "CS_COMMON_CHOOSE_VENDOR",
+            cardText: "CS_COMMON_SELECT_VENDOR",
+            submitBarLabel: "CS_COMMON_NEXT",
+            skipText: "CORE_COMMON_SKIP_CONTINUE",
+          },
+        },
+        {
+          label: "ES_FSM_REGISTRY_SELECT_VEHICLE",
+          isMandatory: true,
+          type: "component",
+          route: "select-vehicle",
+          hideInEmployee: false,
+          key: "selectvehicle",
+          component: "SelectVehicleSearch",
+          texts: {
+            headerCaption: "",
+            header: "CS_COMMON_CHOOSE_VEHICLE",
+            cardText: "CS_COMMON_SELECT_VEHICLE",
+            submitBarLabel: "CS_COMMON_NEXT",
+            skipText: "CORE_COMMON_SKIP_CONTINUE",
+          },
+        },
       ],
     },
   ];

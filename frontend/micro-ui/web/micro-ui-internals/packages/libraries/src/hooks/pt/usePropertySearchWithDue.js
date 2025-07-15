@@ -26,13 +26,22 @@ const usePropertySearchWithDue = ({ tenantId, filters, auth = true, configs }) =
     return data;
   };
 
+  // const { isLoading, error, data } = useQuery(
+  //   ["propertySearchList", tenantId, filters, auth],
+  //   () => configs.enabled && Digit.PTService.search({ tenantId, filters, auth: auth }),
+  //   {...configs,
+  //     select: defaultSelect,
+  //   }
+  // );
+
   const { isLoading, error, data } = useQuery(
     ["propertySearchList", tenantId, filters, auth],
-    () => configs.enabled && Digit.PTService.search({ tenantId, filters, auth: auth }),
+    () => configs.enabled && Digit.PTService.rmcSearch({ tenantId, filters, auth: auth }),
     {...configs,
       select: defaultSelect,
     }
   );
+
   let consumerCodes = data?.ConsumerCodes?.join(",") || "";
   const { isLoading: billLoading, data: billData, isSuccess } = useQuery(
     ["propertySearchBillList", tenantId, filters, data, auth, consumerCodes],

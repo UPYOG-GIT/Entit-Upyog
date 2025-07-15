@@ -38,26 +38,17 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
     allCities = Digit.SessionStorage.get("FSM_TENANTS")
     
   }
-  // console.log("allCities",allCities)
+  console.log("allCities111 ",allCities)
   const [cityCode, setCityCode] = useState();
   const [formValue, setFormValue] = useState();
   const [errorShown, seterrorShown] = useState(false);
   let isMobile = window.Digit.Utils.browser.isMobile();
-  // const { data: propertyData, isLoading: propertyDataLoading, error, isSuccess, billData } = Digit.Hooks.pt.usePropertySearchWithDue({
-  //   tenantId: searchData?.city,
-  //   filters: searchData?.filters,
-  //   auth: true /*  to enable open search set false  */,
-  //   configs: { enabled: Object.keys(searchData).length > 0, retry: false, retryOnMount: false, staleTime: Infinity },
-  // });
-
-  const { data: propertyData, isLoading: propertyDataLoading, error, isSuccess, billData } = Digit.Hooks.fsm.useRMCPropertySearch({
+  const { data: propertyData, isLoading: propertyDataLoading, error, isSuccess, billData } = Digit.Hooks.pt.usePropertySearchWithDue({
     tenantId: searchData?.city,
     filters: searchData?.filters,
     auth: true /*  to enable open search set false  */,
     configs: { enabled: Object.keys(searchData).length > 0, retry: false, retryOnMount: false, staleTime: Infinity },
   });
-
-  
 
   useEffect(() => {
     if ( !(searchData?.filters?.mobileNumber && Object.values(searchData?.filters)?.filter(ob => ob !== undefined)?.length == 1) && 
@@ -108,7 +99,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
   });
 
   const [mobileNumber, property, oldProperty, name, doorNumber] = propsConfig.inputs;
-
+  console.log("propsConfig "+JSON.stringify(propsConfig))
   const config = [
     {
       body: [
@@ -411,7 +402,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
       tempObject = { 
         oldPropertyId : tempObject?.oldPropertyId,
         mobileNumber : tempObject?.mobileNumber,
-        propertyId : tempObject?.propertyIds,
+        propertyIds : tempObject?.propertyIds,
       }
     }
     else if(action === "1")
@@ -431,7 +422,7 @@ const SearchProperty = ({ config: propsConfig, onSelect, redirectToUrl }) => {
     const oldPropId = data?.[oldProperty.name];
     const propId = data?.[property.name];
     const city = data?.city || allCities[0];
-console.log("citycity",city)
+console.log("citycity111 ",city)
 setCityCode(city.code);
     // if ((city!=null && Object.keys(city).length !=0) && !(mobileNumberLength > 0 || oldPropId!="" || propId!="")){
     //   setShowToast({ warning: true, label: "ERR_PT_FILL_VALID_FIELDS" });

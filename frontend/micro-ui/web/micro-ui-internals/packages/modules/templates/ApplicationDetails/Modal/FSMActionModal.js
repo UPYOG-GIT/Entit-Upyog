@@ -24,7 +24,7 @@ const CloseBtn = (props) => {
 };
 
 const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction, actionData }) => {
-  console.log("wwwwwwwwwwwwwwwwwwwwww")
+
   const { data: dsoData, isLoading: isDsoLoading, isSuccess: isDsoSuccess, error: dsoError } = Digit.Hooks.fsm.useDsoSearch(tenantId);
   const { isLoading, isSuccess, isError, data: applicationData, error } = Digit.Hooks.fsm.useSearch(
     tenantId,
@@ -162,7 +162,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     switch (action) {
       case "DSO_ACCEPT":
       case "ACCEPT":
-        console.log("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
+        // console.log("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq")
         setFormValve(vehicleNo ? true : false);
         return setConfig(
           configAcceptDso({

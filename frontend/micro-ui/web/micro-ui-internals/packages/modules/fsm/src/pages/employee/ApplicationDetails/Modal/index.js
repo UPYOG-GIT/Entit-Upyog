@@ -614,7 +614,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   }, [action, reassignReason, isDsoLoading, dso, vehicleMenu, rejectionReason, vehicleNo, vehicleNoList, Reason, fstpoRejectionReason]);
   // console.log("config "+JSON.stringify(config))
   const hiddenFileInput = React.useRef(null);
-  console.log("isDsoLoading: "+isDsoLoading+", isReasonLoading: "+isReasonLoading+", isVehicleDataLoaded: "+isVehicleDataLoaded)
+  // console.log("isDsoLoading: "+isDsoLoading+", isReasonLoading: "+isReasonLoading+", isVehicleDataLoaded: "+isVehicleDataLoaded)
   return action && config.form && !isDsoLoading && !isReasonLoading && isVehicleDataLoaded ? (
     <Modal
       popupStyles={mobileView ? { height: 'fit-content', minHeight: '100vh' } : { height: "fit-content" }}

@@ -87,6 +87,7 @@ const AddVehicle = ({ parentUrl, heading }) => {
     const gender = data?.selectGender?.code;
     const emailId = data?.emailId;
     const dob = new Date(`${data.dob}`).getTime() || new Date(`1/1/1970`).getTime();
+    const vendorId = data?.selectvendor?.id;
 
     const formData = {
       vehicle: {
@@ -102,8 +103,9 @@ const AddVehicle = ({ parentUrl, heading }) => {
         roadTaxPaidTill: roadTax,
         gpsEnabled: true,
         source: "Municipal records",
+        vendorId: vendorId,
         owner: {
-          tenantId: stateId,
+          tenantId: tenantId,
           name: ownerName,
           fatherOrHusbandName: ownerName,
           relationship: "OTHER",

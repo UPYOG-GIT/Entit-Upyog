@@ -4,7 +4,9 @@ import { LabelFieldPair, CardLabel, TextInput, Dropdown, Loader, CardLabelError 
 import { useLocation, useParams } from "react-router-dom";
 
 const SelectTripData = ({ t, config, onSelect, formData = {}, userType }) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  // console.log("getCitizenCurrentTenant "+Digit.ULBService.getCitizenCurrentTenant())
+  // const tenantId = "cg.citya"
   const state = Digit.ULBService.getStateId();
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");

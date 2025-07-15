@@ -33,7 +33,8 @@ import SelectVehicle from "./pageComponents/SelectVehicleType";
 import CitizenApp from "./pages/citizen";
 import ApplicationDetails from "./pages/citizen/ApplicationDetails";
 import { MyApplications } from "./pages/citizen/MyApplications";
-import NewApplicationCitizen from "./pages/citizen/NewApplication/index";
+// import NewApplicationCitizen from "./pages/citizen/NewApplication/index";
+import NewApplicationCitizen from "./pages/citizen/NewApplication/index2";
 import RateView from "./pages/citizen/Rating/RateView";
 import SelectRating from "./pages/citizen/Rating/SelectRating";
 import EmployeeApp from "./pages/employee";
@@ -67,6 +68,14 @@ import EditWorker from "./pages/employee/FSMRegistry/Worker/EditWorker";
 import WorkerDetails from "./pages/employee/FSMRegistry/Worker/WorkerDetails";
 import TqmCard from "./components/TqmCard";
 
+import PropertySearchRMCNSummary from "./pageComponents/PropertySearchRMCNSummary";
+import FSMAddress from "./pageComponents/FSMAddress";
+import CPTRMCSearchResults from "./pages/SearchResults";
+import CPTRMCSearchProperty from "./pages/SearchProperty";
+import SelectVehicleSearch from "./pageComponents/SelectVehicle";
+import SelectVendorSearch from "./pageComponents/SelectVendor";
+import DriverDashboard from "./pages/employee/DriverDashboard";
+
 const FSMModule = ({ stateCode, userType, tenants }) => {
   const moduleCode = "FSM";
   const { path, url } = useRouteMatch();
@@ -77,7 +86,7 @@ const FSMModule = ({ stateCode, userType, tenants }) => {
     return <Loader />;
   }
   Digit.SessionStorage.set("FSM_TENANTS", tenants);
-
+  
   if (userType === "citizen") {
     return <CitizenApp path={path} />;
   } else {
@@ -100,6 +109,12 @@ const FSMLinks = ({ matchPath, userType }) => {
       dashoardLink: "CS_LINK_DSO_DASHBOARD",
       loginLink: "CS_LINK_LOGIN_DSO",
     },
+    {
+      role: "FSM_DRIVER",
+      from: "/digit-ui/citizen/fsm/driver-dashboard",
+      dashoardLink: "CS_LINK_DRIVER_DASHBOARD",
+      loginLink: "CS_LINK_LOGIN_DRIVER",
+    },
   ];
 
   if (userType === "citizen") {
@@ -108,6 +123,10 @@ const FSMLinks = ({ matchPath, userType }) => {
         link: `${matchPath}/new-application`,
         i18nKey: t("CS_HOME_APPLY_FOR_DESLUDGING"),
       },
+      // {
+      //   link: `${matchPath}/search-property`,
+      //   i18nKey: t("CS_HOME_APPLY_FOR_DESLUDGING"),
+      // },
       {
         link: `${matchPath}/my-applications`,
         i18nKey: t("CS_HOME_MY_APPLICATIONS"),
@@ -119,6 +138,12 @@ const FSMLinks = ({ matchPath, userType }) => {
         links.push({
           link: from,
           i18nKey: t(dashoardLink),
+        });
+      else if(role=='FSM_DRIVER')
+        links.push({
+          link: `/digit-ui/citizen/login`,
+          state: { role: "FSM_DRIVER", from },
+          i18nKey: t(loginLink),
         });
       else
         links.push({
@@ -227,6 +252,13 @@ const componentsToRegister = {
   EditWorker,
   WorkerDetails,
   TqmCard,
+  CPTRMCSearchResults,
+  CPTRMCSearchProperty,
+  FSMAddress,
+  PropertySearchRMCNSummary,
+  SelectVehicleSearch,
+  SelectVendorSearch,
+  FSMDriverDashboard: DriverDashboard,
 };
 
 export const initFSMComponents = () => {

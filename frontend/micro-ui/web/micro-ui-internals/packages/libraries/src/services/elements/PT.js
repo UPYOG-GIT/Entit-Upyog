@@ -11,6 +11,15 @@ export const PTService = {
       userService: auth === false ? auth : true,
       params: { tenantId, ...filters },
     }),
+  rmcSearch: ({ tenantId, filters, auth }) =>
+    Request({
+      url: Urls.pt.rmc_search,
+      useCache: false,
+      method: "POST",
+      auth: auth === false ? auth : true,
+      userService: auth === false ? auth : true,
+      params: { tenantId, ...filters },
+    }),
   fetchPaymentDetails: ({ tenantId, consumerCodes ,auth=true}) =>
     Request({
       url: Urls.pt.fetch_payment_details,

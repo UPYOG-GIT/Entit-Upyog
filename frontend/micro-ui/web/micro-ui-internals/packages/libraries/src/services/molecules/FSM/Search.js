@@ -60,22 +60,22 @@ export const Search = {
 
     let paymentPreference = response?.paymentPreference;
 
-    let slumLabel = "";
-    if (response?.address?.slumName && response?.address?.locality?.code && response?.tenantId) {
-      const slumData = await MdmsService.getSlumLocalityMapping(response?.tenantId, "FSM", "Slum");
-      if (slumData[response?.address?.locality?.code]) {
-        slumLabel = slumData[response?.address?.locality?.code].find((slum) => slum?.code === response?.address?.slumName);
-      } else {
-        const slumDataArray = Object.values(slumData);
-        for (let i = 0; i < slumDataArray.length; i++) {
-          const slumFound = slumDataArray[i].find((slum) => slum.code === response?.address?.slumName);
-          if (slumFound) {
-            slumLabel = slumFound;
-          }
-        }
-      }
-    }
-    const slumName = slumLabel ? slumLabel.i18nKey : "N/A";
+    // let slumLabel = "";
+    // if (response?.address?.slumName && response?.address?.locality?.code && response?.tenantId) {
+    //   const slumData = await MdmsService.getSlumLocalityMapping(response?.tenantId, "FSM", "Slum");
+    //   if (slumData[response?.address?.locality?.code]) {
+    //     slumLabel = slumData[response?.address?.locality?.code].find((slum) => slum?.code === response?.address?.slumName);
+    //   } else {
+    //     const slumDataArray = Object.values(slumData);
+    //     for (let i = 0; i < slumDataArray.length; i++) {
+    //       const slumFound = slumDataArray[i].find((slum) => slum.code === response?.address?.slumName);
+    //       if (slumFound) {
+    //         slumLabel = slumFound;
+    //       }
+    //     }
+    //   }
+    // }
+    const slumName =  "N/A";
 
     const state = Digit.ULBService.getStateId();
     const vehicleMenu = await MdmsService.getVehicleType(state, "Vehicle", "VehicleType");
@@ -134,7 +134,7 @@ export const Search = {
           { title: "PT_PROPERTY_ADDRESS_STREET_NAME", value: response?.address?.street },
           { title: "PT_PROPERTY_ADDRESS_HOUSE_NO", value: response?.address?.doorNo },
           { title: "CS_FILE_APPLICATION_PROPERTY_LOCATION_LANDMARK_LABEL", value: response?.address?.landmark },
-          { title: "CS_FILE_APPLICATION_PROPERTY_LOCATION_SLUM_LABEL", value: slumName },
+          // { title: "CS_FILE_APPLICATION_PROPERTY_LOCATION_SLUM_LABEL", value: slumName },
           {
             title: "ES_APPLICATION_DETAILS_LOCATION_GEOLOCATION",
             value:

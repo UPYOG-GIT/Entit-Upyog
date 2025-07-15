@@ -9,6 +9,7 @@ const CitizenApp = ({ path }) => {
   let isCommonPTPropertyScreen = window.location.href.includes("/ws/create-application/property-details");
   let isAcknowledgement = window.location.href.includes("/acknowledgement") || window.location.href.includes("/disconnect-acknowledge");
   const NewApplicationCitizen = Digit.ComponentRegistryService.getComponent("FSMNewApplicationCitizen");
+  const RMCSearchProperty = Digit.ComponentRegistryService.getComponent("CPTRMCSearchProperty");
   const MyApplications = Digit.ComponentRegistryService.getComponent("FSMMyApplications");
   const EmployeeApplicationDetails = Digit.ComponentRegistryService.getComponent("FSMEmployeeApplicationDetails");
   const ApplicationDetails = Digit.ComponentRegistryService.getComponent("FSMCitizenApplicationDetails");
@@ -17,6 +18,7 @@ const CitizenApp = ({ path }) => {
   const Response = Digit.ComponentRegistryService.getComponent("FSMResponse");
   const DsoDashboard = Digit.ComponentRegistryService.getComponent("FSMDsoDashboard");
   const Inbox = Digit.ComponentRegistryService.getComponent("FSMEmpInbox");
+  const DriverDashboard = Digit.ComponentRegistryService.getComponent("FSMDriverDashboard");
 
   return (
     <React.Fragment>
@@ -40,6 +42,8 @@ const CitizenApp = ({ path }) => {
             }
           />
           <PrivateRoute path={`${path}/new-application`} component={() => <NewApplicationCitizen parentRoute={path} />} />
+          {/* <PrivateRoute path={`${path}/search-property`} component={() => <RMCSearchProperty parentRoute={path} />} /> */}
+          {/* <PrivateRoute path={`${path}/search-property`} component={() => <RMCSearchProperty onSelect={''} />} /> */}
           <PrivateRoute path={`${path}/my-applications`} component={MyApplications} />
           <PrivateRoute
             path={`${path}/dso-application-details/:id`}
@@ -50,6 +54,7 @@ const CitizenApp = ({ path }) => {
           <PrivateRoute path={`${path}/rate-view/:id`} component={() => <RateView parentRoute={path} />} />
           <PrivateRoute path={`${path}/response`} component={(props) => <Response parentRoute={path} {...props} />} />
           <PrivateRoute path={`${path}/dso-dashboard`} component={() => <DsoDashboard parentRoute={path} />} />
+          <PrivateRoute path={`${path}/driver-dashboard`} component={() => <DriverDashboard parentRoute={path} />} />
         </Switch>
       </div>
     </React.Fragment>

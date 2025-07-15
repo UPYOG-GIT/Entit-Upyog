@@ -19,6 +19,7 @@ import FstpServiceRequest from "./FstpServiceRequest";
 export const FsmBreadCrumb = ({ location }) => {
   const { t } = useTranslation();
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]);
+  const DRIVER = Digit.UserService.hasAccess(["FSM_DRIVER"]);
   const FSTPO = Digit.UserService.hasAccess(["FSM_EMP_FSTPO"]);
   const isApplicationDetails = location?.pathname?.includes("application-details");
   const isVehicleLog = location?.pathname?.includes("fstp-operator-details");
@@ -57,6 +58,11 @@ export const FsmBreadCrumb = ({ location }) => {
   const crumbs = [
     {
       path: DSO ? "/digit-ui/citizen/fsm/dso-dashboard" : "/digit-ui/employee",
+      content: t("ES_COMMON_HOME"),
+      show: isFsm,
+    },
+    {
+      path: DRIVER ? "/digit-ui/citizen/fsm/driver-dashboard" : "/digit-ui/employee",
       content: t("ES_COMMON_HOME"),
       show: isFsm,
     },

@@ -3,7 +3,7 @@ import { FormStep, CardLabel, Dropdown, RadioButtons, LabelFieldPair, RadioOrSel
 import Timeline from "../components/TLTimelineInFSM";
 import { useLocation } from "react-router-dom";
 
-const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
+const FSMAddress = ({ t, config, onSelect, userType, formData }) => {
   const allCities = Digit.Hooks.fsm.useTenants();
   let tenantId = Digit.ULBService.getCurrentTenantId();
 
@@ -25,6 +25,21 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       code: "FROM_GRAM_PANCHAYAT",
       i18nKey: "FROM_GRAM_PANCHAYAT",
       name: "From Gram Panchayat",
+    },
+  ];
+
+  const pincodeinputs = [
+    {
+      label: "CORE_COMMON_PINCODE",
+      type: "text",
+      name: "pincode",
+      validation: {
+        minlength: 6,
+        maxlength: 6,
+        pattern: "^[1-9][0-9]*",
+        max: "9999999",
+        title: t("CORE_COMMON_PINCODE_INVALID"),
+      },
     },
   ];
 
@@ -57,15 +72,6 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     t
   );
 
-  const { data: fetchedZone } = Digit.Hooks.useBoundaryLocalities(
-    selectedCity?.code,
-    "zone",
-    {
-      enabled: !!selectedCity,
-    },
-    t
-  );
-
   const { data: urcConfig } = Digit.Hooks.fsm.useMDMS(tenantId, "FSM", "UrcConfig");
   const isUrcEnable = urcConfig && urcConfig.length > 0 && urcConfig[0].URCEnable;
   const [selectLocation, setSelectLocation] = useState(() =>
@@ -77,20 +83,8 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
   );
 
   const [localities, setLocalities] = useState();
-  const [localitiesOption, setLocalitiesOption] = useState();
-  const [zones, setZones] = useState();
-  const [wards, setWards] = useState();
   const [selectedLocality, setSelectedLocality] = useState();
-  const [selectedZone, setSelectedZone] = useState();
-  const [selectedWard, setSelectedWard] = useState();
 
-  useEffect(() => {
-  if (fetchedZone){
-    const zone = fetchedZone;
-    setZones(zone);
-  }
-  }, [fetchedZone]);
-  
   useEffect(() => {
     if (cities) {
       if (cities.length === 1) {
@@ -111,7 +105,6 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     }
     if ((!isUrcEnable || isNewVendor || isEditVendor) && selectedCity && fetchedLocalities) {
       let __localityList = fetchedLocalities;
-
       let filteredLocalityList = [];
 
       if (formData?.address?.locality) {
@@ -166,25 +159,12 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     }
   }
 
-  function selectZone(zone){
-    setSelectedZone(zone);
-    setWards(zone?.children);
-    onSelect(config.key, { ...formData[config.key], zone: zone });
-  }
-  // console.log("wards "+JSON.stringify(wards))
-  function selectWard(ward){
-    setSelectedWard(ward);
-    setLocalitiesOption(ward?.children);
-    onSelect(config.key, { ...formData[config.key], ward: ward });
-  }
-
   function selectLocality(locality) {
     setSelectedLocality(locality);
     if (userType === "employee") {
       onSelect(config.key, { ...formData[config.key], locality: locality });
     }
   }
-
 
   const onNewLocality = (value) => {
     setNewLocality(value);
@@ -200,106 +180,32 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     });
   }
 
-  if (userType === "employee") {
-    return (
-      <div>
-        <LabelFieldPair>
-          <CardLabel className="card-label-smaller">
-            {t("MYCITY_CODE_LABEL")}
-            {config.isMandatory ? " * " : null}
-          </CardLabel>
-          <Dropdown
-            className="form-field"
-            isMandatory
-            selected={cities?.length === 1 ? cities[0] : selectedCity}
-            disable={cities?.length === 1}
-            option={cities}
-            select={selectCity}
-            optionKey="code"
-            t={t}
+  return (
+    <React.Fragment>
+        
+    <div>
+      <LabelFieldPair>
+        <CardLabel className="card-label-smaller">{`${t("CORE_COMMON_PINCODE")} *`}</CardLabel>
+        <div className="field">
+          <TextInput key={pincodeinputs.name} value={pincode} {...pincodeinputs.validation} />
+        </div>
+        <CardLabel>{`${t("CS_PROPERTY_LOCATION")} *`}</CardLabel>
+        <div className="field">
+          <RadioButtons
+            selectedOption={selectLocation}
+            onSelect={selectedValue}
+            style={{ display: "flex", marginBottom: 0 }}
+            innerStyles={{ marginLeft: "10px" }}
+            options={inputs}
+            optionsKey="i18nKey"
+            // disabled={editScreen}
           />
-        </LabelFieldPair>
-        {!isUrcEnable || isNewVendor || isEditVendor ? (
-          <div>
-            <LabelFieldPair>
-              <CardLabel className="card-label-smaller">
-                {t("ES_NEW_APPLICATION_LOCATION_ZONE")}
-                {config.isMandatory ? " * " : null}
-              </CardLabel>
-              <Dropdown
-                className="form-field"
-                isMandatory
-                selected={selectedZone}
-                option={zones}
-                select={selectZone}
-                optionKey="i18nkey"
-                t={t}
-              />
-            </LabelFieldPair>
+        </div>
+      </LabelFieldPair>
+    </div>
+    </React.Fragment>
+  );
 
-            <LabelFieldPair>
-              <CardLabel className="card-label-smaller">
-                {t("ES_NEW_APPLICATION_LOCATION_WARD")}
-                {config.isMandatory ? " * " : null}
-              </CardLabel>
-              <Dropdown
-                className="form-field"
-                isMandatory
-                selected={selectedWard}
-                option={wards}
-                select={selectWard}
-                optionKey="code"
-                isDisabled={!selectedZone}
-                t={t}
-              />
-            </LabelFieldPair>
-
-
-
-            <LabelFieldPair>
-              <CardLabel className="card-label-smaller">
-                {t("ES_NEW_APPLICATION_LOCATION_MOHALLA")}
-                {config.isMandatory ? " * " : null}
-              </CardLabel>
-              <Dropdown
-                className="form-field"
-                isMandatory
-                selected={selectedLocality}
-                option={localitiesOption}
-                select={selectLocality}
-                // optionKey="i18nkey"
-                optionKey="code"
-                t={t}
-              />
-            </LabelFieldPair>
-            {!isNewVendor && !isEditVendor && !isUrcEnable && formData?.address?.locality?.name === "Other" && (
-              <LabelFieldPair>
-                <CardLabel className="card-label-smaller">{`${t("ES_INBOX_PLEASE_SPECIFY_LOCALITY")} *`}</CardLabel>
-                <div className="field">
-                  <TextInput id="newLocality" key="newLocality" value={newLocality} onChange={(e) => onNewLocality(e.target.value)} />
-                </div>
-              </LabelFieldPair>
-            )}
-          </div>
-        ) : (
-          <LabelFieldPair>
-            <CardLabel>{`${t("CS_PROPERTY_LOCATION")} *`}</CardLabel>
-            <div className="field">
-              <RadioButtons
-                selectedOption={selectLocation}
-                onSelect={selectedValue}
-                style={{ display: "flex", marginBottom: 0 }}
-                innerStyles={{ marginLeft: "10px" }}
-                options={inputs}
-                optionsKey="i18nKey"
-                // disabled={editScreen}
-              />
-            </div>
-          </LabelFieldPair>
-        )}
-      </div>
-    );
-  }
   return (
     <React.Fragment>
       <Timeline currentStep={1} flow="APPLY" />
@@ -324,4 +230,4 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
   );
 };
 
-export default FSMSelectAddress;
+export default FSMAddress;

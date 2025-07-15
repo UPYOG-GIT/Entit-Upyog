@@ -10,4 +10,8 @@ export const getLocalities = {
     await StoreService.defaultData(tenant, tenant, Digit.StoreData.getCurrentLanguage());
     return (await LocationService.getRevenueLocalities(tenant)).TenantBoundary[0];
   },
+  zone: async (tenant) => {
+    await StoreService.defaultData(tenant, tenant, Digit.StoreData.getCurrentLanguage());
+    return (await LocationService.getRevenueLocalitiesZone(tenant)).TenantBoundary[0];
+  },
 };

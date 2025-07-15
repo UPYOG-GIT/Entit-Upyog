@@ -83,6 +83,7 @@ import useVendorSearch from "./fsm/useVendorSearch";
 import useAdvanceBalanceCalulation from "./fsm/useAdvanceBalanceCalculation";
 import useCustomAPIHook from "./useCustomAPIHook";
 import { usePrivacyContext } from "./usePrivacyContext";
+import useRMCPropertySearch from "./fsm/useRMCPropertySearch";
 
 import useEmployeeSearch from "./useEmployeeSearch";
 
@@ -256,7 +257,8 @@ const fsm = {
   useVehicleTripCreate,
   useVendorSearch,
   useAdvanceBalanceCalulation,
-  useWorkerSearch
+  useWorkerSearch,
+  useRMCPropertySearch
 };
 
 const pt = {

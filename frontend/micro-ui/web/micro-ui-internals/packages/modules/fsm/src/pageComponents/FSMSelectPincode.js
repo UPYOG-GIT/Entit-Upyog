@@ -16,7 +16,7 @@ const FSMSelectPincode = ({ t, config, onSelect, formData = {}, userType, regist
   {
     property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
   }
-  console.log("dddd11111",formData)
+  // console.log("dddd11111",formData)
   const inputs = [
     {
       label: "CORE_COMMON_PINCODE",

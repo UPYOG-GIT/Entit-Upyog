@@ -164,6 +164,23 @@ const VehicleConfig = (t, disabled = false) => {
             className: "payment-form-text-input-correction",
           },
         },
+         
+        {
+          label: "ES_FSM_REGISTRY_SELECT_VENDOR",
+          isMandatory: true,
+          type: "component",
+          route: "select-vendor",
+          hideInEmployee: false,
+          key: "selectvendor",
+          component: "SelectVendorSearch",
+          texts: {
+            headerCaption: "",
+            header: "CS_COMMON_CHOOSE_VENDOR",
+            cardText: "CS_COMMON_SELECT_VENDOR",
+            submitBarLabel: "CS_COMMON_NEXT",
+            skipText: "CORE_COMMON_SKIP_CONTINUE",
+          },
+        },
         {
           label: "ES_FSM_REGISTRY_NEW_VENDOR_ADDITIONAL_DETAILS",
           isMandatory: false,

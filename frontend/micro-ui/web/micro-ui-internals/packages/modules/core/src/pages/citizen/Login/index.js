@@ -27,7 +27,7 @@ import useInterval from "../../../hooks/useInterval";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
-const DEFAULT_REDIRECT_URL = "/digit-ui/citizen";
+const DEFAULT_REDIRECT_URL = "/digit-ui/citizen/fsm-home";
 
 /* set citizen details to enable backward compatiable */
 const setCitizenDetail = (userObject, token, tenantId) => {

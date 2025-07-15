@@ -57,9 +57,11 @@ const AddDriver = ({ parentUrl, heading }) => {
     const license = data?.license;
     const gender = data?.selectGender?.code;
     const emailId = data?.emailId;
-    // const phone = data?.phone;
+    const phone = data?.phone;
     const dob = new Date(`${data.dob}`).getTime() || new Date(`1/1/1970`).getTime();
     const additionalDetails = data?.additionalDetails;
+    const vehicleId = data?.selectvehicle?.id;
+    const vendorId = data?.selectvendor?.id;
     const formData = {
       driver: {
         tenantId: tenantId,
@@ -67,15 +69,17 @@ const AddDriver = ({ parentUrl, heading }) => {
         licenseNumber: license,
         additionalDetails: additionalDetails,
         status: "ACTIVE",
+        vehicleId: vehicleId,
+        vendorId: vendorId,
         owner: {
-          tenantId: stateId,
+          tenantId: tenantId,
           name: name,
           fatherOrHusbandName: name,
           relationship: "OTHER",
           gender: gender,
           dob: dob,
           emailId: emailId || "abc@egov.com",
-          // mobileNumber: phone,
+          mobileNumber: phone,
         },
         vendorDriverStatus: "INACTIVE",
       },

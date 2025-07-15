@@ -6,6 +6,7 @@ const Urls = {
   location: {
     localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=ADMIN&boundaryType=Locality`,
     revenue_localities: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Locality`,
+    revenue_localities_zone: `/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Zone`,
   },
 
   pgr_search: `/pgr-services/v2/request/_search`,
@@ -86,7 +87,8 @@ const Urls = {
     assessment_create: "/property-services/assessment/_create",
     assessment_search: "/property-services/assessment/_search",
     payment_search: "/collection-services/payments/PT/_search",
-    pt_calculate_mutation: "/pt-calculator-v2/propertytax/mutation/_calculate"
+    pt_calculate_mutation: "/pt-calculator-v2/propertytax/mutation/_calculate",
+    rmc_search: "/fsm/rmcproperty/_rmcpropertybyid"
   },
 
   dss: {
