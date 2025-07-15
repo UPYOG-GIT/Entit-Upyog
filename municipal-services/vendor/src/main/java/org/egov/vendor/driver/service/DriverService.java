@@ -58,7 +58,9 @@ public class DriverService {
 	
 	private VendorRequest processVendorDriver(DriverRequest driverRequest) {
 		Driver driver=Driver.builder().id(driverRequest.getDriver().getId()).status(StatusEnum.valueOf("ACTIVE")).build();
-		Vendor vendor=Vendor.builder().id(driverRequest.getDriver().getVendorId()).drivers((List<Driver>) driver).build();
+		List<Driver> drivers = new ArrayList<>();
+		drivers.add(driver);
+		Vendor vendor=Vendor.builder().id(driverRequest.getDriver().getVendorId()).drivers(drivers).build();
 		VendorRequest vendorRequest=VendorRequest.builder().requestInfo(driverRequest.getRequestInfo()).vendor(vendor).build();
 		return vendorRequest;
 	}
