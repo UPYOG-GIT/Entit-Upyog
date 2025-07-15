@@ -67,7 +67,7 @@ public class VehicleService {
 	}
 
 	private VendorRequest processVendorDriver(VehicleRequest vehicleRequest) {
-		Vehicle vehicle = Vehicle.builder().id(vehicleRequest.getVehicle().getId())
+		Vehicle vehicle = Vehicle.builder().registrationNumber(vehicleRequest.getVehicle().getRegistrationNumber()).id(vehicleRequest.getVehicle().getId())
 				.vendorVehicleStatus(StatusEnum.valueOf("ACTIVE")).build();
 		List<Vehicle> vehicles = new ArrayList<>();
 		vehicles.add(vehicle);
