@@ -361,9 +361,29 @@ public class FSMService {
 		fsm.setDso(vendor);
 
 		validateDSOVehicle(fsm, vendor, fsmRequest);
-		validateDSOWorkers(fsm, vendor, fsmRequest);
+
+		/**
+		 * add method call for ASSIGN action to assign Driver
+		 */
+		callDriverAssignService(fsm, fsmRequest);
+//		validateDSOWorkers(fsm, vendor, fsmRequest);
 //		callVehicleTripService(fsmRequest, fsm, oldFSM);
 
+	}
+
+	/**
+	 * 
+	 * Create a method to Assign driver on ASSIGN action
+	 * 
+	 * @param fsm
+	 * @param fsmRequest
+	 */
+	private void callDriverAssignService(FSM fsm, FSMRequest fsmRequest) {
+		if (fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_ASSIGN_DSO)) {
+			ArrayList<String> uuids = new ArrayList<>();
+			uuids.add(fsm.getDriver().getOwner().getUuid());
+			fsmRequest.getWorkflow().setAssignes(uuids);
+		}
 	}
 
 	private void validateDSOVehicle(FSM fsm, Vendor vendor, FSMRequest fsmRequest) {

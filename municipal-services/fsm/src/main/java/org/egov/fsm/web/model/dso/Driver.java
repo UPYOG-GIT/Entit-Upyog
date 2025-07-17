@@ -67,6 +67,14 @@ public class Driver {
 	@JsonProperty("vendor")
 	@Valid
 	private Vendor vendor;
+	
+	@SafeHtml
+	@JsonProperty("vehicleId")
+	private String vehicleId = null;
+	
+	@SafeHtml
+	@JsonProperty("vendorId")
+	private String vendorId = null;
 
 	/**
 	 * Inactive records will be consider as soft deleted
