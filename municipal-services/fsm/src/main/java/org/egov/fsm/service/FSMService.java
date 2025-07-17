@@ -274,12 +274,19 @@ public class FSMService {
 			handleApplicationSubmit(fsmRequest);
 		}
 
+//		if (fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_ASSIGN_DSO)
+//				|| fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_REASSIGN_DSO)) {
+//			handleAssignDSO(fsmRequest);
+//		}
+//
+//		if (fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_DSO_ACCEPT)
+//				|| fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_SCHEDULE)
+//				|| fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_UPDATE)) {
+//			handleDSOAccept(fsmRequest, oldFSM);
+//		}
 		if (fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_ASSIGN_DSO)
-				|| fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_REASSIGN_DSO)) {
-			handleAssignDSO(fsmRequest);
-		}
-
-		if (fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_DSO_ACCEPT)
+				|| fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_REASSIGN_DSO)
+				|| fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_DSO_ACCEPT)
 				|| fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_SCHEDULE)
 				|| fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_UPDATE)) {
 			handleDSOAccept(fsmRequest, oldFSM);
@@ -354,8 +361,8 @@ public class FSMService {
 		fsm.setDso(vendor);
 
 		validateDSOVehicle(fsm, vendor, fsmRequest);
-//		validateDSOWorkers(fsm, vendor, fsmRequest);
-		callVehicleTripService(fsmRequest, fsm, oldFSM);
+		validateDSOWorkers(fsm, vendor, fsmRequest);
+//		callVehicleTripService(fsmRequest, fsm, oldFSM);
 
 	}
 
