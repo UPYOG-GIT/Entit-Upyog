@@ -353,8 +353,14 @@ public class UserService {
 		}
 		if (driver.getRoles() != null) {
 			driver.getRoles().add(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName()));
+			driver.getRoles().add(getRolObj(config.getCitizenRole(), config.getCitizenRoleName()));
 		} else {
-			driver.setRoles(Arrays.asList(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName())));
+			List<Role> roles = new ArrayList<>();
+			roles.add(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName()));
+			roles.add(getRolObj(config.getCitizenRole(), config.getCitizenRoleName()));
+			driver.setRoles(roles);
+			
+//			driver.setRoles(Arrays.asList(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName())));
 		}
 		addUserDefaultFields(driver.getTenantId(), null, driver);
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserContextPath())
