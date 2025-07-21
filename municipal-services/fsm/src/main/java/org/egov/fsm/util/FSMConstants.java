@@ -103,6 +103,8 @@ public class FSMConstants {
 	public static final String WF_ACTION_CREATE ="CREATE";
 	public static final String WF_ACTION_SUBMIT="SUBMIT";
 	public static final String WF_ACTION_ASSIGN_DSO="ASSIGN";
+	public static final String WF_ACTION_START_WORK="START_WORK";
+	public static final String WF_ACTION_WORK_COMPLETED="WORK_COMPLETED";
 	public static final String ASSIGN_DSO="ASSING_DSO";
 	public static final String WF_ACTION_REASSIGN_DSO="REASSING";	
 	
@@ -114,6 +116,8 @@ public class FSMConstants {
 	public static final String PIT_TYPE_LDB = "lbd";
 
 	public static final String ROLE_FSM_DSO = "FSM_DSO";
+	
+	public static final String ROLE_FSM_DRIVER = "FSM_DRIVER";
 
 	public static final String WF_ACTION_COMPLETE = "COMPLETED";
 

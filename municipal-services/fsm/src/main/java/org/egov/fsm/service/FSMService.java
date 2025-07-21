@@ -1,6 +1,5 @@
 package org.egov.fsm.service;
 
-import com.jayway.jsonpath.JsonPath;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,8 +13,9 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 import javax.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.math.NumberUtils;
 import org.egov.common.contract.request.RequestInfo;
 import org.egov.common.contract.request.Role;
@@ -57,6 +57,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import com.jayway.jsonpath.JsonPath;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -223,6 +227,16 @@ public class FSMService {
 		return fsmRequest.getFsm();
 	}
 
+	private void callWorkStartAndCompleteByDriver(FSMRequest fsmRequest) {
+		if (fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_START_WORK)) {
+			handleWorkStartByDriver(fsmRequest);
+		}
+
+		if (fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_WORK_COMPLETED)) {
+			handleWorkCompletedByDriver(fsmRequest);
+		}
+	}
+
 	private void createOrUpdateFsmApplicationWorkers(FSMRequest fsmRequest) {
 		List<Worker> existingWorkers = fsmWorkerRepository.getWorkersData(WorkerSearchCriteria.builder()
 				.tenantId(fsmRequest.getFsm().getTenantId())
@@ -290,6 +304,38 @@ public class FSMService {
 				|| fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_SCHEDULE)
 				|| fsmRequest.getWorkflow().getAction().equalsIgnoreCase(FSMConstants.WF_ACTION_UPDATE)) {
 			handleDSOAccept(fsmRequest, oldFSM);
+		}
+
+	}
+
+	private void handleWorkStartByDriver(FSMRequest fsmRequest) {
+		org.egov.common.contract.request.User user = fsmRequest.getRequestInfo().getUserInfo();
+		Boolean isDriver = util.isRoleAvailale(user, FSMConstants.ROLE_FSM_DRIVER,
+				fsmRequest.getRequestInfo().getUserInfo().getTenantId());
+		if (isDriver) {
+			ArrayList<String> uuids = new ArrayList<>();
+			uuids.add(user.getUuid());
+			fsmRequest.getWorkflow().setAssignes(uuids);
+		} else {
+			throw new CustomException(FSMErrorConstants.INVALID_WORK_START_ACTION,
+					" Only User with FSM_DRIVER role and/or assigned Driver can take this action. ");
+		}
+
+	}
+
+	private void handleWorkCompletedByDriver(FSMRequest fsmRequest) {
+		FSM fsm = fsmRequest.getFsm();
+		org.egov.common.contract.request.User user = fsmRequest.getRequestInfo().getUserInfo();
+		Boolean isDriver = util.isRoleAvailale(user, FSMConstants.ROLE_FSM_DRIVER,
+				fsmRequest.getRequestInfo().getUserInfo().getTenantId());
+
+		if (isDriver) {
+			ArrayList<String> uuids = new ArrayList<>();
+			uuids.add(fsm.getCitizen().getUuid());
+			fsmRequest.getWorkflow().setAssignes(uuids);
+		} else {
+			throw new CustomException(FSMErrorConstants.INVALID_WORK_COMPLETE_ACTION,
+					" Only User with FSM_DRIVER role and/or assigned Driver can take this action. ");
 		}
 	}
 
