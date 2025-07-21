@@ -100,9 +100,15 @@ public class PropertyService {
 		}
 		Object wardNo = propertyDetails.get("WARD_NO");
 		Object wardName = propertyDetails.get("WARD_NAME");
-		Object zoneNO = propertyDetails.get("ZONE_NO");
-		Locality locality = Locality.builder().code(wardNo != null ? "RMCLC" + wardNo.toString() : null)
-				.name(wardName != null ? wardName.toString() : null).label("Locality").build();
+		Object zoneNo = propertyDetails.get("ZONE_NO");
+
+		Locality zone = Locality.builder().code(zoneNo != null ? "RMCZN" + zoneNo : null).build();
+		Locality ward = Locality.builder().code(wardNo != null ? "RMCWD" + wardNo : null)
+				.name(wardName != null ? wardName.toString() : null).build();
+
+		Locality locality = null;
+//		Locality locality = Locality.builder().code(wardNo != null ? "RMCLC" + wardNo.toString() : null)
+//				.name(wardName != null ? wardName.toString() : null).label("Locality").build();
 
 		Map<String, Object> addressAdditional = new HashMap<>();
 
@@ -113,8 +119,8 @@ public class PropertyService {
 		addressAdditional.put("zoneNo", propertyDetails.get("ZONE_NO"));
 
 		Address address = Address.builder().city("Raipur").tenantId("cg.raipur")
-				.wardNo(wardNo != null ? wardNo.toString() : null).zoneNo(wardNo != null ? zoneNO.toString() : null)
-				.locality(locality).build();
+				.wardNo(wardNo != null ? wardNo.toString() : null).zoneNo(wardNo != null ? zoneNo.toString() : null)
+				.locality(locality).zone(zone).ward(ward).build();
 
 		List<String> owners = Arrays.asList(propertyDetails.get("PROPERTY_OWNER").toString().split(","));
 		String ownershipcategory = owners.size() == 1 ? "INDIVIDUAL.SINGLEOWNER" : "INDIVIDUAL.MULTIPLEOWNERS";
