@@ -16,7 +16,8 @@ const usePropertySearchWithDue = ({ tenantId, filters, auth = true, configs }) =
         name: property?.owners?.[0].name,
         status: property?.status,
         due: false,
-        locality: `${property?.tenantId?.replace(".", "_")?.toUpperCase()}_REVENUE_${property?.address?.locality?.code}`,
+        // locality: `${property?.tenantId?.replace(".", "_")?.toUpperCase()}_REVENUE_${property?.address?.locality?.code}`,
+        locality: property?.address?.locality?.code,
         owners: property?.owners,
         documents: property?.documents,
       };

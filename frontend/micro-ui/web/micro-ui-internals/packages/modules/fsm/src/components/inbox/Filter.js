@@ -11,14 +11,14 @@ const Filter = ({ searchParams, paginationParms, onFilterChange, onSearch, remov
   const location = useLocation();
 
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]) || false;
+  const DRIVER = Digit.UserService.hasAccess(["FSM_DRIVER"]) || false;
   const isFstpOperator = Digit.UserService.hasAccess("FSM_EMP_FSTPO") || false;
   const isFstpOperatorRequest = (Digit.UserService.hasAccess("FSM_EMP_FSTPO") && location.pathname.includes("fstp-fsm-request")) || false;
 
   // const hideLocalityFilter = Digit.UserService.hasAccess(["FSM_CREATOR_EMP", "FSM_VIEW_EMP"]);
 
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const tenantId = DRIVER ? Digit.ULBService.getCitizenCurrentTenant() : Digit.ULBService.getCurrentTenantId();
   const state = Digit.ULBService.getStateId();
-
   const { data: roleStatuses, isFetched: isRoleStatusFetched } = Digit.Hooks.fsm.useMDMS(state, "DIGIT-UI", "RoleStatusMapping");
 
   const userInfo = Digit.UserService.getUser();
@@ -52,7 +52,8 @@ const Filter = ({ searchParams, paginationParms, onFilterChange, onSearch, remov
 
   return (
     <React.Fragment>
-      {((!DSO && !isFstpOperator && searchParams) || (mergedRoleDetails?.statuses?.length > 0) || (isFstpOperatorRequest)) && <div className="filter" style={{ marginTop: isFstpOperator ? "-0px" : "revert" }}>
+      {((!DSO && !isFstpOperator && searchParams) || mergedRoleDetails?.statuses?.length > 0 || isFstpOperatorRequest) && (
+        <div className="filter" style={{ marginTop: isFstpOperator ? "-0px" : "revert" }}>
           <div className="filter-card">
             <div className="heading">
               <div className="filter-label">{t("ES_COMMON_FILTER_BY")}:</div>
@@ -71,14 +72,14 @@ const Filter = ({ searchParams, paginationParms, onFilterChange, onSearch, remov
               )}
             </div>
             <div>
-            {!DSO && !isFstpOperator && searchParams && (
-              <AssignedTo onFilterChange={onFilterChange} searchParams={searchParams} paginationParms={paginationParms} tenantId={tenantId} t={t} />
-            )}
-            <div>
-              {/* {GetSelectOptions(t("ES_INBOX_LOCALITY"), localities, selectedLocality, onSelectLocality, "code", onRemove, "locality", "name")} */}
+              {!DSO && !isFstpOperator && searchParams && (
+                <AssignedTo onFilterChange={onFilterChange} searchParams={searchParams} paginationParms={paginationParms} tenantId={tenantId} t={t} />
+              )}
+              <div>
+                {/* {GetSelectOptions(t("ES_INBOX_LOCALITY"), localities, selectedLocality, onSelectLocality, "code", onRemove, "locality", "name")} */}
+              </div>
+              {/* <Status applications={props.applications} onAssignmentChange={handleAssignmentChange} fsmfilters={searchParams} /> */}
             </div>
-            {/* <Status applications={props.applications} onAssignmentChange={handleAssignmentChange} fsmfilters={searchParams} /> */}
-          </div>
 
             {mergedRoleDetails?.statuses?.length > 0 || isFstpOperatorRequest ? (
               <div>
@@ -116,7 +117,7 @@ const Filter = ({ searchParams, paginationParms, onFilterChange, onSearch, remov
             </div>
           </div>
         </div>
-      }
+      )}
       {props.type === "mobile" && props.onClose && (
         <ActionBar>
           <ApplyFilterBar

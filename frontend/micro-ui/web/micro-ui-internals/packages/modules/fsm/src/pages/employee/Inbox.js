@@ -7,13 +7,14 @@ import DesktopInbox from "../../components/DesktopInbox";
 import MobileInbox from "../../components/MobileInbox";
 
 const Inbox = ({ parentRoute, isSearch = false, isInbox = false }) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  // const tenantId = Digit.ULBService.getCurrentTenantId();
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo.info.roles;
-
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]) || false;
+  const DRIVER = Digit.UserService.hasAccess(["FSM_DRIVER"]) || false;
   const isFSTPOperator = Digit.UserService.hasAccess("FSM_EMP_FSTPO") || false;
-
+  const tenantId = DRIVER ? userInfo.info.tenantId :Digit.ULBService.getCurrentTenantId();
+  // console.log("tenantId "+tenantId)
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [shouldSearch, setShouldSearch] = useState(false);
@@ -27,7 +28,7 @@ const Inbox = ({ parentRoute, isSearch = false, isInbox = false }) => {
         applicationStatus: [],
         locality: [],
         uuid:
-          DSO || isFSTPOperator
+          DSO || isFSTPOperator || DRIVER
             ? { code: "ASSIGNED_TO_ME", name: t("ES_INBOX_ASSIGNED_TO_ME") }
             : { code: "ASSIGNED_TO_ALL", name: t("ES_INBOX_ASSIGNED_TO_ALL") },
       }
@@ -55,12 +56,15 @@ const Inbox = ({ parentRoute, isSearch = false, isInbox = false }) => {
     {
       enabled: isInbox,
     },
-    DSO ? true : false
+    DSO || DRIVER ? true : false
   );
-
+  // console.log("applications "+JSON.stringify(applications))
   const inboxTotalCount = DSO
     ? applications?.statuses.filter((e) => e.applicationstatus === "DSO_INPROGRESS")[0]?.count +
       applications?.statuses.filter((e) => e.applicationstatus === "PENDING_DSO_APPROVAL")[0]?.count
+    : DRIVER 
+    ? applications?.statuses.filter((e) => e.applicationstatus === "PENDING_WORK_START_BY_DRIVER")[0]?.count +
+      applications?.statuses.filter((e) => e.applicationstatus === "PENDING_WORK_COMPLETE")[0]?.count
     : applications?.totalCount;
   const {
     isLoading: isSearchLoading,

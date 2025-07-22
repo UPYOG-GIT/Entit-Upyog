@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { LocationSearchCard } from "@upyog/digit-ui-react-components";
 import Timeline from "../components/TLTimelineInFSM";
 
-const FSMSelectGeolocation = ({ t, config, onSelect, formData = {} }) => {
+const FSMSelectGeolocation = ({ t, config, onSelect, userType, formData = {} }) => {
   const [pincode, setPincode] = useState(formData?.address?.pincode || "");
   const [geoLocation, setGeoLocation] = useState(formData?.address?.geoLocation || {});
   const tenants = Digit.Hooks.fsm.useTenants();
@@ -22,6 +22,12 @@ const FSMSelectGeolocation = ({ t, config, onSelect, formData = {} }) => {
     }
   };
 
+
+  //  if (userType === "employee") {
+  //   return (
+  //     {}
+  //   );
+  // }
   return (
     <React.Fragment>
       <Timeline currentStep={1} flow="APPLY" />

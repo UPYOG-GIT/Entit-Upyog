@@ -22,7 +22,19 @@ function getFilteredDsoData(dsoData, vehicle, vehicleCapacity) {
   return dsoData?.filter((e) => e.vehicles?.find((veh) => veh?.capacity == vehicleCapacity));
 }
 
-export const configAssignDso = ({ t, dsoData, dso, selectDSO, vehicleMenu, vehicle, vehicleCapacity, selectVehicle, action }) => {
+function getFilteredDriverData(vehicle, drivers) {
+  return drivers?.flatMap((driver) => driver || [])?.filter((driver) => driver.vehicleId == vehicle?.id);
+}
+
+function getFilteredVehicleData(vehicleMenu, dso) {
+  return vehicleMenu;
+}
+
+export const configAssignDso = ({t, dsoData, dso, selectDSO, vehicleMenu, vehicle, vehicleCapacity, selectVehicle, selectedDriver, drivers, setSelectedDriver, action,
+}) => {
+  // console.log("selectVehicle " + JSON.stringify(selectVehicle));
+  // console.log("vehicle " + JSON.stringify(vehicle));
+
   return {
     label: {
       heading: `ES_FSM_ACTION_TITLE_${action}`,
@@ -32,23 +44,6 @@ export const configAssignDso = ({ t, dsoData, dso, selectDSO, vehicleMenu, vehic
     form: [
       {
         body: [
-          // vehicle ? {
-          //   label: t("ES_FSM_ACTION_VEHICLE_TYPE"),
-          //   isMandatory: true,
-          //   type: "dropdown",
-          //   populators: (
-          //     <Dropdown
-          //       option={vehicleMenu}
-          //       autoComplete="off"
-          //       optionKey="i18nKey"
-          //       id="vehicle"
-          //       selected={vehicle}
-          //       select={selectVehicle}
-          //       disable={vehicle ? true : false}
-          //       t={t}
-          //     />
-          //   ),
-          // }: {},
           {
             label: t("ES_FSM_ACTION_DSO_NAME"),
             isMandatory: true,
@@ -65,8 +60,58 @@ export const configAssignDso = ({ t, dsoData, dso, selectDSO, vehicleMenu, vehic
                   id="dso"
                   selected={dso}
                   select={selectDSO}
-                  disable={getFilteredDsoData(dsoData, vehicle, vehicleCapacity) && !getFilteredDsoData(dsoData, vehicle, vehicleCapacity).length ? true : false}
+                  disable={
+                    getFilteredDsoData(dsoData, vehicle, vehicleCapacity) && !getFilteredDsoData(dsoData, vehicle, vehicleCapacity).length
+                      ? true
+                      : false
+                  }
                 />
+              </React.Fragment>
+            ),
+          },
+          vehicle
+            ? {
+                label: t("ES_FSM_SELECT_VEHICLE"),
+                isMandatory: true,
+                type: "dropdown",
+                populators: (
+                  <React.Fragment>
+                    <Dropdown
+                      option={getFilteredVehicleData(vehicleMenu, dso)}
+                      autoComplete="off"
+                      optionKey="registrationNumber"
+                      id="vehicle"
+                      selected={vehicle}
+                      select={selectVehicle}
+                      // disable={vehicle ? true : false}
+                      t={t}
+                    />
+                  </React.Fragment>
+                ),
+              }
+            : {},
+          {
+            label: t("ES_FSM_ACTION_ASSIGN_DRIVER"),
+            isMandatory: true,
+            type: "dropdown",
+            populators: (
+              <React.Fragment>
+                <Dropdown
+                  option={getFilteredDriverData(vehicle, drivers)}
+                  autoComplete="off"
+                  optionKey="name"
+                  // id="vehicle"
+                  select={(option) => {
+                    setSelectedDriver(option);
+                  }}
+                  selected={selectedDriver}
+                  disable={drivers?.length > 0 ? false : true}
+                  placeholder={t("SW_SEARCH_BY_NAME_ID")}
+                  optionCardStyles={{ maxHeight: "16rem" }}
+                />
+                {drivers?.length === 0 || !drivers ? (
+                  <CardLabelError style={{ marginTop: "-14px" }}>{t("ES_FSM_NO_DRIVER_AVAILABLE")}</CardLabelError>
+                ) : null}
               </React.Fragment>
             ),
           },
@@ -104,10 +149,10 @@ export const configAssignDso = ({ t, dsoData, dso, selectDSO, vehicleMenu, vehic
               validation: {
                 required: true,
               },
-              customProps: { 
+              customProps: {
                 min: Digit.Utils.date.getDate(),
                 max: Digit.Utils.date.getDate(Date.now() + 10 * 24 * 60 * 60 * 1000),
-               },
+              },
               defaultValue: Digit.Utils.date.getDate(),
               component: (props, customProps) => <DatePicker onChange={props.onChange} date={props.value} {...customProps} />,
             },

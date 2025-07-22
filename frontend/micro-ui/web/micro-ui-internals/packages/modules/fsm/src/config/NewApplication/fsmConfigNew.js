@@ -65,10 +65,17 @@ export const newConfig =    [
     ],
   },
   // {
-  //   route: "map",
-  //   component: "FSMSelectGeolocation",
-  //   nextStep: "pincode",
-  //   key: "address",
+
+  //   head: "CS_ADDCOMPLAINT_SELECT_GEOLOCATION_HEADER",
+  //   body: [
+  //     {
+  //       type: "component",
+  //       key: "address",
+  //       component: "FSMSelectGeoLocation",
+  //       route: "map",
+  //       nextStep: "pincode",
+  //     },
+  //   ],
   // },
   {
     head: "ES_TITLE_APPLICANT_DETAILS",

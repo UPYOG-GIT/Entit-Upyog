@@ -2,7 +2,6 @@ import React from "react"
 import useInbox from "../useInbox"
 
 const useFSMInbox = (tenantId, filters, config = {}, overRideUUID = false) => {
-
   const { applicationNos, mobileNumber, limit, offset, sortBy, sortOrder } = filters;
   const _filters = {
     tenantId,

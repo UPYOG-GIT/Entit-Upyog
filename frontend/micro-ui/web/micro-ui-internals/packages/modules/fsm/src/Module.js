@@ -70,6 +70,7 @@ import TqmCard from "./components/TqmCard";
 
 import PropertySearchRMCNSummary from "./pageComponents/PropertySearchRMCNSummary";
 import FSMAddress from "./pageComponents/FSMAddress";
+import FSMSelectLocation from "./pageComponents/FSMSelectLocation";
 import CPTRMCSearchResults from "./pages/SearchResults";
 import CPTRMCSearchProperty from "./pages/SearchProperty";
 import SelectVehicleSearch from "./pageComponents/SelectVehicle";
@@ -259,6 +260,7 @@ const componentsToRegister = {
   SelectVehicleSearch,
   SelectVendorSearch,
   FSMDriverDashboard: DriverDashboard,
+  FSMSelectLocation,
 };
 
 export const initFSMComponents = () => {

@@ -6,6 +6,8 @@ import { configAcceptDso } from "./AcceptDso";
 import { configScheduleDso } from "./ScheduleDso";
 import { configRejectFstpo } from "./RejectFstpo";
 import { configUpdateTrips } from "./UpdateTrips";
+import { configWorkStart } from "./WorkStart";
+import { configWorkComplete } from "./WorkComplete";
 
 export {
   configAssignDso,
@@ -16,4 +18,6 @@ export {
   configScheduleDso,
   configRejectFstpo,
   configUpdateTrips,
+  configWorkStart,
+  configWorkComplete,
 };

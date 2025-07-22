@@ -33,7 +33,8 @@ export const PTSearch = {
         { title: "PT_PROPERTY_ADDRESS_CITY", value: property?.address?.city },
         {
           title: "PT_PROPERTY_ADDRESS_MOHALLA",
-          value: `${property?.tenantId?.toUpperCase()?.split(".")?.join("_")}_REVENUE_${property?.address?.locality?.code}`,
+          // value: `${property?.tenantId?.toUpperCase()?.split(".")?.join("_")}_REVENUE_${property?.address?.locality?.code}`,
+          value: `${property?.address?.locality?.code}`,
         },
         { title: "PT_PROPERTY_ADDRESS_HOUSE_NO", value: property?.address?.doorNo },
         { title: "PT_PROPERTY_ADDRESS_STREET_NAME", value: property?.address?.street },
@@ -101,7 +102,8 @@ export const PTSearch = {
           { title: "PT_PROPERTY_ADDRESS_CITY", value: response?.address?.city },
           {
             title: "PT_PROPERTY_ADDRESS_MOHALLA",
-            value: `${response?.tenantId?.toUpperCase()?.split(".")?.join("_")}_REVENUE_${response?.address?.locality?.code}`,
+            // value: `${response?.tenantId?.toUpperCase()?.split(".")?.join("_")}_REVENUE_${response?.address?.locality?.code}`,
+            value: `${response?.address?.locality?.code}`,
           },
           { title: "PT_PROPERTY_ADDRESS_STREET_NAME", value: response?.address?.street },
           { title: "PT_PROPERTY_ADDRESS_HOUSE_NO", value: response?.address?.doorNo },

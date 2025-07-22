@@ -18,8 +18,8 @@ const DriverDashboard = () => {
   const [loader, setLoader] = useState(true);
   const [isDsoLoaded, setIsDsoLoaded] = useState(false);
 
-
-  // fetch Status codes for DSO_ACTIONS
+  console.log("tenantId2222 "+tenantId)
+  // fetch Status codes for DRIVER_ACTIONS
 
   const filters = {
     limit:10,
@@ -46,7 +46,7 @@ const DriverDashboard = () => {
     },
   });
 
-  console.log("driverData "+JSON.stringify(driverData));
+  // console.log("driverData "+JSON.stringify(driverData));
   // const { data:vendorDetails, isFetching: vendorDetailsFetching } = Digit.Hooks.fsm.useVendorDetail();
 
   // useEffect(() => {

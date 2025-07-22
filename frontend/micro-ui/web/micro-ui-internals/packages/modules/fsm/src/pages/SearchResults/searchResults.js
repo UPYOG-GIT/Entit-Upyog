@@ -141,7 +141,7 @@ const PropertySearchResults = ({
         addr.doorNo || "",
         addr.buildingName || "",
         addr.street || "",
-        t(`TENANTS_MOHALLA_${addr.locality?.code}`) || "",
+        t(`RMCWD_${addr.locality?.code}`) || "",
         t(addr.tenantId) || "",
       ]
         .filter((a) => a)
