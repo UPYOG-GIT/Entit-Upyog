@@ -400,7 +400,7 @@ public class FSMService {
 				fsmRequest.getRequestInfo().getUserInfo().getTenantId());
 
 		if (isFsmEditor) {
-			dsoOwnerId = fsm.getDsoId();
+			dsoOwnerId = fsm.getDso().getOwnerId();
 		} else {
 			throw new CustomException(FSMErrorConstants.INVALID_VEHICLE_ASSIGN_ACTION,
 					" Only Employee with FSM_EDITOR role and/or assigned DSO can take this action. ");
@@ -417,16 +417,19 @@ public class FSMService {
 		 * vendorSearchCriteria.setIds(Arrays.asList(oldFSM.getDsoId())); } if (null !=
 		 * dsoOwnerId) { vendorSearchCriteria.setOwnerIds(Arrays.asList(dsoOwnerId)); }
 		 */
-
+		log.info("dsoOwnerId "+dsoOwnerId);
 		vendorSearchCriteria.setTenantId(fsm.getTenantId());
 		Vendor vendor = dsoService.getVendor(vendorSearchCriteria, fsmRequest.getRequestInfo());
-
+		
+		
 		if (vendor == null) {
 			throw new CustomException(FSMErrorConstants.INVALID_DSO,
 					" DSO is invalid, cannot take an action, Application is not assigned to current logged in user !");
 		}
+		
+//		log.info("vendor " + vendor.toString());
 		fsm.setDso(vendor);
-		log.info("vendor " + vendor.toString());
+		
 		validateDSOVehicle(fsm, vendor, fsmRequest);
 
 		/**
