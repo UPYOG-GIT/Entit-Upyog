@@ -405,7 +405,7 @@ public class FSMService {
 					" DSO is invalid, cannot take an action, Application is not assigned to current logged in user !");
 		}
 		fsm.setDso(vendor);
-
+		log.info("vendor " + vendor.toString());
 		validateDSOVehicle(fsm, vendor, fsmRequest);
 
 		/**
