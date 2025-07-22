@@ -375,28 +375,49 @@ public class FSMService {
 
 	private void handleDSOAccept(FSMRequest fsmRequest, FSM oldFSM) {
 		FSM fsm = fsmRequest.getFsm();
+
 		org.egov.common.contract.request.User dsoUser = fsmRequest.getRequestInfo().getUserInfo();
 
 		String dsoOwnerId = null;
 
 //		Boolean isDso = util.isRoleAvailale(dsoUser, FSMConstants.ROLE_FSM_DSO,
 //				fsmRequest.getRequestInfo().getUserInfo().getTenantId().split("\\.")[0]);
-		Boolean isDso = util.isRoleAvailale(dsoUser, FSMConstants.ROLE_FSM_DSO,
+		/*
+		 * Boolean isDso = util.isRoleAvailale(dsoUser, FSMConstants.ROLE_FSM_DSO,
+		 * fsmRequest.getRequestInfo().getUserInfo().getTenantId());
+		 */
+
+		/*
+		 * if (isDso) { dsoOwnerId = dsoUser.getUuid(); } else if
+		 * (!util.isRoleAvailale(dsoUser, FSMConstants.FSM_EDITOR_EMP,
+		 * fsmRequest.getRequestInfo().getUserInfo().getTenantId())) { throw new
+		 * CustomException(FSMErrorConstants.INVALID_VEHICLE_ASSIGN_ACTION,
+		 * " Only Employee with FSM_EDITOR role and/or assigned DSO can take this action. "
+		 * ); }
+		 */
+
+		Boolean isFsmEditor = util.isRoleAvailale(dsoUser, FSMConstants.FSM_EDITOR_EMP,
 				fsmRequest.getRequestInfo().getUserInfo().getTenantId());
-		if (isDso) {
-			dsoOwnerId = dsoUser.getUuid();
-		} else if (!util.isRoleAvailale(dsoUser, FSMConstants.FSM_EDITOR_EMP,
-				fsmRequest.getRequestInfo().getUserInfo().getTenantId())) {
+
+		if (isFsmEditor) {
+			dsoOwnerId = fsm.getDsoId();
+		} else {
 			throw new CustomException(FSMErrorConstants.INVALID_VEHICLE_ASSIGN_ACTION,
 					" Only Employee with FSM_EDITOR role and/or assigned DSO can take this action. ");
 		}
+
 		VendorSearchCriteria vendorSearchCriteria = new VendorSearchCriteria();
-		if (null != oldFSM.getDsoId()) {
-			vendorSearchCriteria.setIds(Arrays.asList(oldFSM.getDsoId()));
-		}
+		
 		if (null != dsoOwnerId) {
 			vendorSearchCriteria.setOwnerIds(Arrays.asList(dsoOwnerId));
 		}
+
+		/*
+		 * if (null != oldFSM.getDsoId()) {
+		 * vendorSearchCriteria.setIds(Arrays.asList(oldFSM.getDsoId())); } if (null !=
+		 * dsoOwnerId) { vendorSearchCriteria.setOwnerIds(Arrays.asList(dsoOwnerId)); }
+		 */
+
 		vendorSearchCriteria.setTenantId(fsm.getTenantId());
 		Vendor vendor = dsoService.getVendor(vendorSearchCriteria, fsmRequest.getRequestInfo());
 
