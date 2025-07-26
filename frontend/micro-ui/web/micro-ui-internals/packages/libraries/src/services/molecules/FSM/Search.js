@@ -42,8 +42,9 @@ export const Search = {
     const response = await FSMService.search(tenantId, { ...filters });
     return response.fsm[0];
   },
-
+  
   applicationDetails: async (t, tenantId, applicationNos, userType) => {
+    
     const filter = { applicationNos };
     let dsoDetails = {};
     let vehicle = {};

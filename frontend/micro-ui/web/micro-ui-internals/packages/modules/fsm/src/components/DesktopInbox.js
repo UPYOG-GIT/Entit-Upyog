@@ -10,6 +10,7 @@ import SearchApplication from "./inbox/search";
 const DesktopInbox = (props) => {
   const { t } = useTranslation();
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]) || false;
+  const DRIVER = Digit.UserService.hasAccess(["FSM_DRIVER"]) || false;
   const GetCell = (value) => <span className="cell-text">{value}</span>;
   const FSTP = Digit.UserService.hasAccess("FSM_EMP_FSTPO") || false;
 
@@ -218,7 +219,7 @@ const DesktopInbox = (props) => {
               return (
                 <div>
                   <span className="link">
-                    <Link to={`${props.parentRoute}/${DSO ? "dso-application-details" : "application-details"}/` + row.original["applicationNo"]}>
+                    <Link to={`${props.parentRoute}/${DSO || DRIVER? "dso-application-details" : "application-details"}/` + row.original["applicationNo"]}>
                       {row.original["applicationNo"]}
                     </Link>
                   </span>

@@ -18,7 +18,7 @@ const DriverDashboard = () => {
   const [loader, setLoader] = useState(true);
   const [isDsoLoaded, setIsDsoLoaded] = useState(false);
 
-  console.log("tenantId2222 "+tenantId)
+
   // fetch Status codes for DRIVER_ACTIONS
 
   const filters = {

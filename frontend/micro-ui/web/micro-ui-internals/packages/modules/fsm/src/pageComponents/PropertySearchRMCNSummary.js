@@ -32,7 +32,10 @@ const PropertySearchRMCNSummary = ({ config, onSelect, userType, formData, setEr
   state = state && (typeof state === "string" || state instanceof String) ? JSON.parse(state) : state;
   const isEditScreen = pathname.includes("/modify-application/");
   // const tenantId = Digit.ULBService.getCurrentTenantId();
+  const userInfo = Digit.UserService.getUser();
   const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  
+  // console.log("userInfo "+JSON.stringify(userInfo))
   const isEmpNewApplication = window.location.href.includes("/employee/tl/new-application");
   const isEmpRenewLicense =
     window.location.href.includes("/employee/tl/renew-application-details") || window.location.href.includes("/employee/tl/edit-application-details");
@@ -52,10 +55,10 @@ const PropertySearchRMCNSummary = ({ config, onSelect, userType, formData, setEr
   //   { filters: { propertyIds: searchPropertyId }, tenantId: tenantId, enabled: searchPropertyId ? true : false, privacy : Digit.Utils.getPrivacyObject() }
   // );
   const { isLoading, isError, error, data: propertyDetails } = Digit.Hooks.fsm.useRMCPropertySearch(
-    { filters: searchPropertyId ? { propertyIds: searchPropertyId } : { mobileNumber: searchMobileNumber }, tenantId: tenantId },
+    { filters: searchPropertyId ? { propertyIds: searchPropertyId } : { mobileNumber: searchMobileNumber }, tenantId: userInfo?.info.tenantId },
     {
       filters: searchPropertyId ? { propertyIds: searchPropertyId } : { mobileNumber: searchMobileNumber },
-      tenantId: tenantId,
+      tenantId: userInfo?.info.tenantId,
       enabled: (searchPropertyId ? searchPropertyId : searchMobileNumber) ? true : false,
       privacy: Digit.Utils.getPrivacyObject(),
     }
@@ -104,7 +107,8 @@ const PropertySearchRMCNSummary = ({ config, onSelect, userType, formData, setEr
   let propertyAddress = "";
 
   if (propertyDetails && propertyDetails?.Properties.length) {
-    propertyAddress = getAddress(propertyDetails?.Properties[0]?.address, t);
+    propertyAddress = propertyDetails?.Properties[0]?.address?.ward?.code;
+    // propertyAddress = getAddress(propertyDetails?.Properties[0]?.address, t);
   }
   const getInputStyles = () => {
     if (window.location.href.includes("/ws/")) {

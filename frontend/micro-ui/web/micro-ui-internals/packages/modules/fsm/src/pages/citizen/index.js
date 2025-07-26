@@ -32,13 +32,13 @@ const CitizenApp = ({ path }) => {
           <PrivateRoute
             path={`${path}/inbox`}
             component={() =>
-              Digit.UserService.hasAccess(["FSM_DSO"]) || Digit.UserService.hasAccess(["FSM_DRIVER"]) ? <Inbox parentRoute={path} isInbox={true} /> : <Redirect to="/digit-ui/citizen" />
+              Digit.UserService.hasAccess(["FSM_DSO"]) || Digit.UserService.hasAccess(["FSM_DRIVER"]) ? <Inbox parentRoute={path} isInbox={true} /> : <Redirect to="/digit-ui/citizen/fsm-home" />
             }
           />
           <PrivateRoute
             path={`${path}/search`}
             component={() =>
-              Digit.UserService.hasAccess(["FSM_DSO"]) || Digit.UserService.hasAccess(["FSM_DRIVER"]) ? <Inbox parentRoute={path} isSearch={true} /> : <Redirect to="/digit-ui/citizen" />
+              Digit.UserService.hasAccess(["FSM_DSO"]) || Digit.UserService.hasAccess(["FSM_DRIVER"]) ? <Inbox parentRoute={path} isSearch={true} /> : <Redirect to="/digit-ui/citizen/fsm-home" />
             }
           />
           <PrivateRoute path={`${path}/new-application`} component={() => <NewApplicationCitizen parentRoute={path} />} />
@@ -48,6 +48,10 @@ const CitizenApp = ({ path }) => {
           <PrivateRoute
             path={`${path}/dso-application-details/:id`}
             component={() => <EmployeeApplicationDetails parentRoute={path} userType="DSO" />}
+          />
+          <PrivateRoute
+            path={`${path}/dso-application-details/:id`}
+            component={() => <EmployeeApplicationDetails parentRoute={path} userType="DRIVER" />}
           />
           <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
           <PrivateRoute path={`${path}/rate/:id`} component={() => <SelectRating parentRoute={path} />} />

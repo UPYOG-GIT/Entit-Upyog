@@ -6,10 +6,16 @@ import { useLocation } from "react-router-dom";
 const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
   const allCities = Digit.Hooks.fsm.useTenants();
   let tenantId = Digit.ULBService.getCurrentTenantId();
-
+  // let tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  // let tenantId = Digit.ULBService.getCurrentUlb().code;
+  // console.log("getCurrentUlb "+Digit.ULBService.getCurrentUlb().code)
+  // console.log("formData "+JSON.stringify(formData?.cpt?.details?.address?.ward?.code))
   if (userType !== "employee") {
     tenantId = Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")?.code;
   }
+  const propertyWard = formData?.cpt ? formData?.cpt?.details?.address?.ward?.code : "";
+  const propertyName = formData?.cpt ? formData?.cpt?.details?.address?.ward?.name : "";
+  // console.log("propertyWard "+propertyWard)
   const location = useLocation();
   const isNewVendor = location.pathname.includes("new-vendor");
   const isEditVendor = location.pathname.includes("modify-vendor");
@@ -27,7 +33,6 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       name: "From Gram Panchayat",
     },
   ];
-
   if (formData && formData.address) {
     // Check if propertyLocation does not exist in address
     if (!formData.address.hasOwnProperty("propertyLocation")) {
@@ -37,13 +42,15 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
   }
 
   const { pincode, city } = formData?.address || "";
-  const cities =
-    userType === "employee"
-      ? allCities.filter((city) => city.code === tenantId)
-      : pincode
-      ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
-      : allCities;
-
+  // const cities =
+  //   userType === "employee"
+  //     ? allCities.filter((city) => city.code === tenantId)
+  //     : pincode
+  //     ? allCities.filter((city) => city?.pincode?.some((pin) => pin == pincode))
+  //     : allCities;
+  // const cities = city.code;
+  // const cities = allCities.map(city => city.code)
+  const cities = allCities.filter((city) => city.code === tenantId);
   const [selectedCity, setSelectedCity] = useState(
     () => formData?.address?.city || Digit.SessionStorage.get("fsm.file.address.city") || Digit.SessionStorage.get("CITIZEN.COMMON.HOME.CITY")
   );
@@ -65,7 +72,6 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     },
     t
   );
-
   const { data: urcConfig } = Digit.Hooks.fsm.useMDMS(tenantId, "FSM", "UrcConfig");
   const isUrcEnable = urcConfig && urcConfig.length > 0 && urcConfig[0].URCEnable;
   const [selectLocation, setSelectLocation] = useState(() =>
@@ -83,14 +89,37 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
   const [selectedLocality, setSelectedLocality] = useState();
   const [selectedZone, setSelectedZone] = useState();
   const [selectedWard, setSelectedWard] = useState();
+  const [matchedBlock, setMatchedBlock] = useState();
+  const [matchedZone, setMatchedZone] = useState();
+  useEffect(() => {
+    if (propertyWard && propertyName) {
+      // const matchedBlock = fetchedZone
+      //   .flatMap((zone) => zone.children || []) // collect all block-level items
+      //   .find((block) => block.code === propertyWard); // find block with matching code
+      const matchedZone = fetchedZone.find((zone) => (zone.children || []).some((child) => child.code === propertyWard));
+
+      const matchedBlock = matchedZone ? (matchedZone.children || []).find((child) => child.code === propertyWard) : null;
+
+      setMatchedBlock(matchedBlock);
+      setMatchedZone(matchedZone);
+    }
+  }, [propertyWard, propertyName]);
 
   useEffect(() => {
-  if (fetchedZone){
-    const zone = fetchedZone;
-    setZones(zone);
-  }
+    if (propertyWard && propertyName) {
+      setWards([matchedBlock]);
+      setZones([matchedZone]);
+      // setSelectedWard(matchedBlock);
+    }
+  }, [matchedBlock, matchedZone]);
+  console.log("matchedZone "+JSON.stringify(matchedZone))
+  useEffect(() => {
+    if (fetchedZone) {
+      const zone = fetchedZone;
+      setZones(zone);
+    }
   }, [fetchedZone]);
-  
+
   useEffect(() => {
     if (cities) {
       if (cities.length === 1) {
@@ -166,13 +195,13 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
     }
   }
 
-  function selectZone(zone){
+  function selectZone(zone) {
     setSelectedZone(zone);
     setWards(zone?.children);
     onSelect(config.key, { ...formData[config.key], zone: zone });
   }
   // console.log("wards "+JSON.stringify(wards))
-  function selectWard(ward){
+  function selectWard(ward) {
     setSelectedWard(ward);
     setLocalitiesOption(ward?.children);
     onSelect(config.key, { ...formData[config.key], ward: ward });
@@ -184,7 +213,6 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       onSelect(config.key, { ...formData[config.key], locality: locality });
     }
   }
-
 
   const onNewLocality = (value) => {
     setNewLocality(value);
@@ -226,15 +254,7 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
                 {t("ES_NEW_APPLICATION_LOCATION_ZONE")}
                 {config.isMandatory ? " * " : null}
               </CardLabel>
-              <Dropdown
-                className="form-field"
-                isMandatory
-                selected={selectedZone}
-                option={zones}
-                select={selectZone}
-                optionKey="i18nkey"
-                t={t}
-              />
+              <Dropdown className="form-field" isMandatory selected={selectedZone} option={zones} select={selectZone} optionKey="i18nkey" t={t} />
             </LabelFieldPair>
 
             <LabelFieldPair>
@@ -253,8 +273,6 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
                 t={t}
               />
             </LabelFieldPair>
-
-
 
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">

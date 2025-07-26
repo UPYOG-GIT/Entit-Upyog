@@ -145,7 +145,7 @@ const WrapPaymentComponent = (props) => {
         />
         <CardText>{t("CS_PAYMENT_FAILURE_MESSAGE")}</CardText>
         {business_service !== "PT" ? (
-          <Link to={`/digit-ui/citizen`}>
+          <Link to={`/digit-ui/citizen/fsm-home`}>
             <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
           </Link>
         ) : (
@@ -154,7 +154,7 @@ const WrapPaymentComponent = (props) => {
               <SubmitBar label={t("CS_PAYMENT_TRY_AGAIN")} />
             </Link>
             <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
-              <Link to={`/digit-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
+              <Link to={`/digit-ui/citizen/fsm-home`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
             </div>
           </React.Fragment>
         )}
@@ -428,11 +428,11 @@ const WrapPaymentComponent = (props) => {
       {!(business_service == "TL") && <SubmitBar onSubmit={printReciept} label={t("COMMON_DOWNLOAD_RECEIPT")} />}
       {!(business_service == "TL") && (
         <div className="link" style={isMobile ? { marginTop: "8px", width: "100%", textAlign: "center" } : { marginTop: "8px" }}>
-          <Link to={`/digit-ui/citizen`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
+          <Link to={`/digit-ui/citizen/fsm-home`}>{t("CORE_COMMON_GO_TO_HOME")}</Link>
         </div>
       )}
       {business_service == "TL" && (
-        <Link to={`/digit-ui/citizen`}>
+        <Link to={`/digit-ui/citizen/fsm-home`}>
           <SubmitBar label={t("CORE_COMMON_GO_TO_HOME")} />
         </Link>
       )}

@@ -35,7 +35,6 @@ const EmployeeApp = ({
   }, []);
   sourceUrl = "https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com";
   const pdfUrl = "https://pg-egov-assets.s3.ap-south-1.amazonaws.com/Upyog+Code+and+Copyright+License_v1.pdf"
-
   return (
     <div className="employee">
       <Switch>
@@ -57,7 +56,7 @@ const EmployeeApp = ({
             style={
               isUserProfile
                 ? { padding: 0, paddingTop: "80px", marginLeft: mobileView ? "" : "64px" }
-                : { "--banner-url": `url(${stateInfo?.bannerUrl})` ,padding:"0px"}
+                : { "--banner-url": `url(${stateInfo?.bannerUrl1})` ,padding:"0px"}
             }
           >
             <Switch>

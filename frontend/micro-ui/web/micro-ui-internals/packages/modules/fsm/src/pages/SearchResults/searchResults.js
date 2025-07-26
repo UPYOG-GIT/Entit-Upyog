@@ -7,7 +7,7 @@ import _ from "lodash";
 const TYPE_REGISTER = { type: "register" };
 const TYPE_LOGIN = { type: "login" };
 const DEFAULT_USER = "digit-user";
-const DEFAULT_REDIRECT_URL = "/digit-ui/citizen";
+const DEFAULT_REDIRECT_URL = "/digit-ui/citizen/fsm-home";
 
 const PropertySearchResults = ({
   template,

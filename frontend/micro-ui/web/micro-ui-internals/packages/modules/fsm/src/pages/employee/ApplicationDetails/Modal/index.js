@@ -671,17 +671,12 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
             action,
           })
         );
-      case "WORK_START":
+      case "START_WORK":
         setFormValve(true);
         return setConfig(
           configWorkStart({
             t,
-            vehicle,
-            vehicleCapacity: applicationData?.vehicleCapacity,
-            noOfTrips: applicationData?.noOfTrips,
-            applicationCreatedTime: applicationData?.auditDetails?.createdTime,
             action,
-            module,
           })
         );
       case "WORK_COMPLETED":
@@ -689,12 +684,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         return setConfig(
           configWorkComplete({
             t,
-            vehicle,
-            vehicleCapacity: applicationData?.vehicleCapacity,
-            noOfTrips: applicationData?.noOfTrips,
-            applicationCreatedTime: applicationData?.auditDetails?.createdTime,
             action,
-            module,
           })
         );
       default:

@@ -453,6 +453,7 @@ public class FSMService {
 			ArrayList<String> uuids = new ArrayList<>();
 			uuids.add(fsm.getDriver().getOwner().getUuid());
 			fsmRequest.getWorkflow().setAssignes(uuids);
+			fsmRequest.getFsm().setDriver(fsm.getDriver());
 		}
 	}
 

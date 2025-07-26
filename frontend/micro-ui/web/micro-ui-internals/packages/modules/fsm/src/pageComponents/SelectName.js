@@ -3,15 +3,16 @@ import { LabelFieldPair, CardLabel, TextInput, CardLabelError, Dropdown } from "
 import { useLocation } from "react-router-dom";
 
 const SelectName = ({ t, config, onSelect, formData = {}, userType, register, errors }) => {
-    const stateId = Digit.ULBService.getStateId();
+  const stateId = Digit.ULBService.getStateId();
+  // const userInfo = Digit.UserService.getUser();
   const { data: GenderData, isLoading } = Digit.Hooks.fsm.useMDMS(stateId, "common-masters", "FSMGenderType");
   const { pathname: url } = useLocation();
   const editScreen = url.includes("/modify-application/");
   const [dropdownValue, setDropdownValue] = useState("");
   const [genderTypes, setGenderTypes] = useState([]);
-  const [error, setError]=useState("");
+  const [error, setError] = useState("");
   const inputs = [
-        {
+    {
       label: "ES_NEW_APPLICATION_APPLICANT_NAME",
       type: "text",
       name: "applicantName",
@@ -41,10 +42,10 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
       name: "emailId",
       validation: {
         //isRequired: true,
-        pattern: "/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/",
+        pattern: "/^[a-zA-Z0-9._%+-]+@[a-z.-]+.(com|org|in)$/",
         title: t("CORE_COMMON_EMAIL_ID_INVALID"),
       },
-      isMandatory:false,
+      isMandatory: false,
     },
   ];
 
@@ -54,18 +55,17 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
     }
   }, [GenderData]);
 
-  const setValue=(value, input)=> {
-    if(input==="emailId"){
-      const emailRegex=/^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
-      if(!emailRegex.test(value)){
-        setError(t("CORE_INVALID_EMAIL_ID_PATTERN"))
-      }
-      else{
-        setError("")
+  const setValue = (value, input) => {
+    if (input === "emailId") {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-z.-]+\.(com|org|in)$/;
+      if (!emailRegex.test(value)) {
+        setError(t("CORE_INVALID_EMAIL_ID_PATTERN"));
+      } else {
+        setError("");
       }
     }
     onSelect(config.key, { ...formData[config.key], [input]: value });
-  }
+  };
 
   function selectDropdown(value) {
     setDropdownValue(value);
@@ -76,7 +76,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
     <div>
       {inputs?.map((input, index) => (
         <React.Fragment key={index}>
-                  {input.type === "text" && (
+          {input.type === "text" && (
             <React.Fragment>
               {errors[input.name] && <CardLabelError>{t(input.error)}</CardLabelError>}
               <LabelFieldPair>
@@ -84,7 +84,7 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
                   {t(input.label)}
                   {input.isMandatory ? " * " : null}
                 </CardLabel>
-                <div className="field" style={{display:"flex"}}>
+                <div className="field" style={{ display: "flex" }}>
                   {input.componentInFront ? input.componentInFront : null}
                   <TextInput
                     key={input.name}
@@ -93,14 +93,12 @@ const SelectName = ({ t, config, onSelect, formData = {}, userType, register, er
                     disable={editScreen}
                     {...input.validation}
                   />
-                                  </div>
-                              </LabelFieldPair>
-              {input.name==="emailId" && error && (
-                  <CardLabelError style={{color:"red"}}>{error}</CardLabelError>
-                )}
+                </div>
+              </LabelFieldPair>
+              {input.name === "emailId" && error && <CardLabelError style={{ color: "red" }}>{error}</CardLabelError>}
             </React.Fragment>
           )}
-                    {input.type === "dropdown" && (
+          {input.type === "dropdown" && (
             <LabelFieldPair>
               <CardLabel className="card-label-smaller">
                 {t(input.label)}

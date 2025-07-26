@@ -33,7 +33,11 @@ import { ViewImages } from "../../../components/ViewImages";
 import getPDFData from "../../../getPDFData";
 
 const ApplicationDetails = (props) => {
-  const tenantId = Digit.ULBService.getCurrentTenantId();
+  const userInfo = Digit.UserService.getUser();
+  // const tenantId = Digit.ULBService.getCurrentTenantId();
+  // const tenantId = Digit.ULBService.getCitizenCurrentTenant();
+  const tenantId = userInfo?.info?.tenantId;
+  // console.log("userInfo " + JSON.stringify(userInfo));
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -49,9 +53,9 @@ const ApplicationDetails = (props) => {
   const [viewTimeline, setViewTimeline] = useState(false);
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]) || false;
   const [showOptions, setShowOptions] = useState(false);
-  const [showReceiptOptions, setShowReceiptOptions]=useState(false);
+  const [showReceiptOptions, setShowReceiptOptions] = useState(false);
   const isMobile = window.Digit.Utils.browser.isMobile();
-  const [shownDownloadOptions, setShoowDownloadOptions]=useState(false)
+  const [shownDownloadOptions, setShoowDownloadOptions] = useState(false);
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
 
   const { tenants } = storeData || {};
@@ -79,21 +83,30 @@ const ApplicationDetails = (props) => {
     mutate,
   } = Digit.Hooks.fsm.useApplicationActions(tenantId);
 
+  // const workflowDetails = Digit.Hooks.useWorkflowDetails({
+  //   tenantId: applicationDetails?.tenantId || tenantId,
+  //   id: applicationNumber,
+  //   moduleCode:
+  //     applicationData?.paymentPreference === "POST_PAY"
+  //       ? "FSM_POST_PAY_SERVICE"
+  //       : applicationData?.advanceAmount === 0
+  //         ? "PAY_LATER_SERVICE"
+  //         : applicationData?.advanceAmount > 0
+  //           ? "FSM_ADVANCE_PAY_SERVICE"
+  //           : applicationData?.paymentPreference === null &&
+  //             applicationData?.additionalDetails?.tripAmount === 0 &&
+  //             applicationData?.advanceAmount === null
+  //             ? "FSM_ZERO_PAY_SERVICE"
+  //             : "FSM",
+  //   role: "FSM_EMPLOYEE",
+  //   serviceData: applicationDetails,
+  //   getTripData: true,
+  // });
+
   const workflowDetails = Digit.Hooks.useWorkflowDetails({
     tenantId: applicationDetails?.tenantId || tenantId,
     id: applicationNumber,
-    moduleCode:
-      applicationData?.paymentPreference === "POST_PAY"
-        ? "FSM_POST_PAY_SERVICE"
-        : applicationData?.advanceAmount === 0
-          ? "PAY_LATER_SERVICE"
-          : applicationData?.advanceAmount > 0
-            ? "FSM_ADVANCE_PAY_SERVICE"
-            : applicationData?.paymentPreference === null &&
-              applicationData?.additionalDetails?.tripAmount === 0 &&
-              applicationData?.advanceAmount === null
-              ? "FSM_ZERO_PAY_SERVICE"
-              : "FSM",
+    moduleCode: "FSM",
     role: "FSM_EMPLOYEE",
     serviceData: applicationDetails,
     getTripData: true,
@@ -106,6 +119,7 @@ const ApplicationDetails = (props) => {
   }, [showToast]);
 
   function onActionSelect(action) {
+    console.log("action " + action);
     setSelectedAction(action);
     setDisplayMenu(false);
   }
@@ -128,6 +142,8 @@ const ApplicationDetails = (props) => {
       case "DECLINE":
       case "REASSING":
       case "UPDATE":
+      case "START_WORK":
+      case "WORK_COMPLETED":
         return setShowModal(true);
       case "SUBMIT":
       case "FSM_SUBMIT":
@@ -152,9 +168,9 @@ const ApplicationDetails = (props) => {
   };
 
   const handleViewTimeline = () => {
-    const timelineSection = document.getElementById('timeline');
+    const timelineSection = document.getElementById("timeline");
     if (timelineSection) {
-      timelineSection.scrollIntoView({ behavior: 'smooth' });
+      timelineSection.scrollIntoView({ behavior: "smooth" });
     }
     setViewTimeline(true);
   };
@@ -229,7 +245,9 @@ const ApplicationDetails = (props) => {
       checkpoint.status === "WAITING_FOR_DISPOSAL" ||
       checkpoint.status === "DISPOSAL_IN_PROGRESS" ||
       checkpoint.status === "DISPOSED" ||
-      checkpoint.status === "CITIZEN_FEEDBACK_PENDING"
+      checkpoint.status === "CITIZEN_FEEDBACK_PENDING" ||
+      checkpoint.status === "START_WORK" ||
+      checkpoint.status === "WORK_COMPLETED"
     ) {
       const caption = {
         date: checkpoint?.auditDetails?.created,
@@ -269,7 +287,7 @@ const ApplicationDetails = (props) => {
     }
   };
   const downloadAdvancePaymentReceipt = async () => {
-    const paymemntIndex= paymentsHistory.Payments.length===1  ? 0 : 1;
+    const paymemntIndex = paymentsHistory.Payments.length === 1 ? 0 : 1;
     const receiptFile = {
       filestoreIds: [paymentsHistory.Payments[paymemntIndex]?.fileStoreId],
     };
@@ -294,51 +312,48 @@ const ApplicationDetails = (props) => {
   let dowloadOptions =
     paymentsHistory?.Payments?.length > 0
       ? [
-        {
-          label: t("CS_COMMON_APPLICATION_ACKNOWLEDGEMENT"),
-          onClick: handleDownloadPdf,
-        },
-        {
-          label: t("CS_DOWNLOAD_RECEIPT"),
-          onClick: ()=> {
-            setShowReceiptOptions(true),
-            setShowOptions(false)
-          }
-           
-        },
-      ]
+          {
+            label: t("CS_COMMON_APPLICATION_ACKNOWLEDGEMENT"),
+            onClick: handleDownloadPdf,
+          },
+          {
+            label: t("CS_DOWNLOAD_RECEIPT"),
+            onClick: () => {
+              setShowReceiptOptions(true), setShowOptions(false);
+            },
+          },
+        ]
       : [
-        {
-          label: t("CS_COMMON_APPLICATION_ACKNOWLEDGEMENT"),
-          onClick: handleDownloadPdf,
-        },
-      ];
-      const receiptOptions=paymentsHistory?.Payments.length>1 ? [
-        
-        {
-          label : t("ADVANCE_PAYMENT_RECEIPT"),
-          onClick:downloadAdvancePaymentReceipt
-        },
-        {
-          label : t("FINAL_PAYMENT_RECEIPT"),
-          onClick:downloadFinalPaymentReceipt
-        }
-      
-      
-      ]:
-      [
-        {
-          label : t("ADVANCE_PAYMENT_RECEIPT"),
-          onClick:downloadAdvancePaymentReceipt
-        },
-      ]
+          {
+            label: t("CS_COMMON_APPLICATION_ACKNOWLEDGEMENT"),
+            onClick: handleDownloadPdf,
+          },
+        ];
+  const receiptOptions =
+    paymentsHistory?.Payments.length > 1
+      ? [
+          {
+            label: t("ADVANCE_PAYMENT_RECEIPT"),
+            onClick: downloadAdvancePaymentReceipt,
+          },
+          {
+            label: t("FINAL_PAYMENT_RECEIPT"),
+            onClick: downloadFinalPaymentReceipt,
+          },
+        ]
+      : [
+          {
+            label: t("ADVANCE_PAYMENT_RECEIPT"),
+            onClick: downloadAdvancePaymentReceipt,
+          },
+        ];
 
   if (isLoading) {
     return <Loader />;
   }
   const toggleTimeline = () => {
     setShowAllTimeline((prev) => !prev);
-  }
+  };
 
   // let deepCopy = _.cloneDeep(workflowDetails)
   // let index1 = 0
@@ -353,39 +368,46 @@ const ApplicationDetails = (props) => {
   //   }
   // })
 
-    return (
+  return (
     <React.Fragment>
       {!isLoading ? (
         <React.Fragment>
-        <div className="cardHeaderWithOptions" style={isMobile ? {} : {width:"100%", display:"flex", alignItems:"center"}}>
-        <div  style={{flexGrow:1, textAlign:"left"}}>
-        <Header>{t("CS_FSM_APPLICATION_DETAIL_TITLE_APPLICATION_DETAILS")}</Header>
-        </div>
-        <div style={{display:"flex",flexDirection:"row-reverse",alignItems:"center", marginTop:"-25px", justifyContent:"flex-end",gap:"10px"}}>
-        {dowloadOptions && dowloadOptions.length > 0 && !showReceiptOptions && (
-          <MultiLink
-            className="multilinkWrapper"
-            onHeadClick={() => setShowOptions(!showOptions)}
-            displayOptions={showOptions}
-            options={dowloadOptions}
-          />
-        )}
-        
-          <LinkButton label={t("VIEW_TIMELINE")} style={{ color:"#A52A2A"}} onClick={handleViewTimeline}></LinkButton>
+          <div className="cardHeaderWithOptions" style={isMobile ? {} : { width: "100%", display: "flex", alignItems: "center" }}>
+            <div style={{ flexGrow: 1, textAlign: "left" }}>
+              <Header>{t("CS_FSM_APPLICATION_DETAIL_TITLE_APPLICATION_DETAILS")}</Header>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row-reverse",
+                alignItems: "center",
+                marginTop: "-25px",
+                justifyContent: "flex-end",
+                gap: "10px",
+              }}
+            >
+              {dowloadOptions && dowloadOptions.length > 0 && !showReceiptOptions && (
+                <MultiLink
+                  className="multilinkWrapper"
+                  onHeadClick={() => setShowOptions(!showOptions)}
+                  displayOptions={showOptions}
+                  options={dowloadOptions}
+                />
+              )}
 
-        </div> 
-        <div style={{display:"flex",flexDirection:"row-reverse",alignItems:"center",gap:"10px", marginTop:"-25px", zIndex:"10"}}>
-        {receiptOptions && receiptOptions.length > 0 && showReceiptOptions && (
-          <MultiLink
-            className="multilinkWrapper"
-            onHeadClick={() => setShowReceiptOptions(!showReceiptOptions)}
-            displayOptions={showReceiptOptions}
-            options={receiptOptions}
-            
-          />
-        )}   
-        </div>    
-      </div>
+              <LinkButton label={t("VIEW_TIMELINE")} style={{ color: "#A52A2A" }} onClick={handleViewTimeline}></LinkButton>
+            </div>
+            <div style={{ display: "flex", flexDirection: "row-reverse", alignItems: "center", gap: "10px", marginTop: "-25px", zIndex: "10" }}>
+              {receiptOptions && receiptOptions.length > 0 && showReceiptOptions && (
+                <MultiLink
+                  className="multilinkWrapper"
+                  onHeadClick={() => setShowReceiptOptions(!showReceiptOptions)}
+                  displayOptions={showReceiptOptions}
+                  options={receiptOptions}
+                />
+              )}
+            </div>
+          </div>
           <Card className="fsm" style={{ position: "relative" }}>
             {/* {!DSO && (
               <LinkButton
@@ -460,23 +482,24 @@ const ApplicationDetails = (props) => {
                   ) : (
                     <ConnectingCheckPoints>
                       {workflowDetails?.data?.timeline &&
-                        workflowDetails?.data?.timeline.slice(0, showAllTimeline ? workflowDetails.data.timeline.length : 2).map((checkpoint, index, arr) => {
-                          return (
-                            <React.Fragment key={index}>
-                              <CheckPoint
-                                keyValue={index}
-                                isCompleted={index === 0}
-                                label={t("CS_COMMON_FSM_" + `${checkpoint.performedAction === "UPDATE" ? "UPDATE_" : ""}` + checkpoint.status)}
-                                customChild={getTimelineCaptions(checkpoint)}
-                              />
-                            </React.Fragment>
-                          );
-                        })}
+                        workflowDetails?.data?.timeline
+                          .slice(0, showAllTimeline ? workflowDetails.data.timeline.length : 2)
+                          .map((checkpoint, index, arr) => {
+                            return (
+                              <React.Fragment key={index}>
+                                <CheckPoint
+                                  keyValue={index}
+                                  isCompleted={index === 0}
+                                  label={t("CS_COMMON_FSM_" + `${checkpoint.performedAction === "UPDATE" ? "UPDATE_" : ""}` + checkpoint.status)}
+                                  customChild={getTimelineCaptions(checkpoint)}
+                                />
+                              </React.Fragment>
+                            );
+                          })}
                     </ConnectingCheckPoints>
                   )}
                   {workflowDetails?.data?.timeline?.length > 2 && (
-                    <LinkButton label={showAllTimeline ? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}>
-                    </LinkButton>
+                    <LinkButton label={showAllTimeline ? t("COLLAPSE") : t("VIEW_TIMELINE")} onClick={toggleTimeline}></LinkButton>
                   )}
                 </div>
               </Fragment>
@@ -503,14 +526,16 @@ const ApplicationDetails = (props) => {
               onClose={closeToast}
             />
           )}
-          {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length === 1 && workflowDetails?.data?.nextActions?.[0]?.action !== "RATE" && (
-            <ActionBar style={{ zIndex: "19" }}>
-              <SubmitBar
-                label={t(`ES_FSM_${workflowDetails?.data?.nextActions[0].action}`)}
-                onSubmit={() => onActionSelect(workflowDetails?.data?.nextActions[0].action)}
-              />
-            </ActionBar>
-          )}
+          {!workflowDetails?.isLoading &&
+            workflowDetails?.data?.nextActions?.length === 1 &&
+            workflowDetails?.data?.nextActions?.[0]?.action !== "RATE" && (
+              <ActionBar style={{ zIndex: "19" }}>
+                <SubmitBar
+                  label={t(`ES_FSM_${workflowDetails?.data?.nextActions[0].action}`)}
+                  onSubmit={() => onActionSelect(workflowDetails?.data?.nextActions[0].action)}
+                />
+              </ActionBar>
+            )}
           {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 1 && (
             <ActionBar style={{ zIndex: "19" }}>
               {displayMenu && workflowDetails?.data?.nextActions ? (

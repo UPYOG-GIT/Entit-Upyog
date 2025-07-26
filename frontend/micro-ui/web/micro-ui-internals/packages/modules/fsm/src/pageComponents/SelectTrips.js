@@ -53,7 +53,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
         title: t("ES_NEW_APPLICATION_NO_OF_TRIPS_INVALID"),
       },
       default: formData?.tripData?.noOfTrips,
-      disable: false,
+      disable: true,
       isMandatory: true,
     },
     {
@@ -73,7 +73,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
   ];
 
   function setTripNum(value) {
-    onSelect(config.key, { ...formData[config.key], noOfTrips: value });
+    onSelect(config.key, { ...formData[config.key], noOfTrips: 1 });
   }
 
   function selectVehicle(value) {
@@ -168,6 +168,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
               style={{ ...styles, ...FSMTextFieldStyle }}
               onChange={(e) => setValue(e.target.value, input.name)}
               key={input.name}
+              
               value={formData && formData[config.key] ? formData[config.key][input.name] : null}
               {...input.validation}
               disable={input.disable}
