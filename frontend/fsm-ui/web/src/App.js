@@ -1,6 +1,6 @@
 import React from 'react';
 
-// import { initPGRComponents, PGRReducers } from "@upyog/digit-ui-module-pgr";
+import { initPGRComponents, PGRReducers } from "@upyog/digit-ui-module-pgr";
 import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
 import { PTModule, PTLinks, PTComponents } from "@upyog/digit-ui-module-pt";
 // import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
@@ -40,7 +40,7 @@ window.Digit.ComponentRegistryService.setupRegistry({
 // initPGRComponents();
 // initFSMComponents();
 // initDSSComponents();
-initMCollectComponents();
+// initMCollectComponents();
 initHRMSComponents()
 // initTLComponents();
 initReceiptsComponents();
@@ -51,9 +51,9 @@ initReceiptsComponents();
 initCommonPTComponents();
 initCustomisationComponents();
 
-// const moduleReducers = (initData) => ({
-//   pgr: PGRReducers(initData),
-// });
+const moduleReducers = (initData) => ({
+  pgr: PGRReducers(initData),
+});
 
 function App() {
   const stateCode = window.globalConfigs?.getConfig("STATE_LEVEL_TENANT_ID") || process.env.REACT_APP_STATE_LEVEL_TENANT_ID;
