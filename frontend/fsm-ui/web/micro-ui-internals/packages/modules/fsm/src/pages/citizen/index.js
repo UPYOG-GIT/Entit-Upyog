@@ -1,0 +1,68 @@
+import { BackButton, PrivateRoute } from "@upyog/digit-ui-react-components";
+import React from "react";
+import { useTranslation } from "react-i18next";
+import { Redirect, Switch, useLocation } from "react-router-dom";
+
+const CitizenApp = ({ path }) => {
+  const location = useLocation();
+  const { t } = useTranslation();
+  let isCommonPTPropertyScreen = window.location.href.includes("/ws/create-application/property-details");
+  let isAcknowledgement = window.location.href.includes("/acknowledgement") || window.location.href.includes("/disconnect-acknowledge");
+  const NewApplicationCitizen = Digit.ComponentRegistryService.getComponent("FSMNewApplicationCitizen");
+  const RMCSearchProperty = Digit.ComponentRegistryService.getComponent("CPTRMCSearchProperty");
+  const MyApplications = Digit.ComponentRegistryService.getComponent("FSMMyApplications");
+  const EmployeeApplicationDetails = Digit.ComponentRegistryService.getComponent("FSMEmployeeApplicationDetails");
+  const ApplicationDetails = Digit.ComponentRegistryService.getComponent("FSMCitizenApplicationDetails");
+  const SelectRating = Digit.ComponentRegistryService.getComponent("FSMSelectRating");
+  const RateView = Digit.ComponentRegistryService.getComponent("FSMRateView");
+  const Response = Digit.ComponentRegistryService.getComponent("FSMResponse");
+  const DsoDashboard = Digit.ComponentRegistryService.getComponent("FSMDsoDashboard");
+  const Inbox = Digit.ComponentRegistryService.getComponent("FSMEmpInbox");
+  const DriverDashboard = Digit.ComponentRegistryService.getComponent("FSMDriverDashboard");
+
+  return (
+    <React.Fragment>
+      <div className="fsm-citizen-wrapper">
+        {location.pathname.includes("/response") || location.pathname.split("/").includes("check") ? null : location.pathname.includes("/street") ? (
+          <BackButton getBackPageNumber={() => -4}>{t("CS_COMMON_BACK")}</BackButton>
+        ) : (
+          <BackButton>{t("CS_COMMON_BACK")}</BackButton>
+        )}
+        <Switch>
+          <PrivateRoute
+            path={`${path}/inbox`}
+            component={() =>
+              Digit.UserService.hasAccess(["FSM_DSO"]) || Digit.UserService.hasAccess(["FSM_DRIVER"]) ? <Inbox parentRoute={path} isInbox={true} /> : <Redirect to="/fsm-ui/citizen/fsm-home" />
+            }
+          />
+          <PrivateRoute
+            path={`${path}/search`}
+            component={() =>
+              Digit.UserService.hasAccess(["FSM_DSO"]) || Digit.UserService.hasAccess(["FSM_DRIVER"]) ? <Inbox parentRoute={path} isSearch={true} /> : <Redirect to="/fsm-ui/citizen/fsm-home" />
+            }
+          />
+          <PrivateRoute path={`${path}/new-application`} component={() => <NewApplicationCitizen parentRoute={path} />} />
+          {/* <PrivateRoute path={`${path}/search-property`} component={() => <RMCSearchProperty parentRoute={path} />} /> */}
+          {/* <PrivateRoute path={`${path}/search-property`} component={() => <RMCSearchProperty onSelect={''} />} /> */}
+          <PrivateRoute path={`${path}/my-applications`} component={MyApplications} />
+          <PrivateRoute
+            path={`${path}/dso-application-details/:id`}
+            component={() => <EmployeeApplicationDetails parentRoute={path} userType="DSO" />}
+          />
+          <PrivateRoute
+            path={`${path}/dso-application-details/:id`}
+            component={() => <EmployeeApplicationDetails parentRoute={path} userType="DRIVER" />}
+          />
+          <PrivateRoute path={`${path}/application-details/:id`} component={() => <ApplicationDetails parentRoute={path} />} />
+          <PrivateRoute path={`${path}/rate/:id`} component={() => <SelectRating parentRoute={path} />} />
+          <PrivateRoute path={`${path}/rate-view/:id`} component={() => <RateView parentRoute={path} />} />
+          <PrivateRoute path={`${path}/response`} component={(props) => <Response parentRoute={path} {...props} />} />
+          <PrivateRoute path={`${path}/dso-dashboard`} component={() => <DsoDashboard parentRoute={path} />} />
+          <PrivateRoute path={`${path}/driver-dashboard`} component={() => <DriverDashboard parentRoute={path} />} />
+        </Switch>
+      </div>
+    </React.Fragment>
+  );
+};
+
+export default CitizenApp;

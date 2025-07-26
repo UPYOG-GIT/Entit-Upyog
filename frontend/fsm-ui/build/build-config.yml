@@ -1,0 +1,24 @@
+#
+# config:
+# -   name: < Name of the job, foo/bar would create job named bar inside folder foo >
+#     build:
+#     - work-dir: < Working directory of the app to be built >
+#       dockerfile: < Path to the dockerfile, optional, assumes dockerfile in working directory if not provided >
+#       image-name: < Docker image name  >
+# -
+# -
+
+config:
+-   name: builds/fsm-ui
+    build:
+      - work-dir: frontend/micro-ui/web/
+      dockerfile: web/docker/Dockerfile
+      image-name: fsm-ui
+
+
+# config:
+# -   name: builds/citizen
+#     build:
+#       - work-dir: frontend/micro-ui/web/
+#       dockerfile: web/docker/Dockerfile
+#       image-name: citizen
