@@ -3,50 +3,51 @@ import React from 'react';
 import { initPGRComponents, PGRReducers } from "@upyog/digit-ui-module-pgr";
 import { initFSMComponents } from "@upyog/digit-ui-module-fsm";
 import { PTModule, PTLinks, PTComponents } from "@upyog/digit-ui-module-pt";
-// import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
-// import { initDSSComponents } from "@upyog/digit-ui-module-dss";
+import { MCollectModule, MCollectLinks, initMCollectComponents } from "@upyog/digit-ui-module-mcollect";
+import { initDSSComponents } from "@upyog/digit-ui-module-dss";
 import { PaymentModule, PaymentLinks, paymentConfigs } from "@upyog/digit-ui-module-common";
 import { DigitUI } from "@upyog/digit-ui-module-core";
 import { initLibraries } from "@upyog/digit-ui-libraries";
 import { HRMSModule ,initHRMSComponents  } from "@upyog/digit-ui-module-hrms";
-// import { TLModule, TLLinks,initTLComponents } from "@upyog/digit-ui-module-tl";
+import { TLModule, TLLinks,initTLComponents } from "@upyog/digit-ui-module-tl";
 import { initReceiptsComponents, ReceiptsModule } from "@upyog/digit-ui-module-receipts";
-// import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
-// import { initNOCComponents } from "@upyog/digit-ui-module-noc";
-// import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
+import { initOBPSComponents } from "@upyog/digit-ui-module-obps";
+import { initNOCComponents } from "@upyog/digit-ui-module-noc";
+import { initEngagementComponents } from "@upyog/digit-ui-module-engagement";
 // import { initWSComponents } from "@upyog/digit-ui-module-ws"; 
 import {initCustomisationComponents} from "./Customisations";
 import { initCommonPTComponents } from "@upyog/digit-ui-module-commonpt";
 
 initLibraries();
 //"WS" removed the ws enabledModules ;
-const enabledModules = ["FSM", "Payment", "PT", "QuickPayLinks","HRMS", "TL","Receipts" , "CommonPT"];
+// const enabledModules = ["FSM", "Payment", "PT", "QuickPayLinks","HRMS", "TL","Receipts" , "CommonPT"];
+const enabledModules = ["PGR", "FSM", "Payment", "PT", "QuickPayLinks", "DSS", "MCollect", "HRMS", "TL", "Receipts", "OBPS", "Engagement", "NOC", "WS","CommonPT", "NDSS"];
 window.Digit.ComponentRegistryService.setupRegistry({
-  // ...paymentConfigs,
+  ...paymentConfigs,
   PTModule,
   PTLinks,
   PaymentModule,
   PaymentLinks,
   ...PTComponents,
-  // MCollectLinks,
-  // MCollectModule,
+  MCollectLinks,
+  MCollectModule,
   HRMSModule,
-  // TLModule,
-  // TLLinks,
+  TLModule,
+  TLLinks,
   ReceiptsModule
 });
 
 
-// initPGRComponents();
-// initFSMComponents();
-// initDSSComponents();
-// initMCollectComponents();
+initPGRComponents();
+initFSMComponents();
+initDSSComponents();
+initMCollectComponents();
 initHRMSComponents()
-// initTLComponents();
+initTLComponents();
 initReceiptsComponents();
-// initOBPSComponents();
-// initNOCComponents();
-// initEngagementComponents();
+initOBPSComponents();
+initNOCComponents();
+initEngagementComponents();
 // initWSComponents();
 initCommonPTComponents();
 initCustomisationComponents();
