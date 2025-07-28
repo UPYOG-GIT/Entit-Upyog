@@ -11,7 +11,7 @@
 config:
 -   name: builds/fsm-ui
     build:
-      - work-dir: frontend/micro-ui/web/
+      - work-dir: frontend/fsm-ui/web/
       dockerfile: web/docker/Dockerfile
       image-name: fsm-ui
 

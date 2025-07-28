@@ -477,7 +477,7 @@ const Home = ({
             ? {
                 // backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/background_pic1.png")`, width: '100%', backgroundRepeat: 'no-repeat', height: 'auto'
                 // backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/banner1.png")`,
-                backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/fsm_banner.png")`,
+                backgroundImage: `url("https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/fsm_login_bg.png")`,
                 width: "100%",
                 backgroundRepeat: "no-repeat",
                 backgroundSize: "cover",
