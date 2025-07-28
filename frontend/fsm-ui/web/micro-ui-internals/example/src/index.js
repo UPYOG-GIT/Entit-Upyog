@@ -33,7 +33,7 @@ import "@entit/digit-ui-css/example/index.css";
 
 // import { subFormRegistry } from "@upyog/digit-ui-libraries";
 
-// import { pgrCustomizations, pgrComponents } from "./pgr";
+import { pgrCustomizations, pgrComponents } from "./pgr";
 
 
 var Digit = window.Digit || {};
