@@ -403,13 +403,11 @@ public class UserService {
 
 		HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(formData, headers);
 		
-		String url = config.getUserAuthUrl();
-		StringBuilder uri = new StringBuilder(url);
+//		String url = config.getUserAuthUrl();
+		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserAuthUrl());
 		
-		String dobFormat = null;
 		try {
 			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, requestEntity);
-			parseResponse(responseMap, dobFormat);
 			return mapper.convertValue(responseMap, UserResponseApp.class);
 		} catch (IllegalArgumentException e) {
 			throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
