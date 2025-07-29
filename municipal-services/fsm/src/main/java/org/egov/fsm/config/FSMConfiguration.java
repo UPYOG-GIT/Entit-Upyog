@@ -36,6 +36,12 @@ public class FSMConfiguration {
 
 		@Value("${egov.user.create.path}")
 		private String userCreateEndpoint;
+		
+		@Value("${egov.user.create.fsm.path}")
+		private String userCreateFsmEndpoint;
+		
+		@Value("${egov.user.auth.url}")
+		private String userAuthUrl;
 
 		@Value("${egov.user.search.path}")
 		private String userSearchEndpoint;

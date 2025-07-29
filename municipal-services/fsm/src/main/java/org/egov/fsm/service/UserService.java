@@ -23,11 +23,17 @@ import org.egov.fsm.web.model.FSMSearchCriteria;
 import org.egov.fsm.web.model.user.CreateUserRequest;
 import org.egov.fsm.web.model.user.User;
 import org.egov.fsm.web.model.user.UserDetailResponse;
+import org.egov.fsm.web.model.user.UserResponseApp;
 import org.egov.fsm.web.model.user.UserSearchRequest;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -86,15 +92,13 @@ public class UserService {
 					// create new user
 
 					if (!foundUser) {
-						applicantDetailResponse = createApplicant(applicant, fsmRequest.getRequestInfo(),
-								Boolean.TRUE);
+						applicantDetailResponse = createApplicant(applicant, fsmRequest.getRequestInfo(), Boolean.TRUE);
 						applicant = applicantDetailResponse.getUser().get(0);
 
 					}
 
 				} else {
-					applicantDetailResponse = createApplicant(applicant, fsmRequest.getRequestInfo(),
-							Boolean.TRUE);
+					applicantDetailResponse = createApplicant(applicant, fsmRequest.getRequestInfo(), Boolean.TRUE);
 					applicant = applicantDetailResponse.getUser().get(0);
 				}
 				/*
@@ -320,8 +324,7 @@ public class UserService {
 			userSearchRequest.setUuid(criteria.getOwnerIds());
 		return userSearchRequest;
 	}
-	
-	
+
 	public UserDetailResponse getUserSearch(String uuid, String tenantId, RequestInfo requestInfo) {
 		UserSearchRequest userSearchRequest = getUserSearchRequest1(uuid, tenantId, requestInfo);
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
@@ -338,7 +341,7 @@ public class UserService {
 	private UserSearchRequest getUserSearchRequest1(String uuid, String tenantId, RequestInfo requestInfo) {
 		List<String> uuidList = new ArrayList<>();
 		uuidList.add(uuid);
-		
+
 		UserSearchRequest userSearchRequest = new UserSearchRequest();
 		userSearchRequest.setRequestInfo(requestInfo);
 		userSearchRequest.setUuid(uuidList);
@@ -348,4 +351,68 @@ public class UserService {
 		return userSearchRequest;
 	}
 
+	public UserResponseApp userSearchApp(String tenantId, String mobileNumber) {
+		UserDetailResponse userDetailResponse = null;
+		UserResponseApp userResponseApp = null;
+		UserSearchRequest userSearchRequest = new UserSearchRequest();
+		userSearchRequest.setTenantId(tenantId);
+		userSearchRequest.setMobileNumber(mobileNumber);
+		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserSearchEndpoint());
+		userDetailResponse = userCall(userSearchRequest, uri);
+		if (userDetailResponse == null || userDetailResponse.getUser().isEmpty()) {
+			userDetailResponse = createUserNoValidate(tenantId, mobileNumber);
+		}
+
+		if (userDetailResponse != null || !userDetailResponse.getUser().isEmpty()) {
+			userResponseApp = otpValidateAndAuthGenerate(tenantId, mobileNumber);
+		}
+
+		return userResponseApp;
+	}
+
+	private UserDetailResponse createUserNoValidate(String tenantId, String mobileNumber) {
+		Role role = getCitizenRole();
+		User user = new User();
+		user.setTenantId(tenantId);
+		user.setMobileNumber(mobileNumber);
+		user.setName(mobileNumber);
+		addUserDefaultFields(user.getTenantId(), role, user);
+		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserContextPath())
+				.append(config.getUserCreateFsmEndpoint());
+		setUserName(user);
+		user.setType(FSMConstants.CITIZEN);
+		RequestInfo requestInfo = new RequestInfo();
+		requestInfo.setApiId("Rainmaker");
+		UserDetailResponse userDetailResponse = userCall(new CreateUserRequest(requestInfo, user), uri);
+		log.debug("owner created --> " + userDetailResponse.getUser().get(0).getUuid());
+		return userDetailResponse;
+	}
+	
+	public UserResponseApp otpValidateAndAuthGenerate(String tenantId, String mobileNumber) {
+		
+		MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+		formData.add("tenantId", tenantId);
+		formData.add("username", mobileNumber);
+		formData.add("password", "123456"); // or your actual name
+		formData.add("userType", FSMConstants.CITIZEN);
+		formData.add("scope", "read");
+		formData.add("grant_type", "password");
+		
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+		HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(formData, headers);
+		
+		String url = config.getUserAuthUrl();
+		StringBuilder uri = new StringBuilder(url);
+		
+		String dobFormat = null;
+		try {
+			LinkedHashMap responseMap = (LinkedHashMap) serviceRequestRepository.fetchResult(uri, requestEntity);
+			parseResponse(responseMap, dobFormat);
+			return mapper.convertValue(responseMap, UserResponseApp.class);
+		} catch (IllegalArgumentException e) {
+			throw new CustomException("IllegalArgumentException", "ObjectMapper not able to convertValue in userCall");
+		}
+	}
 }

@@ -41,6 +41,7 @@ import org.egov.fsm.web.model.dso.Vendor;
 import org.egov.fsm.web.model.dso.VendorSearchCriteria;
 import org.egov.fsm.web.model.user.User;
 import org.egov.fsm.web.model.user.UserDetailResponse;
+import org.egov.fsm.web.model.user.UserResponseApp;
 import org.egov.fsm.web.model.vehicle.Vehicle;
 import org.egov.fsm.web.model.vehicle.trip.VehicleTrip;
 import org.egov.fsm.web.model.worker.Worker;
@@ -407,7 +408,7 @@ public class FSMService {
 		}
 
 		VendorSearchCriteria vendorSearchCriteria = new VendorSearchCriteria();
-		
+
 		if (null != dsoOwnerId) {
 			vendorSearchCriteria.setOwnerIds(Arrays.asList(dsoOwnerId));
 		}
@@ -417,19 +418,18 @@ public class FSMService {
 		 * vendorSearchCriteria.setIds(Arrays.asList(oldFSM.getDsoId())); } if (null !=
 		 * dsoOwnerId) { vendorSearchCriteria.setOwnerIds(Arrays.asList(dsoOwnerId)); }
 		 */
-		log.info("dsoOwnerId "+dsoOwnerId);
+		log.info("dsoOwnerId " + dsoOwnerId);
 		vendorSearchCriteria.setTenantId(fsm.getTenantId());
 		Vendor vendor = dsoService.getVendor(vendorSearchCriteria, fsmRequest.getRequestInfo());
-		
-		
+
 		if (vendor == null) {
 			throw new CustomException(FSMErrorConstants.INVALID_DSO,
 					" DSO is invalid, cannot take an action, Application is not assigned to current logged in user !");
 		}
-		
+
 //		log.info("vendor " + vendor.toString());
 		fsm.setDso(vendor);
-		
+
 		validateDSOVehicle(fsm, vendor, fsmRequest);
 
 		/**
@@ -919,6 +919,12 @@ public class FSMService {
 					fsmRequest.getRequestInfo().getUserInfo().getTenantId());
 		}
 		return isDsoOrEditorAccess;
+	}
+
+	public UserResponseApp citizenValidateAndAuthGenerateForApp(String tenantId, String mobileNumber) {
+		UserResponseApp userResponse = userService.userSearchApp(tenantId, mobileNumber);
+		return userResponse;
+		
 	}
 
 }

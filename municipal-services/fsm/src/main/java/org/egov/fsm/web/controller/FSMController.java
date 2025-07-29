@@ -6,6 +6,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import org.egov.fsm.service.FSMService;
+import org.egov.fsm.service.UserService;
 import org.egov.fsm.util.FSMUtil;
 import org.egov.fsm.util.ResponseInfoFactory;
 import org.egov.fsm.web.model.FSM;
@@ -18,10 +19,10 @@ import org.egov.fsm.web.model.FSMSearchCriteria;
 import org.egov.fsm.web.model.PeriodicApplicationRequest;
 import org.egov.fsm.web.model.PeriodicApplicationResponse;
 import org.egov.fsm.web.model.RequestInfoWrapper;
+import org.egov.fsm.web.model.user.UserResponseApp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -43,7 +44,6 @@ public class FSMController {
 
 	@Autowired
 	private ResponseInfoFactory responseInfoFactory;
-
 
 	@PostMapping(value = "/_create")
 	public ResponseEntity<FSMResponse> create(@Valid @RequestBody FSMRequest fsmRequest) {
@@ -82,7 +82,6 @@ public class FSMController {
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	
 
 	@PostMapping(value = "/_audit")
 	public ResponseEntity<FSMAuditResponse> audit(@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
@@ -138,6 +137,15 @@ public class FSMController {
 						.createResponseInfoFromRequestInfo(periodicApplicationRequest.getRequestInfo(), true))
 				.build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
+
+	}
+
+	@PostMapping(value = "/_validateuserapp")
+	public ResponseEntity<UserResponseApp> citizenValidateAndAuthGenerateForApp(@RequestParam String tenantId,
+			@RequestParam String mobileNumber) {
+
+		UserResponseApp userResponseApp = fsmService.citizenValidateAndAuthGenerateForApp(tenantId, mobileNumber);
+		return new ResponseEntity<>(userResponseApp, HttpStatus.OK);
 
 	}
 
