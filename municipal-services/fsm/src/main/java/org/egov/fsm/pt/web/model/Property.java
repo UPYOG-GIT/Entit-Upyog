@@ -3,6 +3,7 @@ package org.egov.fsm.pt.web.model;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Digits;
@@ -60,9 +61,9 @@ public class Property extends PropertyInfo {
 	private Institution institution;
 
 	@JsonProperty("creationReason")
-	@NotNull(message="The value provided is either Invald or null")
+	@NotNull(message = "The value provided is either Invald or null")
 	private CreationReason creationReason;
-	
+
 	@JsonProperty("usageCategory")
 	@SafeHtml
 	private String usageCategory;
@@ -96,27 +97,30 @@ public class Property extends PropertyInfo {
 
 	@JsonProperty("dueAmount")
 	private String dueAmount;
-	
+
 	@JsonProperty("dueAmountYear")
 	private String dueAmountYear;
-	
+
 	@DiffIgnore
 	@JsonProperty("additionalDetails")
 	private JsonNode additionalDetails;
-	
+
 	@JsonProperty("auditDetails")
 	private AuditDetails auditDetails;
 
 	@JsonProperty("workflow")
 	@DiffIgnore
 	private ProcessInstance workflow;
-	
+
 	@JsonProperty("AlternateUpdated")
 	private boolean AlternateUpdated;
 
 	@Builder.Default
 	@JsonProperty("isOldDataEncryptionRequest")
 	private boolean isOldDataEncryptionRequest = false;
+
+	@JsonProperty("localityList")
+	private List<Map<String, Object>> localityList;
 
 	public Property(String id, String propertyId, String surveyId, List<String> linkedProperties, String tenantId,
 			String accountId, String oldPropertyId, Status status, Address address, String acknowldgementNumber,
@@ -153,7 +157,7 @@ public class Property extends PropertyInfo {
 			this.owners.add(ownersItem);
 		return this;
 	}
-	
+
 	public Property addUnitsItem(Unit unit) {
 		if (this.units == null) {
 			this.units = new ArrayList<>();
