@@ -165,7 +165,7 @@ public class PropertyService {
 	}
 
 	private Map<String, Object> locationZoneSearchFromMdms(String tenantId, String wardCode) {
-		String url = "/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Zone&tenantId="
+		String url = "http://localhost:8091/egov-location/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Zone&tenantId="
 				+ tenantId;
 		Map<String, Object> response = restTemplate.getForObject(url, Map.class);
 		List<Map<String, Object>> boundaryList = ((List<Map<String, Object>>) response.get("TenantBoundary")).stream()
