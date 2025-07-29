@@ -400,7 +400,8 @@ public class UserService {
 		
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
+//		headers.setBasicAuth("ZWdvdi11c2VyLWNsaWVudDo=");
+		headers.set("authorization", "Basic ZWdvdi11c2VyLWNsaWVudDo=");
 		HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(formData, headers);
 		
 //		String url = config.getUserAuthUrl();
