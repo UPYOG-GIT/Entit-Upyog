@@ -371,15 +371,18 @@ public class UserService {
 	}
 
 	private UserDetailResponse createUserNoValidate(String tenantId, String mobileNumber) {
+		String uuid = UUID.randomUUID().toString();
 		Role role = getCitizenRole();
 		User user = new User();
 		user.setTenantId(tenantId);
 		user.setMobileNumber(mobileNumber);
 		user.setName(mobileNumber);
+		user.setUserName(mobileNumber);
+		user.setUuid(uuid);
 		addUserDefaultFields(user.getTenantId(), role, user);
 		StringBuilder uri = new StringBuilder(config.getUserHost()).append(config.getUserContextPath())
 				.append(config.getUserCreateFsmEndpoint());
-		setUserName(user);
+//		setUserName(user);
 		user.setType(FSMConstants.CITIZEN);
 		RequestInfo requestInfo = new RequestInfo();
 		requestInfo.setApiId("Rainmaker");
