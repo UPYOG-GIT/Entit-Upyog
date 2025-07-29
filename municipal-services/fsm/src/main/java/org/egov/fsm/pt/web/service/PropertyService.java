@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.egov.fsm.config.FSMConfiguration;
 import org.egov.fsm.pt.web.enums.Channel;
 import org.egov.fsm.pt.web.enums.Source;
 import org.egov.fsm.pt.web.enums.Status;
@@ -31,6 +32,9 @@ public class PropertyService {
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
+	@Autowired
+	private FSMConfiguration config;
 
 	public List<Property> getPropertiesById(PropertyCriteria criteria) throws Exception {
 
@@ -165,9 +169,18 @@ public class PropertyService {
 	}
 
 	private Map<String, Object> locationZoneSearchFromMdms(String tenantId, String wardCode) {
-		String url = "http://egov-location:8080/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Zone&tenantId="
-				+ tenantId;
-		Map<String, Object> response = restTemplate.getForObject(url, Map.class);
+		
+		StringBuilder uri = new StringBuilder(config.getLocationHost());
+		uri.append(config.getLocationContextPath()).append(config.getLocationEndpoint());
+		uri.append("?").append("tenantId=").append(tenantId);
+		uri.append("&").append("hierarchyTypeCode=").append("REVENUE");
+		uri.append("&").append("boundaryType=").append("Zone");
+		
+		
+//		String url = "http://egov-location:8080/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Zone&tenantId="
+//				+ tenantId;
+		
+		Map<String, Object> response = restTemplate.getForObject(uri.toString(), Map.class);
 		List<Map<String, Object>> boundaryList = ((List<Map<String, Object>>) response.get("TenantBoundary")).stream()
 				.flatMap(tenantBoundary -> ((List<Map<String, Object>>) tenantBoundary.get("boundary")).stream())
 				.collect(Collectors.toList());
