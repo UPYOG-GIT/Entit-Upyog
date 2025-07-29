@@ -32,7 +32,7 @@ public class PropertyService {
 
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
 	@Autowired
 	private FSMConfiguration config;
 
@@ -153,8 +153,7 @@ public class PropertyService {
 //					.auditDetails(auditdetails)
 				.landArea(landArea).address(address).propertyId(propertyDetails.get("PROP_UID").toString())
 				.tenantId("cg.raipur").status(Status.fromValue("ACTIVE"))
-				.dueAmount(propertyDetails.get("DUE_AMOUNT").toString())
-				.localityList(localityList).build();
+				.dueAmount(propertyDetails.get("DUE_AMOUNT").toString()).localityList(localityList).build();
 
 		OwnerInfo owner = OwnerInfo.builder().status(Status.fromValue("ACTIVE")).tenantId("cg.raipur")
 				.mobileNumber(propertyDetails.get("MOBILE").toString())
@@ -169,18 +168,17 @@ public class PropertyService {
 	}
 
 	private Map<String, Object> locationZoneSearchFromMdms(String tenantId, String wardCode) {
-		
+
 		StringBuilder uri = new StringBuilder(config.getLocationHost());
 		uri.append(config.getLocationContextPath()).append(config.getLocationEndpoint());
 		uri.append("?").append("tenantId=").append(tenantId);
 		uri.append("&").append("hierarchyTypeCode=").append("REVENUE");
 		uri.append("&").append("boundaryType=").append("Zone");
-		
-		
+
 //		String url = "http://egov-location:8080/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Zone&tenantId="
 //				+ tenantId;
-		
-		Map<String, Object> response = restTemplate.getForObject(uri.toString(), Map.class);
+
+		Map<String, Object> response = restTemplate.postForObject(uri.toString(), null, Map.class);
 		List<Map<String, Object>> boundaryList = ((List<Map<String, Object>>) response.get("TenantBoundary")).stream()
 				.flatMap(tenantBoundary -> ((List<Map<String, Object>>) tenantBoundary.get("boundary")).stream())
 				.collect(Collectors.toList());
