@@ -18,6 +18,9 @@ import org.egov.fsm.pt.web.model.OwnerInfo;
 import org.egov.fsm.pt.web.model.Property;
 import org.egov.fsm.pt.web.model.PropertyCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -177,8 +180,13 @@ public class PropertyService {
 
 //		String url = "http://egov-location:8080/location/v11/boundarys/_search?hierarchyTypeCode=REVENUE&boundaryType=Zone&tenantId="
 //				+ tenantId;
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON); // force application/json
 
-		Map<String, Object> response = restTemplate.postForObject(uri.toString(), null, Map.class);
+		// if no body is required, send empty JSON {}
+		HttpEntity<String> entity = new HttpEntity<>("{}", headers);
+
+		Map<String, Object> response = restTemplate.postForObject(uri.toString(), entity, Map.class);
 		List<Map<String, Object>> boundaryList = ((List<Map<String, Object>>) response.get("TenantBoundary")).stream()
 				.flatMap(tenantBoundary -> ((List<Map<String, Object>>) tenantBoundary.get("boundary")).stream())
 				.collect(Collectors.toList());
