@@ -108,7 +108,7 @@ public class PropertyService {
 		Object wardName = propertyDetails.get("WARD_NAME");
 		Object zoneNo = propertyDetails.get("ZONE_NO");
 
-		String wardCode = "RMCWD" + zoneNo;
+		String wardCode = "RMCWD" + wardNo;
 		Map<String, Object> locationData = locationZoneSearchFromMdms("cg.raipur", wardCode);
 		Map<String, Object> wards = (Map<String, Object>) locationData.get("ward");
 		Map<String, Object> zones = (Map<String, Object>) locationData.get("zone");
