@@ -2,17 +2,17 @@ FROM upyogio/alpine-node-builder-14:yarn AS build
 # FROM ghcr.io/egovernments/alpine-node-builder-14:yarn AS build
 RUN apk update && apk upgrade
 RUN apk add --no-cache git>2.30.0
-RUN yarn add @entit/digit-ui-css
-RUN yarn add @upyog/digit-ui-libraries
-RUN yarn add @upyog/digit-ui-module-common
-RUN yarn add @upyog/digit-ui-module-commonpt
-RUN yarn add @upyog/digit-ui-module-core
-RUN yarn add @upyog/digit-ui-module-fsm
-RUN yarn add @upyog/digit-ui-module-hrms
-RUN yarn add @upyog/digit-ui-module-receipts
-RUN yarn add @upyog/digit-ui-module-tl
-RUN yarn add @upyog/digit-ui-react-components
-RUN yarn add @upyog/digit-ui-module-pt
+# RUN yarn add @entit/digit-ui-css
+# RUN yarn add @upyog/digit-ui-libraries
+# RUN yarn add @upyog/digit-ui-module-common
+# RUN yarn add @upyog/digit-ui-module-commonpt
+# RUN yarn add @upyog/digit-ui-module-core
+# RUN yarn add @upyog/digit-ui-module-fsm
+# RUN yarn add @upyog/digit-ui-module-hrms
+# RUN yarn add @upyog/digit-ui-module-receipts
+# RUN yarn add @upyog/digit-ui-module-tl
+# RUN yarn add @upyog/digit-ui-react-components
+# RUN yarn add @upyog/digit-ui-module-pt
 
 
 ARG WORK_DIR
