@@ -5,15 +5,7 @@
   "workspaces": [
     "example",
     "packages/*",
-    "packages/modules/common",
-    "packages/modules/commonPt",
-    "packages/modules/core",
-    "packages/modules/fsm",
-    "packages/modules/hrms",
-    "packages/modules/pt",
-    "packages/modules/receipts",
-    "packages/modules/templates",
-    "packages/modules/tl"
+    "packages/modules/*"
   ],
   "author": "Abhinav Kushwaha <abhinav.kushwaha@upyog.org>",
   "license": "MIT",
