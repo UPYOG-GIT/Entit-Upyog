@@ -47,10 +47,9 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
   const onSubmit = () => {
     onSelect(config.key, { advanceAmount });
   };
-
   useEffect(() => {
     (async () => {
-      if (formData?.propertyType && formData?.subtype && formData?.address && formData?.selectTripNo?.vehicleCapacity.capacity &&
+      if (formData?.propertyType && formData?.address && formData?.selectTripNo?.vehicleCapacity.capacity &&
         formData?.address?.propertyLocation?.code === "WITHIN_ULB_LIMITS") {
         const capacity = formData?.selectTripNo?.vehicleCapacity.capacity;
         const { slum: slumDetails } = formData.address;
@@ -60,9 +59,9 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
             ? tenantId
             : formData?.address?.city?.code,
           {
-            propertyType: formData?.subtype?.code,
+            // propertyType: formData?.subtype?.code,
             capacity,
-            slum,
+            // slum,
           });
 
         const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
@@ -106,7 +105,7 @@ const SelectPaymentPreference = ({ config, formData, t, onSelect, userType }) =>
     })();
   }, [
     formData?.propertyType,
-    formData?.subtype,
+    // formData?.subtype,
     formData?.address,
     formData?.selectTripNo?.vehicleCapacity.capacity,
     formData?.selectTripNo?.tripNo?.code,

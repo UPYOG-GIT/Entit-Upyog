@@ -101,7 +101,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
         });
       } else if (
         formData?.propertyType &&
-        formData?.subtype &&
+        // formData?.subtype &&
         formData?.address &&
         formData?.tripData?.vehicleType?.capacity &&
         formData?.address?.propertyLocation?.code === "WITHIN_ULB_LIMITS"
@@ -110,9 +110,9 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
         const { slum: slumDetails } = formData.address;
         const slum = slumDetails ? "YES" : "NO";
         const billingDetails = await Digit.FSMService.billingSlabSearch(tenantId, {
-          propertyType: formData?.subtype,
+          // propertyType: formData?.subtype,
           capacity,
-          slum,
+          // slum,
         });
 
         const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
@@ -134,7 +134,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
         }
       }
     })();
-  }, [formData?.propertyType, formData?.subtype, formData?.address, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips, formData?.address?.propertyLocation?.code]);
+  }, [formData?.propertyType,   formData?.address, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips, formData?.address?.propertyLocation?.code]);
 
   // console.log(formData,"formData 1111111111")
   return isVehicleMenuLoading && isDsoLoading ? (

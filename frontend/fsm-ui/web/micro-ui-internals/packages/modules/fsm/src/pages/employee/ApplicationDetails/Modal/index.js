@@ -1,5 +1,5 @@
 import { Loader, Modal, FormComposer, Toast } from "@upyog/digit-ui-react-components";
-import React, { useState, useEffect, useCallback  } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useQueryClient } from "react-query";
 import { UploadPitPhoto } from "@upyog/digit-ui-react-components";
 
@@ -13,7 +13,7 @@ import {
   configUpdateTrips,
   configRejectFstpo,
   configWorkStart,
-  configWorkComplete
+  configWorkComplete,
 } from "../config";
 import { jsx } from "react/jsx-runtime";
 
@@ -148,6 +148,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   const [selectedWorkers, setSelectedWorkers] = useState([]);
   const [vehicleDriverList, setVehicleDriverList] = useState([]);
   const [vehicleDriver, setVehicleDriver] = useState(null);
+
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [file, setFile] = useState(null);
 
   const individualIds = applicationDetails?.dsoDetails?.workers
     ?.map((worker) => {
@@ -314,9 +317,9 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   // }
 
   const selectDSO = useCallback((dsoDetails) => {
-  setDSO(dsoDetails);
-  // setVehicleMenu(dsoDetails.vehicles);
-}, []);
+    setDSO(dsoDetails);
+    // setVehicleMenu(dsoDetails.vehicles);
+  }, []);
 
   function selectVehicleNo(vehicleNo) {
     setVehicleNo(vehicleNo);
@@ -331,12 +334,12 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
   // }
 
   const selectVehicle = useCallback((value) => {
-  setVehicle(value);
-  setDefautValue({
-    capacity: value?.capacity,
-    wasteCollected: value?.capacity,
-  });
-}, []);
+    setVehicle(value);
+    setDefautValue({
+      capacity: value?.capacity,
+      wasteCollected: value?.capacity,
+    });
+  }, []);
 
   function selectReason(reason) {
     setFstpoRejectionReason(reason);
@@ -366,11 +369,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     // Digit.SessionStorage.set("PGR_CREATE_IMAGES", ids);
   };
 
-  
   function submit(data) {
     const workflow = { action: action };
 
-    if (dso){ 
+    if (dso) {
       applicationData.dsoId = dso.id;
       applicationData.dso = dso;
     }
@@ -433,6 +435,27 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         });
       }
     }
+    if (action === "START_WORK" && file) {
+      workflow.comments = data.comments;
+      workflow.varificationDocuments = [
+        {
+          documentType: "Work Start",
+          fileName: file?.name,
+          fileStoreId: uploadedFile,
+        },
+      ];
+    }
+
+    if (action === "WORK_COMPLETED" && file) {
+      workflow.comments = data.comments;
+      workflow.varificationDocuments = [
+        {
+          documentType: "Work Completed",
+          fileName: file?.name,
+          fileStoreId: uploadedFile,
+        },
+      ];
+    }
 
     if (reassignReason) addCommentToWorkflow(reassignReason, workflow, data);
     if (rejectionReason) addCommentToWorkflow(rejectionReason, workflow, data);
@@ -471,12 +494,43 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
       submitAction({ fsm: { ...applicationData, workers: workerPayload }, workflow });
       return;
     }
-    console.log("applicationData "+JSON.stringify(applicationData))
-    console.log("workflow "+JSON.stringify(workflow))
+    console.log("applicationData " + JSON.stringify(applicationData));
+    console.log("workflow " + JSON.stringify(workflow));
     submitAction({ fsm: applicationData, workflow });
   }
 
-  // console.log("selectVehicle "+JSON.stringify(selectVehicle))
+  function selectFile(e) {
+    setFile(e.target.files[0]);
+  }
+
+  useEffect(() => {
+    (async () => {
+      // setError(null);
+      if (file) {
+        if (file.size >= 5242880) {
+          setShowToast({ label: "CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED", error: true });
+          // setError(t("CS_MAXIMUM_UPLOAD_SIZE_EXCEEDED"));
+        } else {
+          try {
+            setUploadedFile(null);
+            const response = await Digit.UploadServices.Filestorage("FSM", file, Digit.ULBService.getStateId());
+            if (response?.data?.files?.length > 0) {
+              console.log("response?.data?.files[0]?.fileStoreId " + response?.data?.files[0]?.fileStoreId);
+              setUploadedFile(response?.data?.files[0]?.fileStoreId);
+            } else {
+              setShowToast({ label: "CS_FILE_UPLOAD_ERROR", error: true });
+              // setError(t("CS_FILE_UPLOAD_ERROR"));
+            }
+          } catch (err) {
+            setShowToast({ label: "CS_FILE_UPLOAD_ERROR", error: true });
+            // setError(t("CS_FILE_UPLOAD_ERROR"));
+          }
+        }
+      }
+    })();
+  }, [file]);
+
+  console.log("uploadedFile " + uploadedFile);
   const onRemoveWorkers = (index, workerToRemove) => {
     setSelectedWorkers(() => selectedWorkers?.filter((worker) => worker.individualId !== workerToRemove.individualId));
   };
@@ -677,6 +731,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           configWorkStart({
             t,
             action,
+            selectFile,
+            uploadedFile,
+            setUploadedFile,
+            error,
           })
         );
       case "WORK_COMPLETED":
@@ -685,6 +743,10 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
           configWorkComplete({
             t,
             action,
+            selectFile,
+            uploadedFile,
+            setUploadedFile,
+            error,
           })
         );
       default:

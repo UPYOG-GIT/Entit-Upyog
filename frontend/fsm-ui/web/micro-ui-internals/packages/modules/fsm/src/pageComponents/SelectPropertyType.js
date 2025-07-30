@@ -19,7 +19,7 @@ if (property !== "undefined")
   property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
 }
   const usageType = property?.propertyDetails?.usageCategory || property?.usageCategory
-  console.log("formData",formData)
+  // console.log("formData",formData)
   const [propertyType, setPropertyType] = useState(formData?.propertyType || "" );
 useEffect(()=>{
  if(userType === "employee" && property && propertyTypesData.data)
@@ -30,7 +30,6 @@ useEffect(()=>{
       propertyType = propertyTypesData?.data.filter((city) => {
           return city.code == formData?.propertyType
         })
-        console.log("SSSSSS",propertyType,propertyTypesData)
         if(propertyType.length >0)
         {
           onSelect(config.key, propertyType[0].code)
@@ -39,7 +38,6 @@ useEffect(()=>{
      
     }
     if(property){
-      console.log("property",property,propertyTypesData)
       if(property?.propertyDetails?.usageCategory == "COMMERCIAL" || property?.propertyDetails?.usageCategory == 
       "RESIDENTIAL" ||property?.propertyDetails?.usageCategory == "INSTITUTIONAL")
       {
@@ -49,12 +47,10 @@ useEffect(()=>{
     }
 },[propertyTypesData.isLoading])
   useEffect(() => {
-    console.log("usageType",usageType)
     if (!propertyTypesData.isLoading && propertyTypesData.data && usageType) {
       const preFilledPropertyType = propertyTypesData.data.filter(
         (propertyType) => propertyType.code === (usageType||formData?.propertyType?.code || formData?.propertyType)
       )[0];
-      console.log("preFilledPropertyType",preFilledPropertyType)
       if(preFilledPropertyType !== undefined)
       {
         setPropertyType(preFilledPropertyType);
@@ -84,7 +80,6 @@ useEffect(()=>{
     }
     return content;
   };
-console.log("propertyType",propertyType)
   if (propertyTypesData.isLoading) {
     return <Loader />;
   }

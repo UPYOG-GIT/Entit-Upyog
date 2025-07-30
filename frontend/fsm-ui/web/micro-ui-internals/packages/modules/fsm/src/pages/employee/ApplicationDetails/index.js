@@ -36,7 +36,8 @@ const ApplicationDetails = (props) => {
   const userInfo = Digit.UserService.getUser();
   // const tenantId = Digit.ULBService.getCurrentTenantId();
   // const tenantId = Digit.ULBService.getCitizenCurrentTenant();
-  const tenantId = userInfo?.info?.tenantId;
+  // const tenantId = userInfo?.info?.tenantId;
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   // console.log("userInfo " + JSON.stringify(userInfo));
   const state = Digit.ULBService.getStateId();
   const { t } = useTranslation();

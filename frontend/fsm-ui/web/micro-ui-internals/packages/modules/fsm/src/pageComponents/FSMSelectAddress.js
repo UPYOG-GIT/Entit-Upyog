@@ -112,7 +112,6 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
       // setSelectedWard(matchedBlock);
     }
   }, [matchedBlock, matchedZone]);
-  console.log("matchedZone "+JSON.stringify(matchedZone))
   useEffect(() => {
     if (fetchedZone) {
       const zone = fetchedZone;

@@ -22,6 +22,7 @@ const FSMCard = () => {
 
   // Septage ready for Disposal ( 10 KL)
   // Septage disposed today ( 50 KL)
+  // const tenantId = Digit.ULBService.getCurrentTenantId();
   const tenantId = Digit.ULBService.getCurrentTenantId();
 
   // TO DO get day time

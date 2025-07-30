@@ -18,11 +18,16 @@ import { useTranslation } from "react-i18next";
 import _ from "lodash";
 import { useLocation, Link, useHistory } from "react-router-dom";
 const getAddress = (address, t) => {
-  return `${address?.doorNo ? `${address?.doorNo}, ` : ""} ${address?.street ? `${address?.street}, ` : ""}${
-    address?.landmark ? `${address?.landmark}, ` : ""
-  }${t(Digit.Utils.pt.getMohallaLocale(address?.locality.code, address?.tenantId))}, ${t(Digit.Utils.pt.getCityLocale(address?.tenantId))}${
-    address?.pincode && t(address?.pincode) ? `, ${address.pincode}` : " "
+
+  return `${address?.additionalDetails?.address ? `${address?.additionalDetails?.address}, ` : ""} ${address?.ward?.name? `${address?.ward?.name}, ` : ""}${
+    address?.zone?.name ? `${address?.zone?.name}, ` : ""
   }`;
+  
+  // return `${address?.doorNo ? `${address?.doorNo}, ` : ""} ${address?.street ? `${address?.street}, ` : ""}${
+  //   address?.landmark ? `${address?.landmark}, ` : ""
+  // }${t(Digit.Utils.pt.getMohallaLocale(address?.locality.code, address?.tenantId))}, ${t(Digit.Utils.pt.getCityLocale(address?.tenantId))}${
+  //   address?.pincode && t(address?.pincode) ? `, ${address.pincode}` : " "
+  // }`;
 };
 
 const PropertySearchRMCNSummary = ({ config, onSelect, userType, formData, setError, formState, clearErrors }) => {
@@ -107,8 +112,8 @@ const PropertySearchRMCNSummary = ({ config, onSelect, userType, formData, setEr
   let propertyAddress = "";
 
   if (propertyDetails && propertyDetails?.Properties.length) {
-    propertyAddress = propertyDetails?.Properties[0]?.address?.ward?.code;
-    // propertyAddress = getAddress(propertyDetails?.Properties[0]?.address, t);
+    // propertyAddress = propertyDetails?.Properties[0]?.address?.ward?.code;
+    propertyAddress = getAddress(propertyDetails?.Properties[0]?.address, t);
   }
   const getInputStyles = () => {
     if (window.location.href.includes("/ws/")) {

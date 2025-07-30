@@ -62,7 +62,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
 
       if (
         formData?.propertyType &&
-        formData?.subtype &&
+        // formData?.subtype &&
         formData?.address &&
         formData?.tripData?.vehicleType?.capacity &&
         formData?.address?.propertyLocation?.code === "WITHIN_ULB_LIMITS"
@@ -71,9 +71,9 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
         const { slum: slumDetails } = formData.address;
         const slum = slumDetails ? "YES" : "NO";
         const billingDetails = await Digit.FSMService.billingSlabSearch(tenantId, {
-          propertyType: formData?.subtype,
+          // propertyType: formData?.subtype,
           capacity,
-          slum,
+          // slum,
         });
 
         const billSlab = billingDetails?.billingSlab?.length && billingDetails?.billingSlab[0];
@@ -106,7 +106,7 @@ const AdvanceCollection = ({ t, config, onSelect, formData, userType, FSMTextFie
         }
       }
     })();
-  }, [formData?.propertyType, formData?.subtype, formData?.address?.slum, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips]);
+  }, [formData?.propertyType, formData?.address?.slum, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips]);
 
   useEffect(() => {
     (async () => {

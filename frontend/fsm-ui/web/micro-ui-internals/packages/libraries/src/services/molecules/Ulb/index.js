@@ -1,5 +1,6 @@
 import { StoreService } from "../Store/service";
 import { UserService } from "../../elements/User";
+import { jsx } from "react/jsx-runtime";
 
 /**
  * Custom service which can be used to
@@ -36,11 +37,13 @@ export const ULBService = {
         return user.extraRoleInfo?.tenantId;
       }
     }
+    
     //TODO: fix tenant id from userinfo
     // const tenantId =
     //   user?.info?.type === "EMPLOYEE" && user?.info?.tenantId ? user?.info?.tenantId : window?.globalConfigs.getConfig("STATE_LEVEL_TENANT_ID");
-    const tenantId =
-      user?.info?.type === user?.info?.tenantId ? user?.info?.tenantId : window?.globalConfigs.getConfig("STATE_LEVEL_TENANT_ID");
+    // const tenantId =
+    //   user?.info?.type === user?.info?.tenantId ? user?.info?.tenantId : window?.globalConfigs.getConfig("STATE_LEVEL_TENANT_ID");
+    const tenantId = user?.info?.tenantId;
     return tenantId;
   },
   /**

@@ -13,7 +13,8 @@ const Inbox = ({ parentRoute, isSearch = false, isInbox = false }) => {
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]) || false;
   const DRIVER = Digit.UserService.hasAccess(["FSM_DRIVER"]) || false;
   const isFSTPOperator = Digit.UserService.hasAccess("FSM_EMP_FSTPO") || false;
-  const tenantId = DRIVER ? userInfo.info.tenantId :Digit.ULBService.getCurrentTenantId();
+  // const tenantId = DRIVER ? userInfo.info.tenantId :Digit.ULBService.getCurrentTenantId();
+  const tenantId = Digit.ULBService.getCurrentTenantId();
   // console.log("tenantId "+tenantId)
   const { t } = useTranslation();
   const queryClient = useQueryClient();

@@ -1,7 +1,7 @@
 import React from "react";
 import { Dropdown, UploadFile } from "@upyog/digit-ui-react-components";
 
-export const configWorkStart = ({ t, action, uploadedFile, setUploadedFile, selectFile, error }) => {
+export const configWorkStart = ({ t, action, selectFile, uploadedFile, setUploadedFile, error }) => {
   return {
     label: {
       heading: `ES_FSM_ACTION_TITLE_${action}`,
