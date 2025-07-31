@@ -25,6 +25,10 @@ public class Document   {
   @SafeHtml
   @JsonProperty("documentType")
   private String documentType = null;
+  
+  @SafeHtml
+  @JsonProperty("fileStoreId")
+  private String fileStoreId = null;
 
   @SafeHtml
   @JsonProperty("fileStore")
@@ -164,6 +168,7 @@ public class Document   {
     sb.append("    fileStore: ").append(toIndentedString(fileStore)).append("\n");
     sb.append("    documentUid: ").append(toIndentedString(documentUid)).append("\n");
     sb.append("    additionalDetails: ").append(toIndentedString(additionalDetails)).append("\n");
+    sb.append("    fileStoreId: ").append(toIndentedString(fileStoreId)).append("\n");
     sb.append("}");
     return sb.toString();
   }
@@ -178,4 +183,14 @@ public class Document   {
     }
     return o.toString().replace("\n", "\n    ");
   }
+
+public String getFileStoreId() {
+	return fileStoreId;
+}
+
+public void setFileStoreId(String fileStoreId) {
+	this.fileStoreId = fileStoreId;
+}
+  
+  
 }
