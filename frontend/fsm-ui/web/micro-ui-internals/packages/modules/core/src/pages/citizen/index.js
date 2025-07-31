@@ -322,8 +322,20 @@ const Home = ({
 
       // </Route>
       <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>
-        <div className="moduleLinkHomePage">
-          <img src={bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
+        <div className="moduleLinkHomePage" style={{height:"auto"}}>
+          <img
+            src={bannerImage || stateInfo?.bannerUrl}
+            alt="noimagefound"
+            style={{
+              // border:"1px solid",
+              // marginTop:"100px",
+              // minWidth: "auto",
+              // marginLeft: "0px",
+              height: "auto",
+              maxWidth: "100%",
+              backgroundSize: "cover",
+            }}
+          />
           {/* <BackButton className="moduleLinkHomePageBackButton" /> */}
           {/* <h1>{t("MODULE_" + code.toUpperCase())}</h1> */}
         </div>
