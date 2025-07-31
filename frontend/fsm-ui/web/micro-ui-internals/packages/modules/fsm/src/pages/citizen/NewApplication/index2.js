@@ -6,7 +6,7 @@ import { newConfig } from "../../../config/NewApplication/fsmConfigNew";
 
 const isConventionalSpecticTank = (tankDimension) => tankDimension === "lbd";
 
-const FileComplaint = ({ parentUrl, heading }) => {
+const FileComplaint = ({ parentRoute, heading }) => {
   // const __initPropertyType__ = window.Digit.SessionStorage.get("propertyType");
   // const __initSubType__ = window.Digit.SessionStorage.get("subType");
   // const tenantId = Digit.ULBService.getCurrentTenantId();
@@ -217,7 +217,8 @@ const FileComplaint = ({ parentUrl, heading }) => {
     Digit.SessionStorage.set("selected_localities", null);
     Digit.SessionStorage.set("locality_property", null);
     // history.push("/fsm-ui/employee/fsm/response", formData);
-    history.push("/fsm-ui/citizen/fsm/response", formData);
+    // history.push("/fsm-ui/citizen/fsm/response", formData);
+    history.push(`${parentRoute}/response`);
     
   };
 

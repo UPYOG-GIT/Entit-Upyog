@@ -437,7 +437,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     }
     if (action === "START_WORK" && file) {
       workflow.comments = data.comments;
-      workflow.varificationDocuments = [
+      workflow.verificationDocuments = [
         {
           documentType: "Work Start",
           fileName: file?.name,
@@ -448,7 +448,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
 
     if (action === "WORK_COMPLETED" && file) {
       workflow.comments = data.comments;
-      workflow.varificationDocuments = [
+      workflow.verificationDocuments = [
         {
           documentType: "Work Completed",
           fileName: file?.name,

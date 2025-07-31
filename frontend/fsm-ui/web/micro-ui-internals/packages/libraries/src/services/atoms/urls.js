@@ -74,7 +74,8 @@ const Urls = {
     search_bill: "/billing-service/bill/v2/_search",
     reciept_search: "/collection-services/payments/:buisnessService/_search",
     obps_Reciept_Search: "/collection-services/payments/_search",
-    get_receipt: "/collection-services/receipts/v2/_getReceipt"
+    get_receipt: "/collection-services/receipts/v2/_getReceipt",
+    get_fsm_receipt: "/collection-services/receipts/v2/_getReceiptfsm"
   },
 
   pt: {

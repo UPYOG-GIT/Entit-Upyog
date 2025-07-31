@@ -3,17 +3,22 @@ import { FormStep, TextArea, LabelFieldPair, CardLabel } from "@upyog/digit-ui-r
 import Timeline from "../components/TLTimelineInFSM";
 
 const FSMSelectLandmark = ({ t, config, onSelect, formData, userType }) => {
-
   //let property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT")||"{}")
-  let property = sessionStorage?.getItem("Digit_FSM_PT")
-if (property !== "undefined")
-{
-  property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"))
-}
-
+  let property = sessionStorage?.getItem("Digit_FSM_PT");
+  if (property !== "undefined") {
+    property = JSON.parse(sessionStorage?.getItem("Digit_FSM_PT"));
+  }
+  const propertyAddress = formData?.cpt ? formData?.cpt?.details?.address?.additionalDetails?.address : "";
+  
   const [landmark, setLandmark] = useState(property?.propertyDetails?.address?.landmark);
 
   const [error, setError] = useState("");
+
+  useEffect(() => {
+      if (propertyAddress) {
+        setLandmark(propertyAddress);
+      }
+    }, [propertyAddress]);
 
   const inputs = [
     {
@@ -61,8 +66,13 @@ if (property !== "undefined")
 
   return (
     <React.Fragment>
-    
-    {window.location.href.includes("/pt") ?  <Timeline currentStep={1} flow ="PT_APPLY"/> : window.location.href.includes("/tl") ? <Timeline currentStep={2} /> : <Timeline currentStep={1} flow="APPLY" />}
+      {window.location.href.includes("/pt") ? (
+        <Timeline currentStep={1} flow="PT_APPLY" />
+      ) : window.location.href.includes("/tl") ? (
+        <Timeline currentStep={2} />
+      ) : (
+        <Timeline currentStep={1} flow="APPLY" />
+      )}
       <FormStep
         config={{ ...config, inputs }}
         value={landmark}

@@ -180,7 +180,7 @@ const Response = (props) => {
   useEffect(() => {
     switch (selectedAction) {
       case "GO_TO_HOME":
-        return isCitizen ? history.push("/fsm-ui/citizen") : history.push("/fsm-ui/employee");
+        return isCitizen ? history.push("/fsm-ui/citizen/fsm-home") : history.push("/fsm-ui/employee");
       case "ASSIGN_TO_DSO":
         return history.push(`/fsm-ui/employee/fsm/application-details/${getApplicationNo}`);
       case "PAY":
@@ -192,7 +192,7 @@ const Response = (props) => {
     return <Loader />;
   }
   let ACTIONS = ["GO_TO_HOME"];
-  if (Data?.fsm?.[0].applicationStatus === "PENDING_APPL_FEE_PAYMENT" && paymentAccess) {
+  if (Data?.fsm?.[0].applicationStatus === "PENDING_FEE_PAYMENT" && paymentAccess) {
     ACTIONS = [...ACTIONS, "PAY"];
   } else if (Data?.fsm?.[0].applicationStatus === "ASSING_DSO" && FSM_EDITOR) {
     ACTIONS = [...ACTIONS, "ASSIGN_TO_DSO"];

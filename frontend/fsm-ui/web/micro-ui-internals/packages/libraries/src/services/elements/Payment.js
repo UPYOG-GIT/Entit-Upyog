@@ -41,7 +41,10 @@ export const PaymentService = {
 
   getReciept: (tenantId, businessservice, filters = {}) =>
     Request({
-      url: businessservice && businessservice !=="BPAREG" ? `${Urls.payment.print_reciept}/${businessservice}/_search` : `${Urls.payment.print_reciept}/_search`,
+      url:
+        businessservice && businessservice !== "BPAREG"
+          ? `${Urls.payment.print_reciept}/${businessservice}/_search`
+          : `${Urls.payment.print_reciept}/_search`,
       useCache: false,
       method: "POST",
       auth: true,
@@ -60,27 +63,33 @@ export const PaymentService = {
       params: { tenantId, key },
       data: data,
     }),
-    
-    downloadReceipt: (data) => {
-      // console.log("hhh"+JSON.stringify(data)); // Log the data parameter to the console
-      return Request({
-        
-        url: Urls.payment.get_receipt,
-        useCache: false,
-        method: "POST",
-        auth: false,
-        userService: true,
-        locale: true,
-        // params: { tenantId, key },
-        data: data
-        
-        
-      });
-      
-    },
-    
-    
 
+  downloadReceipt: (data) => {
+    // console.log("hhh"+JSON.stringify(data)); // Log the data parameter to the console
+    return Request({
+      url: Urls.payment.get_receipt,
+      useCache: false,
+      method: "POST",
+      auth: false,
+      userService: true,
+      locale: true,
+      // params: { tenantId, key },
+      data: data,
+    });
+  },
+
+  downloadFSMReceipt: (data) => 
+    Request({
+      url: Urls.payment.get_fsm_receipt,
+      useCache: false,
+      method: "POST",
+      auth: false,
+      userService: true,
+      locale: true,
+      // params: { tenantId, key },
+      data: data,
+    }),
+  // },
 
   printReciept: (tenantId, filters = {}) =>
     Request({
@@ -130,17 +139,23 @@ export const PaymentService = {
       data: Demands,
       auth: false,
     })
-    .then((d) => {
-      return d;
-    })
-    .catch((err) => {
-      return err;
-    }),
+      .then((d) => {
+        return d;
+      })
+      .catch((err) => {
+        return err;
+      }),
 
   recieptSearch: (tenantId, businessService, params) =>
     Request({
-      url: (businessService === "BPAREG" && !params?.isEmployee) /* || businessService.includes("BPA.") && !params?.isEmployee ) */ ? Urls.payment.obps_Reciept_Search : Urls.payment.reciept_search,
-      urlParams: (businessService === "BPAREG" && !params?.isEmployee) /* || businessService.includes("BPA.") && !params?.isEmployee) */ ? {}:{ buisnessService: businessService },
+      url:
+        businessService === "BPAREG" && !params?.isEmployee /* || businessService.includes("BPA.") && !params?.isEmployee ) */
+          ? Urls.payment.obps_Reciept_Search
+          : Urls.payment.reciept_search,
+      urlParams:
+        businessService === "BPAREG" && !params?.isEmployee /* || businessService.includes("BPA.") && !params?.isEmployee) */
+          ? {}
+          : { buisnessService: businessService },
       method: "POST",
       // do not change this directly add a param if needed
       auth: true,

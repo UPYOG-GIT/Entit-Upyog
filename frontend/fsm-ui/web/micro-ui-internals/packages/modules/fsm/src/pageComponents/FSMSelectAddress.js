@@ -15,7 +15,8 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
   }
   const propertyWard = formData?.cpt ? formData?.cpt?.details?.address?.ward?.code : "";
   const propertyName = formData?.cpt ? formData?.cpt?.details?.address?.ward?.name : "";
-  // console.log("propertyWard "+propertyWard)
+  const propertyLocality = formData?.cpt ? formData?.cpt?.details?.localityList : "";
+  // console.log("propertyLocality "+JSON.stringify(propertyLocality))
   const location = useLocation();
   const isNewVendor = location.pathname.includes("new-vendor");
   const isEditVendor = location.pathname.includes("modify-vendor");
@@ -106,9 +107,10 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
   }, [propertyWard, propertyName]);
 
   useEffect(() => {
-    if (propertyWard && propertyName) {
+    if (propertyWard && propertyName && propertyLocality) {
       setWards([matchedBlock]);
       setZones([matchedZone]);
+      setLocalitiesOption(propertyLocality);
       // setSelectedWard(matchedBlock);
     }
   }, [matchedBlock, matchedZone]);
@@ -196,13 +198,18 @@ const FSMSelectAddress = ({ t, config, onSelect, userType, formData }) => {
 
   function selectZone(zone) {
     setSelectedZone(zone);
+
+    if(!propertyWard){
     setWards(zone?.children);
+    }
     onSelect(config.key, { ...formData[config.key], zone: zone });
   }
   // console.log("wards "+JSON.stringify(wards))
   function selectWard(ward) {
     setSelectedWard(ward);
+    if(!propertyLocality){
     setLocalitiesOption(ward?.children);
+    }
     onSelect(config.key, { ...formData[config.key], ward: ward });
   }
 

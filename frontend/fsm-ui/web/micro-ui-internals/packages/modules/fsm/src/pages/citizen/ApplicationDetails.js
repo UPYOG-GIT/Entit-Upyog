@@ -5,6 +5,7 @@ import { useHistory, useLocation, useParams } from "react-router-dom";
 import getPDFData from "../../getPDFData";
 import { getVehicleType } from "../../utils";
 import { ApplicationTimeline } from "../../components/ApplicationTimeline";
+import Urls from "../../../../../libraries/src/services/atoms/urls";
 
 const ApplicationDetails = () => {
   const { t } = useTranslation();
@@ -58,13 +59,48 @@ const ApplicationDetails = () => {
       setShowOptions(false);
     }
   };
+  
+  const downloadPaymentReceipt = async () => {
+    const paymemntIndex= paymentsHistory.Payments.length===1  ? 0 : 1;
+    const response = await fetch(Urls.payment.get_fsm_receipt, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ Payments: [ paymentsHistory.Payments[paymemntIndex] ] })
+    });
+
+    if (!response.ok) {
+      console.log('Error: Failed to download PDF file');
+      return;
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'paymentReceipt.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    
+
+    
+  };
+
   const downloadAdvancePaymentReceipt = async () => {
+    
+    
+
     const paymemntIndex= paymentsHistory.Payments.length===1  ? 0 : 1;
     const receiptFile = {
       filestoreIds: [paymentsHistory.Payments[paymemntIndex]?.fileStoreId],
     };
     if (!receiptFile?.fileStoreIds?.[0]) {
       const newResponse = await Digit.PaymentService.generatePdf(state, { Payments: [paymentsHistory.Payments[paymemntIndex]] }, "fsm-receipt");
+      const response = await Digit.PaymentService.downloadFSMReceipt({Payments: [paymentsHistory.Payments[paymemntIndex]]});
+    
       const fileStore = await Digit.PaymentService.printReciept(state, {
         fileStoreIds: newResponse.filestoreIds[0],
       });
@@ -85,44 +121,58 @@ const ApplicationDetails = () => {
       } 
       setViewTimeline(true);   
   };
-
+  let receiptOptions;
   const dowloadOptions =
-    paymentsHistory?.Payments?.length > 0
-      ? [
+    
+      
+      [
           {
             label: t("CS_COMMON_APPLICATION_ACKNOWLEDGEMENT"),
             onClick: handleDownloadPdf,
           },
+          receiptOptions= paymentsHistory?.Payments.length > 0 ?
           {
             label: t("CS_COMMON_PAYMENT_RECEIPT"),
-            onClick: ()=> {
-              setShowReceiptOptions(true),
-              setShowOptions(false)
-            }
-          },
-        ]
-      : [
-          {
-            label: t("CS_COMMON_APPLICATION_ACKNOWLEDGEMENT"),
-            onClick: handleDownloadPdf,
-          },
-        ];
-        const receiptOptions= paymentsHistory?.Payments.length > 1 ?
-        [
-          {
-            label : t("ADVANCE_PAYMENT_RECEIPT"),
-            onClick:downloadAdvancePaymentReceipt
-          },
-          {
-            label : t("FINAL_PAYMENT_RECEIPT"),
-            onClick:downloadFinalPaymentReceipt
+            onClick:downloadPaymentReceipt
           }
-        ]:[
-          {
-            label : t("ADVANCE_PAYMENT_RECEIPT"),
-            onClick:downloadAdvancePaymentReceipt
-          },
+          :""
         ]
+      
+      // [
+      //     {
+      //       label: t("CS_COMMON_APPLICATION_ACKNOWLEDGEMENT"),
+      //       onClick: handleDownloadPdf,
+      //     },
+      //     {
+      //       label: t("CS_COMMON_PAYMENT_RECEIPT"),
+      //       onClick: ()=> {
+      //         setShowReceiptOptions(true),
+      //         setShowOptions(false)
+      //       }
+      //     },
+      //   ]
+      // : [
+      //     {
+      //       label: t("CS_COMMON_APPLICATION_ACKNOWLEDGEMENT"),
+      //       onClick: handleDownloadPdf,
+      //     },
+      //   ];
+      //   const receiptOptions= paymentsHistory?.Payments.length > 1 ?
+      //   [
+      //     {
+      //       label : t("ADVANCE_PAYMENT_RECEIPT"),
+      //       onClick:downloadAdvancePaymentReceipt
+      //     },
+      //     {
+      //       label : t("FINAL_PAYMENT_RECEIPT"),
+      //       onClick:downloadFinalPaymentReceipt
+      //     }
+      //   ]:[
+      //     {
+      //       label : t("ADVANCE_PAYMENT_RECEIPT"),
+      //       onClick:downloadAdvancePaymentReceipt
+      //     },
+      //   ]
 
   return (
     <React.Fragment>
