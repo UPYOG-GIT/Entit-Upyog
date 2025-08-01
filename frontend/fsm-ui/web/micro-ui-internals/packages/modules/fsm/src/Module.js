@@ -104,12 +104,12 @@ const FSMLinks = ({ matchPath, userType }) => {
   }, []);
 
   const roleBasedLoginRoutes = [
-    {
-      role: "FSM_DSO",
-      from: "/fsm-ui/citizen/fsm/dso-dashboard",
-      dashoardLink: "CS_LINK_DSO_DASHBOARD",
-      loginLink: "CS_LINK_LOGIN_DSO",
-    },
+    // {
+    //   role: "FSM_DSO",
+    //   from: "/fsm-ui/citizen/fsm/dso-dashboard",
+    //   dashoardLink: "CS_LINK_DSO_DASHBOARD",
+    //   loginLink: "CS_LINK_LOGIN_DSO",
+    // },
     {
       role: "FSM_DRIVER",
       from: "/fsm-ui/citizen/fsm/driver-dashboard",

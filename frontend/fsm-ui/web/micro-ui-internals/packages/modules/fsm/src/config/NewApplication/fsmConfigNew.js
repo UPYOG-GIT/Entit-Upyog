@@ -49,7 +49,7 @@ export const newConfig =    [
       },
       {
         label: "ES_NEW_APPLICATION_PROPERTY_SUB-TYPE",
-        isMandatory: false,
+        isMandatory: true,
         type: "component",
         route: "property-subtype",
         key: "subtype",

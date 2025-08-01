@@ -69,7 +69,6 @@ const getPDFData = (application, tenantInfo, t) => {
   const amountPerTrip = additionalDetails?.tripAmount;
   const totalAmount = amountPerTrip * application?.noOfTrips;
   const advanceAmountDue = application?.advanceAmount;
-console.log("applicationapplication",application)
   return {
     t: t,
     tenantId: tenantInfo?.code,
@@ -98,7 +97,7 @@ console.log("applicationapplication",application)
         values: [
           { title: t("CS_APPLICATION_DETAILS_APPLICANT_NAME"), value: application?.citizen?.name || "N/A" },
           { title: t("CS_APPLICATION_DETAILS_APPLICANT_MOBILE"), value: application?.citizen?.mobileNumber || "N/A" },
-          { title: t("CS_APPLICATION_DETAILS_APPLICANT_EMAIL_ID"), value: application?.citizen?.emailId || application?.additionalDetails?.emailId || "NA" },
+          // { title: t("CS_APPLICATION_DETAILS_APPLICANT_EMAIL_ID"), value: application?.citizen?.emailId || application?.additionalDetails?.emailId || "NA" },
         ],
       },
       {
@@ -168,10 +167,10 @@ console.log("applicationapplication",application)
             title: t("CS_APPLICATION_DETAILS_AMOUNT_DUE"),
             value: getTotalAmount(totalAmount),
           },
-          {
-            title: t("CS_APPLICATION_DETAILS_ADV_AMOUNT_DUE"),
-            value: getAdvanceAmount(advanceAmountDue),
-          },
+          // {
+          //   title: t("CS_APPLICATION_DETAILS_ADV_AMOUNT_DUE"),
+          //   value: getAdvanceAmount(advanceAmountDue),
+          // },
         ],
       },
     ],

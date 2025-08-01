@@ -217,8 +217,8 @@ const FileComplaint = ({ parentRoute, heading }) => {
     Digit.SessionStorage.set("selected_localities", null);
     Digit.SessionStorage.set("locality_property", null);
     // history.push("/fsm-ui/employee/fsm/response", formData);
-    // history.push("/fsm-ui/citizen/fsm/response", formData);
-    history.push(`${parentRoute}/response`);
+    history.push("/fsm-ui/citizen/fsm/response", formData);
+    // history.push(`${parentRoute}/response`);
     
   };
 
