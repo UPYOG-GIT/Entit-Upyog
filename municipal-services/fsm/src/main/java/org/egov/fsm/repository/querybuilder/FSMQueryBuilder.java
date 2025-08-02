@@ -27,15 +27,13 @@ public class FSMQueryBuilder {
 			+ "	 LEFT OUTER JOIN  eg_fsm_pit_detail fsm_pit on fsm_pit.fsm_id = fsm.id";
 
 	private static final String dashboardSearchQuery = "SELECT counts.completed, counts.progress, counts.feedback_pending, counts.driver_assigned, counts.Total"
-			+ "FROM ("
-			+ "    SELECT COUNT(CASE WHEN fsm.applicationstatus != 'PENDING_FEE_PAYMENT' THEN 1 END) AS Total,"
-			+ "           COUNT(CASE WHEN fsm.applicationstatus = 'COMPLETED' THEN 1 END) AS completed,"
-			+ "           COUNT(CASE WHEN fsm.applicationstatus IN ('PENDING_WORK_START_BY_DRIVER') THEN 1 END) AS driver_assigned,"
-			+ "           COUNT(CASE WHEN fsm.applicationstatus IN ('PENDING_WORK_COMPLETE') THEN 1 END) AS progress,"
-			+ "           COUNT(CASE WHEN fsm.applicationstatus = 'CITIZEN_FEEDBACK_PENDING' THEN 1 END) AS feedback_pending,"
-			+ "           COUNT(CASE WHEN fsm.applicationstatus IN ('ASSIGN_DSO','ASSIGN_DRIVER') THEN 1 END) AS pending,"
-			+ "           fsm.tenantid FROM eg_fsm_application fsm GROUP BY fsm.tenantid"
-			+ ") AS counts ";
+			+ " FROM ( SELECT COUNT(CASE WHEN fsm.applicationstatus != 'PENDING_FEE_PAYMENT' THEN 1 END) AS Total,"
+			+ " COUNT(CASE WHEN fsm.applicationstatus = 'COMPLETED' THEN 1 END) AS completed,"
+			+ " COUNT(CASE WHEN fsm.applicationstatus IN ('PENDING_WORK_START_BY_DRIVER') THEN 1 END) AS driver_assigned,"
+			+ " COUNT(CASE WHEN fsm.applicationstatus IN ('PENDING_WORK_COMPLETE') THEN 1 END) AS progress,"
+			+ " COUNT(CASE WHEN fsm.applicationstatus = 'CITIZEN_FEEDBACK_PENDING' THEN 1 END) AS feedback_pending,"
+			+ " COUNT(CASE WHEN fsm.applicationstatus IN ('ASSIGN_DSO','ASSIGN_DRIVER') THEN 1 END) AS pending,"
+			+ " fsm.tenantid FROM eg_fsm_application fsm GROUP BY fsm.tenantid" + ") AS counts ";
 
 	private static final String PAGINATION_WRAPPER = "{} {orderby} {pagination}";
 
@@ -317,11 +315,11 @@ public class FSMQueryBuilder {
 	public String getFSMDashboardCountQuery(String tenantId, List<Object> preparedStmtList) {
 
 		StringBuilder builder = new StringBuilder(dashboardSearchQuery);
-		
+
 		addClauseIfRequired(preparedStmtList, builder);
 		builder.append(" tenantid != ?");
 		preparedStmtList.add("cg.citya");
-		
+
 		if (tenantId != null) {
 			addClauseIfRequired(preparedStmtList, builder);
 			builder.append(" tenantid = ?");
