@@ -150,7 +150,7 @@ public class FSMController {
 	}
 
 	@PostMapping(value = "/dashboard/count")
-	public ResponseEntity<List<Map<String, Object>>> getDataCountsForDashboard(String tenantId) {
+	public ResponseEntity<List<Map<String, Object>>> getDataCountsForDashboard(@RequestParam(required = false) String tenantId) {
 
 		List<Map<String, Object>> sqlResponseList = fsmService.getDataCountsForDashboard(tenantId);
 		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
