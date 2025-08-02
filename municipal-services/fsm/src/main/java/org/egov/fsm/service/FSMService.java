@@ -924,7 +924,11 @@ public class FSMService {
 	public UserResponseApp citizenValidateAndAuthGenerateForApp(String tenantId, String mobileNumber) {
 		UserResponseApp userResponse = userService.userSearchApp(tenantId, mobileNumber);
 		return userResponse;
-		
+
+	}
+
+	public List<Map<String, Object>> getDataCountsForDashboard(String tenantId) {
+		return fsmRepository.getDataCountsForDashboard(tenantId);
 	}
 
 }

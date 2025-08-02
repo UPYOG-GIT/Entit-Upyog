@@ -2,11 +2,11 @@ package org.egov.fsm.web.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.egov.fsm.service.FSMService;
-import org.egov.fsm.service.UserService;
 import org.egov.fsm.util.FSMUtil;
 import org.egov.fsm.util.ResponseInfoFactory;
 import org.egov.fsm.web.model.FSM;
@@ -146,6 +146,14 @@ public class FSMController {
 
 		UserResponseApp userResponseApp = fsmService.citizenValidateAndAuthGenerateForApp(tenantId, mobileNumber);
 		return new ResponseEntity<>(userResponseApp, HttpStatus.OK);
+
+	}
+
+	@PostMapping(value = "/dashboard/count")
+	public ResponseEntity<List<Map<String, Object>>> getDataCountsForDashboard(String tenantId) {
+
+		List<Map<String, Object>> sqlResponseList = fsmService.getDataCountsForDashboard(tenantId);
+		return new ResponseEntity<>(sqlResponseList, HttpStatus.OK);
 
 	}
 

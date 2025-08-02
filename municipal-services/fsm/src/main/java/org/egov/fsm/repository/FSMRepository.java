@@ -3,6 +3,7 @@ package org.egov.fsm.repository;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -60,10 +61,10 @@ public class FSMRepository {
 	@Autowired
 	private TripDetailRowMapper detailMapper;
 
-		public void save(FSMRequest fsmRequest) {
-			producer.push(config.getSaveTopic(), fsmRequest);
-			producer.push(config.getFsmEventIndexKafkaTopic(), fsmRequest);
-		}
+	public void save(FSMRequest fsmRequest) {
+		producer.push(config.getSaveTopic(), fsmRequest);
+		producer.push(config.getFsmEventIndexKafkaTopic(), fsmRequest);
+	}
 
 	public void update(FSMRequest fsmRequest, boolean isStateUpdatable) {
 		RequestInfo requestInfo = fsmRequest.getRequestInfo();
@@ -88,7 +89,6 @@ public class FSMRepository {
 					new FSMRequest(requestInfo, fsmForStatusUpdate, fsmRequest.getWorkflow()));
 			producer.push(config.getFsmEventIndexKafkaTopic(), fsmRequest);
 		}
-			
 
 	}
 
@@ -116,8 +116,7 @@ public class FSMRepository {
 		List<Object> preparedStmtList = new ArrayList<>();
 		preparedStmtList.add(criteria.getOffset());
 		preparedStmtList.add(criteria.getLimit());
-		return jdbcTemplate.query(
-				"SELECT id from eg_fsm_application ORDER BY createdtime offset " + " ? " + "limit ? ",
+		return jdbcTemplate.query("SELECT id from eg_fsm_application ORDER BY createdtime offset " + " ? " + "limit ? ",
 				preparedStmtList.toArray(), new SingleColumnRowMapper<>(String.class));
 	}
 
@@ -141,12 +140,9 @@ public class FSMRepository {
 		preparedStmtList.add(tenantId);
 		preparedStmtList.add(new Date().getTime() - timeLimit);
 		preparedStmtList.add(FSMConstants.COMPLETED);
-		return jdbcTemplate.queryForList(baseQuery.toString(), String.class,
-				preparedStmtList.toArray());
+		return jdbcTemplate.queryForList(baseQuery.toString(), String.class, preparedStmtList.toArray());
 
 	}
-	
-	
 
 	/***
 	 * This method will return unique tenantid's
@@ -155,8 +151,7 @@ public class FSMRepository {
 	 */
 
 	public List<String> getTenants() {
-		return jdbcTemplate.query(FSMQueryBuilder.GET_UNIQUE_TENANTS,
-				new SingleColumnRowMapper<>(String.class));
+		return jdbcTemplate.query(FSMQueryBuilder.GET_UNIQUE_TENANTS, new SingleColumnRowMapper<>(String.class));
 
 	}
 
@@ -187,16 +182,29 @@ public class FSMRepository {
 
 		return tripDetails;
 	}
-/**
- * This function is to update the trip status to inactive while decreasing the trips during trip update
- * @param vehicleTripList
- */
-	//commented as  vehicleTripList is handled while calling updateVehicleToInActive function
+
+	/**
+	 * This function is to update the trip status to inactive while decreasing the
+	 * trips during trip update
+	 * 
+	 * @param vehicleTripList
+	 */
+	// commented as vehicleTripList is handled while calling updateVehicleToInActive
+	// function
 	public void updateVehicleToInActive(List<VehicleTrip> vehicleTripList) {
 		if (vehicleTripList != null) {
-			producer.push(config.getVehicleUpdateTripToInactive(), new VehicleTripRequest(new RequestInfo(), vehicleTripList,null));
+			producer.push(config.getVehicleUpdateTripToInactive(),
+					new VehicleTripRequest(new RequestInfo(), vehicleTripList, null));
 		}
 	}
-	
+
+	public List<Map<String, Object>> getDataCountsForDashboard(String tenantId) {
+
+		List<Object> preparedStmtList = new ArrayList<>();
+		
+		String query = fsmQueryBuilder.getFSMDashboardCountQuery(tenantId, preparedStmtList);
+		return jdbcTemplate.queryForList(query.toString(), preparedStmtList.toArray());
+//		return null;
+	}
 
 }
