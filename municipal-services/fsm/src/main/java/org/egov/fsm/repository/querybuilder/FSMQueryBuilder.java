@@ -31,8 +31,8 @@ public class FSMQueryBuilder {
 			+ " COUNT(CASE WHEN fsm.applicationstatus = 'COMPLETED' THEN 1 END) AS completed,"
 			+ " COUNT(CASE WHEN fsm.applicationstatus IN ('PENDING_WORK_START_BY_DRIVER') THEN 1 END) AS driver_assigned,"
 			+ " COUNT(CASE WHEN fsm.applicationstatus IN ('PENDING_WORK_COMPLETE') THEN 1 END) AS progress,"
-			+ " COUNT(CASE WHEN fsm.applicationstatus = 'CITIZEN_FEEDBACK_PENDING' THEN 1 END) AS feedback_pending"
-			+ " COUNT(CASE WHEN fsm.applicationstatus IN ('ASSIGN_DSO','ASSIGN_DRIVER') THEN 1 END) AS pending,"
+			+ " COUNT(CASE WHEN fsm.applicationstatus = 'CITIZEN_FEEDBACK_PENDING' THEN 1 END) AS feedback_pending,"
+			+ " COUNT(CASE WHEN fsm.applicationstatus IN ('ASSIGN_DSO','ASSIGN_DRIVER') THEN 1 END) AS pending"
 			+ " FROM eg_fsm_application fsm WHERE tenantId!='cg.citya') AS counts ";
 
 	private static final String PAGINATION_WRAPPER = "{} {orderby} {pagination}";
