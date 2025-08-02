@@ -927,8 +927,8 @@ public class FSMService {
 
 	}
 
-	public List<Map<String, Object>> getDataCountsForDashboard(String tenantId) {
-		return fsmRepository.getDataCountsForDashboard(tenantId);
+	public Map<String, Object> getDataCountsForDashboard() {
+		return fsmRepository.getDataCountsForDashboard();
 	}
 
 }

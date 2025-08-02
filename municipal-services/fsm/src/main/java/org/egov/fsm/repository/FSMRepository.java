@@ -198,13 +198,10 @@ public class FSMRepository {
 		}
 	}
 
-	public List<Map<String, Object>> getDataCountsForDashboard(String tenantId) {
+	public Map<String, Object> getDataCountsForDashboard() {
 
-		List<Object> preparedStmtList = new ArrayList<>();
-		
-		String query = fsmQueryBuilder.getFSMDashboardCountQuery(tenantId, preparedStmtList);
-		return jdbcTemplate.queryForList(query.toString(), preparedStmtList.toArray());
-//		return null;
+		String query = fsmQueryBuilder.getFSMDashboardCountQuery();
+		return jdbcTemplate.queryForMap(query.toString());
 	}
 
 }
