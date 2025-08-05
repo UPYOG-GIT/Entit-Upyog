@@ -9,9 +9,14 @@ import org.egov.fsm.web.model.driver.DriverResponse;
 import org.egov.fsm.web.model.driver.DriverSearchCriteria;
 import org.egov.tracer.model.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@Slf4j
 public class DriverService {
 
 	@Autowired
