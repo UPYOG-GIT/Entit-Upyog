@@ -132,6 +132,9 @@ public class FSMService {
 	@Autowired
 	FsmWorkerRepository fsmWorkerRepository;
 
+	@Autowired
+	DriverService driverService;
+
 	public FSM create(FSMRequest fsmRequest) {
 		RequestInfo requestInfo = fsmRequest.getRequestInfo();
 		Object mdmsData = util.mDMSCall(requestInfo, fsmRequest.getFsm().getTenantId());
@@ -722,6 +725,10 @@ public class FSMService {
 //			String accountId = fsm.getAccountId();
 			fsm.setCitizen(
 					userService.getUserSearch(fsm.getAccountId(), fsm.getTenantId(), requestInfo).getUser().get(0));
+			if (fsm.getDriver() != null) {
+				fsm.setDriver(driverService.driverSearch(fsm.getTenantId(), fsm.getDriverId(), requestInfo).getDriver()
+						.get(0));
+			}
 		}
 //		if (!fsmList.isEmpty()) {
 //			enrichmentService.enrichFSMSearch(fsmList, requestInfo, criteria.getTenantId());

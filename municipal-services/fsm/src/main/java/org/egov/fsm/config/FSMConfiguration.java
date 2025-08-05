@@ -303,5 +303,14 @@ public class FSMConfiguration {
 		// inbox Config
 		@Value("${fsm.event.index.kafka.topic}")
 		private String fsmEventIndexKafkaTopic;
+		
+		@Value("${egov.driver.host}")
+		private String driverHost;
+
+		@Value("${egov.driver.context.path}")
+		private String driverContextPath;
+
+		@Value("${egov.driver.search.path}")
+		private String driverSearchEndpoint;
 
 }
