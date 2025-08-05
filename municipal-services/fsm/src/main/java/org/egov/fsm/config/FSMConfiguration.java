@@ -304,7 +304,7 @@ public class FSMConfiguration {
 		@Value("${fsm.event.index.kafka.topic}")
 		private String fsmEventIndexKafkaTopic;
 		
-		@Value("${egov.driver.host}")
+		@Value("${egov.vendor.host}")
 		private String driverHost;
 
 		@Value("${egov.driver.context.path}")
