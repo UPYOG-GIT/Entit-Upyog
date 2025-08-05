@@ -71,6 +71,7 @@ public class FSMRowMapper implements ResultSetExtractor<List<FSM>> {
 			String oldApplicationNo = rs.getString("oldApplicationNo");
 			String paymentPreference = rs.getString("paymentPreference");
 			BigDecimal advanceAmount = rs.getBigDecimal("advanceamount");
+			String driverId = rs.getString("driver_id");
 			if (fmsMap.get(id) == null) {
 				currentfsm = FSM.builder().id(id).applicationNo(applicationNo).tenantId(tenantId)
 						.description(description).accountId(accountId)
@@ -79,7 +80,7 @@ public class FSMRowMapper implements ResultSetExtractor<List<FSM>> {
 						.vehicleId(vehicleId).applicationStatus(applicationStatus).dsoId(dsoid)
 						.possibleServiceDate(possiblesrvdate).vehicleType(vehicleType).vehicleCapacity(vehicleCapacity)
 						.completedOn(compeletedOn).applicationType(applicationType).oldApplicationNo(oldApplicationNo)
-						.paymentPreference(paymentPreference).advanceAmount(advanceAmount).build();
+						.paymentPreference(paymentPreference).advanceAmount(advanceAmount).driverId(driverId).build();
 
 				fmsMap.put(id, currentfsm);
 			}
