@@ -28,7 +28,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Request schema of FSM application.  
+ * Request schema of FSM application.
  */
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2020-12-23T12:08:13.326Z[GMT]")
@@ -38,157 +38,157 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class FSM   {
-  @JsonProperty("citizen")
-  @Valid
-  private User citizen ;
+public class FSM {
+	@JsonProperty("citizen")
+	@Valid
+	private User citizen;
 
-  @SafeHtml
-  @JsonProperty("id")
-  private String id ;
+	@SafeHtml
+	@JsonProperty("id")
+	private String id;
 
-  @NotNull
-  @SafeHtml
-  @Size(min=2,max=64)
-  @JsonProperty("tenantId")
-  private String tenantId ;
+	@NotNull
+	@SafeHtml
+	@Size(min = 2, max = 64)
+	@JsonProperty("tenantId")
+	private String tenantId;
 
-  @SafeHtml
-  @JsonProperty("applicationNo")
-  private String applicationNo ;
+	@SafeHtml
+	@JsonProperty("applicationNo")
+	private String applicationNo;
 
-  @SafeHtml
-  @JsonProperty("description")
-  private String description ;
+	@SafeHtml
+	@JsonProperty("description")
+	private String description;
 
-  @SafeHtml
-  @JsonProperty("accountId")
-  private String accountId ;
+	@SafeHtml
+	@JsonProperty("accountId")
+	private String accountId;
 
-  @JsonProperty("additionalDetails")
-  private Object additionalDetails ;
+	@JsonProperty("additionalDetails")
+	private Object additionalDetails;
 
-  @SafeHtml
-  @JsonProperty("applicationStatus")
-  private String applicationStatus ;
+	@SafeHtml
+	@JsonProperty("applicationStatus")
+	private String applicationStatus;
 
-  @SafeHtml
-  @JsonProperty("source")
-  private String source ;
+	@SafeHtml
+	@JsonProperty("source")
+	private String source;
 
-  @SafeHtml
-  @JsonProperty("sanitationtype")
-  private String sanitationtype ;
+	@SafeHtml
+	@JsonProperty("sanitationtype")
+	private String sanitationtype;
 
-  @SafeHtml
-  @JsonProperty("propertyUsage")
-  private String propertyUsage ;
-  
-  @SafeHtml
-  @JsonProperty("vehicleType")
-  private String vehicleType ;
- 
-  @JsonProperty("noOfTrips")
-  private Integer noOfTrips ;
-  
-  @SafeHtml
-  @JsonProperty("vehicleCapacity")
-  private String vehicleCapacity ;
+	@SafeHtml
+	@JsonProperty("propertyUsage")
+	private String propertyUsage;
 
-  /**
-   * Gets or Sets status
-   */
-  public enum StatusEnum {
-    ACTIVE("ACTIVE"),
-    
-    INACTIVE("INACTIVE");
+	@SafeHtml
+	@JsonProperty("vehicleType")
+	private String vehicleType;
 
-    private String value;
+	@JsonProperty("noOfTrips")
+	private Integer noOfTrips;
 
-    StatusEnum(String value) {
-      this.value = value;
-    }
+	@SafeHtml
+	@JsonProperty("vehicleCapacity")
+	private String vehicleCapacity;
 
-    @Override
-    @JsonValue
-    public String toString() {
-      return String.valueOf(value);
-    }
+	/**
+	 * Gets or Sets status
+	 */
+	public enum StatusEnum {
+		ACTIVE("ACTIVE"),
 
-    @JsonCreator
-    public static StatusEnum fromValue(String text) {
-      for (StatusEnum b : StatusEnum.values()) {
-        if (String.valueOf(b.value).equals(text)) {
-          return b;
-        }
-      }
-      return null;
-    }
-  }
-  @JsonProperty("status")
-  private StatusEnum status ;
+		INACTIVE("INACTIVE");
 
-  @SafeHtml
-  @JsonProperty("vehicleId")
-  private String vehicleId ;
-  
-  @JsonProperty("vehicle")
-  private Vehicle vehicle ;
+		private String value;
 
-  @JsonProperty("workers")
-  private List<Worker> workers;
-  
-  @SafeHtml
-  @JsonProperty("dsoId")
-  private String dsoId ;
-  
-  @JsonProperty("dso")
-  private Vendor dso ;
-  
-  @JsonProperty("possibleServiceDate")
-  private Long possibleServiceDate ;
+		StatusEnum(String value) {
+			this.value = value;
+		}
 
-  @JsonProperty("pitDetail")
-  @Valid
-  private PitDetail pitDetail ;
+		@Override
+		@JsonValue
+		public String toString() {
+			return String.valueOf(value);
+		}
 
-  @Valid
-  @JsonProperty("address")
-  private Address address;
+		@JsonCreator
+		public static StatusEnum fromValue(String text) {
+			for (StatusEnum b : StatusEnum.values()) {
+				if (String.valueOf(b.value).equals(text)) {
+					return b;
+				}
+			}
+			return null;
+		}
+	}
 
-  @JsonProperty("auditDetails")
-  private AuditDetails auditDetails ;
-  
-  @JsonProperty("wasteCollected")
-  private Double wasteCollected ;
-  
+	@JsonProperty("status")
+	private StatusEnum status;
 
-  @JsonProperty("completedOn")
-  private Long completedOn ;
-  
-  @JsonProperty("advanceAmount")
-  private BigDecimal advanceAmount=null;
+	@SafeHtml
+	@JsonProperty("vehicleId")
+	private String vehicleId;
 
-  @JsonProperty("applicationType")
-  private String applicationType ;
-  
-  @JsonProperty("oldApplicationNo")
-  private String oldApplicationNo ;
-  
-  @JsonProperty("paymentPreference")
-  private String paymentPreference ;
+	@JsonProperty("vehicle")
+	private Vehicle vehicle;
 
-  @JsonProperty("processInstance")
-private ProcessInstance processInstance;
+	@JsonProperty("workers")
+	private List<Worker> workers;
 
-  @SafeHtml
-  @JsonProperty("driverId")
-  private String driverId ;
-  
-  @JsonProperty("driver")
-  private Driver driver ;
-  
- // @JsonProperty("receivedPayment")
- // private String receivedPayment;
+	@SafeHtml
+	@JsonProperty("dsoId")
+	private String dsoId;
+
+	@JsonProperty("dso")
+	private Vendor dso;
+
+	@JsonProperty("possibleServiceDate")
+	private Long possibleServiceDate;
+
+	@JsonProperty("pitDetail")
+	@Valid
+	private PitDetail pitDetail;
+
+	@Valid
+	@JsonProperty("address")
+	private Address address;
+
+	@JsonProperty("auditDetails")
+	private AuditDetails auditDetails;
+
+	@JsonProperty("wasteCollected")
+	private Double wasteCollected;
+
+	@JsonProperty("completedOn")
+	private Long completedOn;
+
+	@JsonProperty("advanceAmount")
+	private BigDecimal advanceAmount = null;
+
+	@JsonProperty("applicationType")
+	private String applicationType;
+
+	@JsonProperty("oldApplicationNo")
+	private String oldApplicationNo;
+
+	@JsonProperty("paymentPreference")
+	private String paymentPreference;
+
+	@JsonProperty("processInstance")
+	private ProcessInstance processInstance;
+
+	@SafeHtml
+	@JsonProperty("driverId")
+	private String driverId = null;
+
+	@JsonProperty("driver")
+	private Driver driver;
+
+	// @JsonProperty("receivedPayment")
+	// private String receivedPayment;
 
 }
