@@ -725,7 +725,7 @@ public class FSMService {
 //			String accountId = fsm.getAccountId();
 			fsm.setCitizen(
 					userService.getUserSearch(fsm.getAccountId(), fsm.getTenantId(), requestInfo).getUser().get(0));
-			if (fsm.getDriver() != null) {
+			if (fsm.getDriverId() != null) {
 				fsm.setDriver(driverService.driverSearch(fsm.getTenantId(), fsm.getDriverId(), requestInfo).getDriver()
 						.get(0));
 			}
