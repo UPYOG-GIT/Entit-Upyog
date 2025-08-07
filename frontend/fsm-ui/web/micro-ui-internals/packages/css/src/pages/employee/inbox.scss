@@ -190,6 +190,28 @@
   @apply inline ml-sm p-sm bg-primary-main rounded-full text-white text-heading-s align-middle text-center font-regular;
 }
 
+.search-tabs-container {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  margin-bottom: 35px;
+  display: flex;
+  justify-content: space-between;
+
+  .search-tab-head {
+    padding: 10px 35px;
+  }
+
+  .search-tab-head-selected {
+    padding: 10px 35px;
+    color: rgb(244, 119, 56);
+    border-bottom: 4px solid rgb(244, 119, 56);
+    font-weight: bold;
+  }
+
+  .search-tab-head-selected:focus {
+    outline: 0;
+  }
+}
+
 @screen dt {
   .complaint-links-container {
     @apply bg-white;

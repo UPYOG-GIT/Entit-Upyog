@@ -10,6 +10,8 @@ import RegistrySearch from "./RegistrySearch";
 import { useQueryClient } from "react-query";
 
 const RegisryInbox = (props) => {
+
+  // console.log("props "+JSON.stringify(props))
   const tenantId = Digit.ULBService.getCurrentTenantId();
   const { t } = useTranslation();
   const history = useHistory();
@@ -20,7 +22,7 @@ const RegisryInbox = (props) => {
   const [showToast, setShowToast] = useState(null);
   const [vendors, setVendors] = useState([]);
   const queryClient = useQueryClient();
-
+  
   const {
     data: vendorData,
     isLoading: isVendorLoading,

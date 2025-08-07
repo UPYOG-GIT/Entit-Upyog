@@ -18,15 +18,23 @@ import _ from "lodash";
 import TLCaption from "./TLCaption";
 
 export const ApplicationTimeline = (props) => {
+
+  
   const { t } = useTranslation();
   const { isLoading, data } = Digit.Hooks.useWorkflowDetails({
     tenantId: props.application?.tenantId,
     id: props.id,
     moduleCode: "FSM",
   });
+
+  function OpenImage(imageSource, index,thumbnailsToShow){
+    window.open(thumbnailsToShow?.fullImage?.[0],"_blank");
+  }
+
   const [showAllTimeline, setShowAllTimeline]=useState(false);
   const getTimelineCaptions = (checkpoint) => {
-    const __comment = checkpoint?.comment?.split("~");
+    // const __comment = checkpoint?.comment?.split("~");
+    const __comment = checkpoint?.wfComment;
     const reason = __comment ? __comment[0] : null;
     const reason_comment = __comment ? __comment[1] : null;
     if (checkpoint.status === "CREATED") {
@@ -36,7 +44,7 @@ export const ApplicationTimeline = (props) => {
       };
       return <TLCaption data={caption} />;
     } else if (
-      checkpoint.status === "PENDING_APPL_FEE_PAYMENT" ||
+      checkpoint.status === "PENDING_FEE_PAYMENT" ||
       checkpoint.status === "DSO_REJECTED" ||
       checkpoint.status === "CANCELED" ||
       checkpoint.status === "REJECTED"
@@ -46,8 +54,22 @@ export const ApplicationTimeline = (props) => {
         name: checkpoint?.assigner,
         comment: reason ? t(`ES_ACTION_REASON_${reason}`) : null,
         otherComment: reason_comment ? reason_comment : null,
+        thumbnailsToShow : checkpoint?.thumbnailsToShow,
       };
-      return <TLCaption data={caption} />;
+      return <TLCaption data={caption} OpenImage={OpenImage}/>;
+    } else if (
+      checkpoint.status === "PENDING_WORK_START_BY_DRIVER" ||
+      checkpoint.status === "PENDING_WORK_COMPLETE" 
+    ) {
+      const caption = {
+        date: checkpoint?.auditDetails?.created,
+        name: checkpoint?.assignes?.[0]?.name,
+        mobileNumber: props.application?.dsoDetails?.mobileNumber,
+        comment: reason ? t(`${reason}`) : null,
+        otherComment: reason_comment ? reason_comment : null,
+        thumbnailsToShow : checkpoint?.thumbnailsToShow,
+      };
+      return <TLCaption data={caption} OpenImage={OpenImage} />;
     } else if (checkpoint.status === "CITIZEN_FEEDBACK_PENDING") {
       return (
         <>
@@ -60,10 +82,10 @@ export const ApplicationTimeline = (props) => {
           )}
         </>
       );
-    } else if (checkpoint.status === "DSO_INPROGRESS") {
+    } else if (checkpoint.status === "ASSIGN_DSO") {
       const caption = {
         name: checkpoint?.assigner,
-        mobileNumber: props.application?.dsoDetails?.mobileNumber,
+        // mobileNumber: props.application?.dsoDetails?.mobileNumber,
         date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(props.application?.possibleServiceDate)}`,
       };
       return <TLCaption data={caption} />;
@@ -85,11 +107,11 @@ export const ApplicationTimeline = (props) => {
       if (checkpoint?.numberOfTrips) caption.comment = `${t("NUMBER_OF_TRIPS")}: ${checkpoint?.numberOfTrips}`;
       return <TLCaption data={caption} />;
     }
-    else if (checkpoint.status === "PENDING_PAYYY") {
+    else if (checkpoint.status === "PENDING_FEE_PAYMENT") {
       const caption = {
         name: checkpoint?.assigner,
         mobileNumber: checkpoint?.assigner?.mobileNumber,
-        date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(props.application?.possibleServiceDate)}`,
+        // date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(props.application?.possibleServiceDate)}`,
       };
       return <TLCaption data={caption} />;
   };

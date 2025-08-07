@@ -31,6 +31,7 @@ import { useQueryClient } from "react-query";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { ViewImages } from "../../../components/ViewImages";
 import getPDFData from "../../../getPDFData";
+import JsDictionary from "../../../../../../libraries/src/services/atoms/JsDictionary";
 
 const ApplicationDetails = (props) => {
   const userInfo = Digit.UserService.getUser();
@@ -60,7 +61,6 @@ const ApplicationDetails = (props) => {
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
 
   const { tenants } = storeData || {};
-
   const { data: paymentsHistory } = Digit.Hooks.fsm.usePaymentHistory(tenantId, applicationNumber);
 
   const { isLoading, isError, data: applicationDetails, error } = Digit.Hooks.fsm.useApplicationDetail(
@@ -112,6 +112,10 @@ const ApplicationDetails = (props) => {
     serviceData: applicationDetails,
     getTripData: true,
   });
+
+  function OpenImage(imageSource, index,thumbnailsToShow){
+    window.open(thumbnailsToShow?.fullImage?.[0],"_blank");
+  }
 
   useEffect(() => {
     if (showToast) {
@@ -201,7 +205,8 @@ const ApplicationDetails = (props) => {
   }
 
   const getTimelineCaptions = (checkpoint) => {
-    const __comment = checkpoint?.comment?.split("~");
+    // const __comment = checkpoint?.comment?.split("~");
+    const __comment = checkpoint?.wfComment;
     const reason = __comment ? __comment[0] : null;
     const reason_comment = __comment ? __comment[1] : null;
     if (checkpoint.status === "CREATED") {
@@ -214,7 +219,7 @@ const ApplicationDetails = (props) => {
       };
       return <TLCaption data={caption} />;
     } else if (
-      checkpoint.status === "PENDING_APPL_FEE_PAYMENT" ||
+      checkpoint.status === "PENDING_FEE_PAYMENT" ||
       checkpoint.status === "DSO_REJECTED" ||
       checkpoint.status === "CANCELED" ||
       checkpoint.status === "REJECTED"
@@ -224,6 +229,26 @@ const ApplicationDetails = (props) => {
         name: checkpoint?.assigner,
         comment: reason ? t(`ES_ACTION_REASON_${reason}`) : null,
         otherComment: reason_comment ? reason_comment : null,
+      };
+      return <TLCaption data={caption} />;
+    } else if (
+      checkpoint.status === "PENDING_WORK_START_BY_DRIVER" ||
+      checkpoint.status === "PENDING_WORK_COMPLETE" 
+    ) {
+      const caption = {
+        date: checkpoint?.auditDetails?.created,
+        name: checkpoint?.assignes?.[0]?.name,
+        // mobileNumber: applicationData.application?.dsoDetails?.mobileNumber,
+        comment: reason ? t(`${reason}`) : null,
+        otherComment: reason_comment ? reason_comment : null,
+        thumbnailsToShow : checkpoint?.thumbnailsToShow,
+      };
+      return <TLCaption data={caption} OpenImage={OpenImage} />;
+    } else if (checkpoint.status === "ASSIGN_DSO") {
+      const caption = {
+        name: checkpoint?.assigner,
+        // mobileNumber: props.application?.dsoDetails?.mobileNumber,
+        date: `${t("CS_FSM_EXPECTED_DATE")} ${Digit.DateUtils.ConvertTimestampToDate(applicationData?.possibleServiceDate)}`,
       };
       return <TLCaption data={caption} />;
     } else if (checkpoint.status === "DSO_INPROGRESS") {

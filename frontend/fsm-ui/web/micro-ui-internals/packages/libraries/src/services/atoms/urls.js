@@ -60,6 +60,7 @@ const Urls = {
     workerSearch: "/individual/v1/_search",
     rmcPtSearchbyId: "https://mcraipur.in/api/getPropertyDetails",
     rmcPtSearchbyMoNo: "",
+    fsmDashboardCount:"/fsm/v1/dashboard/count",
   },
 
   payment: {

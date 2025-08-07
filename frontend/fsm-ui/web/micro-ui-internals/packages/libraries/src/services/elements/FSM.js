@@ -184,4 +184,12 @@ export const FSMService = {
         params: { tenantId, ...params },
         auth: true,
       }),
+  fsmDashboardCount: (tenantId) =>
+    Request({
+      url: Urls.fsm.fsmDashboardCount,
+      params: {tenantId},
+      auth: false,
+      userService: false,
+      method: "POST"
+    }),
 };

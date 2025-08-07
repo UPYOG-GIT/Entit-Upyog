@@ -3,8 +3,8 @@ import { Request } from "../atoms/Utils/Request";
 import cloneDeep from "lodash/cloneDeep";
 
 const getThumbnails = async (ids, tenantId, documents = []) => {
-  tenantId = window.location.href.includes("/obps/") ? Digit.ULBService.getStateId() : tenantId;
-  if (window.location.href.includes("/obps/")) {
+  tenantId = window.location.href.includes("/obps/") || window.location.href.includes("/fsm/") ? Digit.ULBService.getStateId() : tenantId;
+  if (window.location.href.includes("/obps/") || window.location.href.includes("/fsm/")) {
     if (documents?.length > 0) {
       let workflowsDocs = [];
       documents?.map((doc) => {
@@ -35,11 +35,11 @@ const getThumbnails = async (ids, tenantId, documents = []) => {
 
 const makeCommentsSubsidariesOfPreviousActions = async (wf) => {
   const TimelineMap = new Map();
-  const tenantId = window.location.href.includes("/obps/") ? Digit.ULBService.getStateId() : wf?.[0]?.tenantId;
+  const tenantId = window.location.href.includes("/obps/") || window.location.href.includes("/fsm/") ? Digit.ULBService.getStateId() : wf?.[0]?.tenantId;
   let fileStoreIdsList = [];
   let res = {};
 
-  if (window.location.href.includes("/obps/")) {
+  if (window.location.href.includes("/obps/") || window.location.href.includes("/fsm/")) {
     wf?.map((wfData) => {
       wfData?.documents?.map((wfDoc) => {
         if (wfDoc?.fileStoreId) fileStoreIdsList.push(wfDoc?.fileStoreId);
@@ -212,7 +212,7 @@ export const WorkflowService = {
               for (const data of tripSearchResp.vehicleTrip) {
                 const resp = await Digit.WorkflowService.getByBusinessId(tenantId, data.applicationNo);
                 resp?.ProcessInstances?.map((instance, ind) => {
-                  if (instance.state.applicationStatus === "WAITING_FOR_DISPOSAL") {
+                  if (instance.state.applicationStatus === "WAITING_FOR_DISPOSAL" || instance.state.applicationStatus === "PENDING_WORK_COMPLETE" || instance.state.applicationStatus === "PENDING_WORK_START_BY_DRIVER") {
                     waitingForDisposedCount++;
                     cretaedTime = Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.createdTime);
                     lastModifiedTime = Digit.DateUtils.ConvertEpochToDate(instance.auditDetails.lastModifiedTime);

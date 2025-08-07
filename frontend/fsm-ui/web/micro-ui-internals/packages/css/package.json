@@ -1,6 +1,6 @@
 {
   "name": "@entit/digit-ui-css",
-  "version": "9.6.1",
+  "version": "2.0.1",
   "license": "MIT",
   "main": "dist/index.css",
   "engines": {
@@ -11,7 +11,7 @@
   },
   "scripts": {
     "start": "gulp build",
-    "build:prod": "NODE_ENV=production gulp build",
+    "build:prod": "gulp build",
     "prepublish": "yarn build:prod",
     "deploy": "gulp && cp -R svg example && cp -R img example && gh-pages -d example",
     "publish:css": "cd packages/css && yarn publish --access public"
@@ -22,7 +22,7 @@
   ],
   "style": "./dist/index.css",
   "dependencies": {
-    "@entit/digit-ui-css": "9.6.1",
+    "@entit/digit-ui-css": "2.0.1",
     "node-sass": "4.14.1",
     "normalize.css": "8.0.1",
     "postcss-scss": "3.0.5",

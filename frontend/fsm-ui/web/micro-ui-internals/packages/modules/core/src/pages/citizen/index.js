@@ -52,277 +52,54 @@ const Home = ({
     );
   });
 
-  const [initiatedCount, setInitiatedCount] = useState(0);
-  const [citizenApprovalInProcessCount, setCitizenApprovalInProcessCount] = useState(0);
-  const [approvedCount, setApprovedCount] = useState(0);
-  const [rejectedCount, setRejectedCount] = useState(0);
-  const [departmentInProcessCount, setDepartmentInProcessCount] = useState(0);
-  const [reassignedCount, setReassignedCount] = useState(0);
-  const [applFeePending, setApplFeePending] = useState(0);
-  const [sancFeePending, setSancFeePending] = useState(0);
-  const [inprogressCount, setInprogressCount] = useState(0);
-  const [totalProposal, setTotalProposal] = useState(0);
-  const [directBhawanAnugya, setDirectBhawanAnugya] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
+  const [progressCount, setProgressCount] = useState(0);
+  const [feedbackPendingCount, setFeedbackPendingCount] = useState(0);
+  const [driverAssignedCount, setDriverAssigned] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(async () => {
-    const getDashboardCount = await Digit.OBPSAdminService.getDashboardCount();
+    const fsmDashboardCount = await Digit.FSMService.fsmDashboardCount();
 
-    // console.log("getDashboardCount--" + JSON.stringify(getDashboardCount))
+    if (fsmDashboardCount.total !== undefined) {
+      const totalCount = fsmDashboardCount.total;
+      setTotalCount(totalCount);
+    }
 
-    getDashboardCount.forEach((dashboardData) => {
-      if (dashboardData.initiated !== undefined) {
-        const initiatedCount = dashboardData.initiated;
-        setInitiatedCount(initiatedCount);
-        // console.log("initiatedCount" + initiatedCount);
-      }
+    if (fsmDashboardCount.completed !== undefined) {
+      const completedCount = fsmDashboardCount.completed;
+      const feedbackPendingCount = fsmDashboardCount.feedback_pending;
+      setCompletedCount(completedCount + feedbackPendingCount);
+    }
 
-      if (dashboardData.citizen_approval_inprocess !== undefined) {
-        const citizenApprovalInProcessCount = dashboardData.citizen_approval_inprocess;
-        setCitizenApprovalInProcessCount(citizenApprovalInProcessCount);
-      }
+    if (fsmDashboardCount.progress !== undefined) {
+      const progressCount = fsmDashboardCount.progress;
+      setProgressCount(progressCount);
+    }
 
-      if (dashboardData.approved !== undefined) {
-        const approvedCount = dashboardData.approved;
-        setApprovedCount(approvedCount);
-      }
+    if (fsmDashboardCount.feedback_pending !== undefined) {
+      const feedbackPendingCount = fsmDashboardCount.feedback_pending;
+      setFeedbackPendingCount(feedbackPendingCount);
+    }
 
-      if (dashboardData.rejected !== undefined) {
-        const rejectedCount = dashboardData.rejected;
-        setRejectedCount(rejectedCount);
-      }
+    if (fsmDashboardCount.driver_assigned !== undefined) {
+      const driverAssignedCount = fsmDashboardCount.driver_assigned;
+      setDriverAssigned(driverAssignedCount);
+    }
 
-      if (dashboardData.direct_bhawan_anugya !== undefined) {
-        const directBhawanAnugya = dashboardData.direct_bhawan_anugya;
-        setDirectBhawanAnugya(directBhawanAnugya);
-      }
-
-      if (dashboardData.department_inprocess !== undefined) {
-        const departmentInProcessCount = dashboardData.department_inprocess;
-        setDepartmentInProcessCount(departmentInProcessCount);
-      }
-
-      if (dashboardData.reassign !== undefined) {
-        const reassignedCount = dashboardData.reassign;
-        setReassignedCount(reassignedCount);
-      }
-
-      if (dashboardData.appl_fee !== undefined) {
-        const applFeePending = dashboardData.appl_fee;
-        setApplFeePending(applFeePending);
-      }
-
-      if (dashboardData.sanc_fee_pending !== undefined) {
-        const sancFeePending = dashboardData.sanc_fee_pending;
-        setSancFeePending(sancFeePending);
-      }
-
-      if (dashboardData.inprogress !== undefined) {
-        const inprogressCount = dashboardData.inprogress;
-        setInprogressCount(inprogressCount);
-      }
-
-      if (dashboardData.total !== undefined) {
-        const totalProposal = dashboardData.total;
-        setTotalProposal(totalProposal);
-      }
-    });
+    if (fsmDashboardCount.pending !== undefined) {
+      const pendingCount = fsmDashboardCount.pending;
+      setPendingCount(pendingCount);
+    }
   }, []);
 
   const ModuleLevelLinkHomePages = modules.map(({ code, bannerImage }, index) => {
     let Links = Digit.ComponentRegistryService.getComponent(`${code}Links`) || (() => <React.Fragment />);
 
     return (
-      // <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>
-      //   <div className="moduleLinkHomePage">
-      //     <img src={bannerImage || stateInfo?.bannerUrl} alt="noimagefound" />
-      //     {/* <BackButton className="moduleLinkHomePageBackButton" /> */}
-      //     {/* <h1>{t("MODULE_" + code.toUpperCase())}</h1> */}
-      //   </div>
-      //   <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} >
-      //     <Box flex="3" className="leftColumn">
-      //       <Chip label="Welcome to Online Building Permission System!" style={{ width: '100%', maxWidth: 500, color: 'white', backgroundColor: '#f47738', marginTop: 20, fontSize: 19 }} />
-      //       <Typography variant="body1" style={{ fontFamily: 'Sans-serif', color: '#444444', padding: 10, marginTop: 10, marginRight: 40, fontSize: 20, textAlign: 'justify' }}>
-      //         Niwaspass system enables citizens of urban areas of Chhattisgarh to upload their requisite documents as per the set procedure and generate the building permission after various checks of the system. In this system, an unique Chhattisgarh model based initiative has been introduced where citizens having plot size upto 500 Sq. Mtr can get Direct Building Permission by paying a 1/- application fees.
-      //       </Typography>
-
-      //       {/* if not responsive remove marginnRight of above*/}
-      //       <Typography variant="body1" style={{ fontFamily: 'Sans-serif', color: '#2e2e2e', marginBottom: '1rem', marginLeft: 10, fontSize: 18 }}>
-      //         Currently the following ULB's are in this system :
-      //       </Typography>
-
-      //       <List sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', marginTop: -2 }}>
-      //         <ListItem>
-
-      //           <ListItemText primary="Birgaon Municipal Corporation" style={{ color: "#444444" }} />
-      //         </ListItem>
-      //         <ListItem>
-      //           <ListItemText primary="Dhamtari Municipal Corporation" style={{ color: "#444444" }} />
-      //         </ListItem>
-      //         <ListItem>
-      //           <ListItemText primary="Bhilai-Charoda Municipal Corporation" style={{ color: "#444444" }} />
-      //         </ListItem>
-      //       </List>
-
-      //     </Box>
-      //     <Box flex="1" className="rightColumn">
-      //       <div className="moduleLinkHomePageModuleLinks">
-      //         <Links key={index} matchPath={`/fsm-ui/citizen/${code.toLowerCase()}`} userType={"citizen"} />
-      //       </div>
-      //       <div style={{ display: 'flex', flexWrap: 'wrap', width: '1000%' }}>
-
-      //       </div>
-
-      //     </Box>
-      //   </Box>
-
-      //   <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-      //     <Card sx={{
-      //       width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-      //       borderRadius: '10px',
-      //     }}>
-      //       <CardContent>
-      //         <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-      //           gutterBottom>
-      //           {totalProposal}
-      //         </Typography>
-      //         <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-      //           Total Application
-      //         </Typography>
-      //       </CardContent>
-      //     </Card>
-
-      //     <Card sx={{
-      //       width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-      //       borderRadius: '10px',
-      //     }}>
-      //       <CardContent>
-      //         <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-      //           gutterBottom>
-      //           {initiatedCount}
-      //         </Typography>
-      //         <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-      //           Initiated Application
-      //         </Typography>
-      //       </CardContent>
-      //     </Card>
-      //     <Card sx={{
-      //       width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-      //       borderRadius: '10px',
-      //     }}>
-      //       <CardContent>
-      //         <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-      //           gutterBottom>
-      //           {approvedCount}
-      //         </Typography>
-      //         <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-      //           Approved Application
-      //         </Typography>
-      //       </CardContent>
-      //     </Card>
-
-      //     <Card sx={{
-      //       width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-      //       borderRadius: '10px',
-      //     }}>
-      //       <CardContent>
-      //         <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-      //           gutterBottom>
-      //           {directBhawanAnugya}
-      //         </Typography>
-      //         <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-      //           Direct Bhawan Anugya
-      //         </Typography>
-      //       </CardContent>
-      //     </Card>
-
-      //     {/* Additional Typography components */}
-
-      //     <Card sx={{
-      //       width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-      //       borderRadius: '10px',
-      //     }}>
-      //       <CardContent>
-      //         <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-      //           gutterBottom>
-      //           {inprogressCount}/{citizenApprovalInProcessCount}
-      //         </Typography>
-      //         <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-      //           Architect / Citizen Inprocess
-      //         </Typography>
-      //       </CardContent>
-      //     </Card>
-
-      //     <Card sx={{
-      //       width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-      //       borderRadius: '10px',
-      //     }}>
-      //       <CardContent>
-      //         <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-      //           gutterBottom>
-      //           {departmentInProcessCount}
-      //         </Typography>
-      //         <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-      //           Department Inprocess
-      //         </Typography>
-      //       </CardContent>
-      //     </Card>
-      //     <Card sx={{
-      //       width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-      //       borderRadius: '10px',
-      //     }}>
-      //       <CardContent>
-      //         <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-      //           gutterBottom>
-      //           {applFeePending}
-      //         </Typography>
-      //         <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-      //           Pre Fee Pending
-      //         </Typography>
-      //       </CardContent>
-      //     </Card>
-      //     <Card sx={{
-      //       width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-      //       borderRadius: '10px',
-      //     }}>
-      //       <CardContent>
-      //         <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-      //           gutterBottom>
-      //           {sancFeePending}
-      //         </Typography>
-      //         <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-      //           Post Fee Pending
-      //         </Typography>
-      //       </CardContent>
-      //     </Card>
-      //     <Card sx={{
-      //       width: '30%', marginBottom: '1rem', backgroundColor: 'white', boxShadow: '0px 0px 20px 5px rgba(0, 0, 0, 0.1)',
-      //       borderRadius: '10px',
-      //     }}>
-      //       <CardContent>
-      //         <Typography style={{ fontSize: 30, justifyContent: 'center', display: 'flex', color: '#EA7738' }}
-      //           gutterBottom>
-      //           {rejectedCount}
-      //         </Typography>
-      //         <Typography style={{ color: '#EA7738', justifyContent: 'center', display: 'flex' }}>
-      //           Rejected Cases
-      //         </Typography>
-      //       </CardContent>
-      //     </Card>
-      //   </div>
-
-      //   <Box flex="6" marginBottom={2}>
-      //     <Alert severity="info" sx={{ maxWidth: 1300, padding: '1rem', justifyContent: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      //       <Typography variant="h6" align="center">Notice</Typography>
-      //       <Typography variant="body1" align="center">*Grievance Redressal Number - 1100 (Toll Free)</Typography>
-      //       <Typography variant="body1" align="center">Install WhatsApp application on your mobile and click on <a href="#">CLICK HERE</a></Typography>
-      //       <Typography variant="body1" align="center">Inside that, you will get links to join WhatsApp group of BPMS Support of all municipal corporation, add yourself in your respective municipal corporation by clicking on it</Typography>
-      //     </Alert>
-
-      //   </Box>
-
-      // </Route>
       <Route key={index} path={`${path}/${code.toLowerCase()}-home`}>
-        <div className="moduleLinkHomePage" style={{height:"auto"}}>
+        <div className="moduleLinkHomePage" style={{ height: "auto" }}>
           <img
             src={bannerImage || stateInfo?.bannerUrl}
             alt="noimagefound"
@@ -400,7 +177,7 @@ const Home = ({
           >
             <CardContent>
               <Typography style={{ fontSize: 30, justifyContent: "center", display: "flex", color: "#EA7738" }} gutterBottom>
-                {0}
+                {totalCount}
               </Typography>
               <Typography style={{ color: "#EA7738", justifyContent: "center", display: "flex" }}>Total Request</Typography>
             </CardContent>
@@ -417,9 +194,9 @@ const Home = ({
           >
             <CardContent>
               <Typography style={{ fontSize: 30, justifyContent: "center", display: "flex", color: "#EA7738" }} gutterBottom>
-                {0}
+                {completedCount}
               </Typography>
-              <Typography style={{ color: "#EA7738", justifyContent: "center", display: "flex" }}>Work Progress</Typography>
+              <Typography style={{ color: "#EA7738", justifyContent: "center", display: "flex" }}>Request Completed</Typography>
             </CardContent>
           </Card>
           <Card
@@ -433,9 +210,57 @@ const Home = ({
           >
             <CardContent>
               <Typography style={{ fontSize: 30, justifyContent: "center", display: "flex", color: "#EA7738" }} gutterBottom>
-                {0}
+                {progressCount}
               </Typography>
-              <Typography style={{ color: "#EA7738", justifyContent: "center", display: "flex" }}>Request Completed</Typography>
+              <Typography style={{ color: "#EA7738", justifyContent: "center", display: "flex" }}>Desludging Inprogess</Typography>
+            </CardContent>
+          </Card>
+          <Card
+            sx={{
+              width: "30%",
+              marginBottom: "1rem",
+              backgroundColor: "white",
+              boxShadow: "0px 0px 20px 5px rgba(0, 0, 0, 0.1)",
+              borderRadius: "10px",
+            }}
+          >
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: "center", display: "flex", color: "#EA7738" }} gutterBottom>
+                {driverAssignedCount}
+              </Typography>
+              <Typography style={{ color: "#EA7738", justifyContent: "center", display: "flex" }}>Driver Assigned</Typography>
+            </CardContent>
+          </Card>
+          <Card
+            sx={{
+              width: "30%",
+              marginBottom: "1rem",
+              backgroundColor: "white",
+              boxShadow: "0px 0px 20px 5px rgba(0, 0, 0, 0.1)",
+              borderRadius: "10px",
+            }}
+          >
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: "center", display: "flex", color: "#EA7738" }} gutterBottom>
+                {pendingCount}
+              </Typography>
+              <Typography style={{ color: "#EA7738", justifyContent: "center", display: "flex" }}>Work Pending</Typography>
+            </CardContent>
+          </Card>
+          <Card
+            sx={{
+              width: "30%",
+              marginBottom: "1rem",
+              backgroundColor: "white",
+              boxShadow: "0px 0px 20px 5px rgba(0, 0, 0, 0.1)",
+              borderRadius: "10px",
+            }}
+          >
+            <CardContent>
+              <Typography style={{ fontSize: 30, justifyContent: "center", display: "flex", color: "#EA7738" }} gutterBottom>
+                {feedbackPendingCount}
+              </Typography>
+              <Typography style={{ color: "#EA7738", justifyContent: "center", display: "flex" }}>Citizen Feedback Pending</Typography>
             </CardContent>
           </Card>
         </div>
