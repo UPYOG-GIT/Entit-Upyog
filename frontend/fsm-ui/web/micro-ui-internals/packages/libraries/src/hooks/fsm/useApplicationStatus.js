@@ -1,25 +1,39 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "react-query";
+import { jsx } from "react/jsx-runtime";
 
-const useApplicationStatus = (select, isEnabled = true, statusMap=[]) => {
+const useApplicationStatus = (select, isEnabled = true, statusMap = []) => {
   const { t } = useTranslation();
 
   const userInfo = Digit.UserService.getUser();
   const userRoles = userInfo.info.roles.map((roleData) => roleData.code);
 
+  //   const workflowOrder = [
+  //     "CREATED",
+  //     "PENDING_APPL_FEE_PAYMENT",
+  //     "ASSING_DSO",
+  //     "PENDING_DSO_APPROVAL",
+  //     "DSO_REJECTED",
+  //     "DSO_INPROGRESS",
+  //     "REJECTED",
+  //     "CANCELED",
+  //     "COMPLETED",
+  //     "CITIZEN_FEEDBACK_PENDING",
+  //     "DISPOSAL_IN_PROGRESS",
+  //     "PENDING_FEE_PAYMENT",
+  // "PENDING_WORK_START_BY_DRIVER",
+  // "PENDING_WORK_COMPLETE"
+  //   ];
+
   const workflowOrder = [
-    "CREATED",
-    "PENDING_APPL_FEE_PAYMENT",
-    "ASSING_DSO",
-    "PENDING_DSO_APPROVAL",
-    "DSO_REJECTED",
-    "DSO_INPROGRESS",
-    "REJECTED",
-    "CANCELED",
+    "PENDING_FEE_PAYMENT",
+    "ASSIGN_DSO",
+    "PENDING_WORK_START_BY_DRIVER",
+    "PENDING_WORK_COMPLETE",
     "COMPLETED",
+    "CANCELED",
     "CITIZEN_FEEDBACK_PENDING",
-    "DISPOSAL_IN_PROGRESS"
   ];
 
   const DSO = Digit.UserService.hasAccess(["FSM_DSO"]);
@@ -35,12 +49,12 @@ const useApplicationStatus = (select, isEnabled = true, statusMap=[]) => {
   };
 
   const getStates = (businessServices) => {
-    let states = []
+    let states = [];
     businessServices.map((data) => {
-      states = states.concat(data.states)
-    })
-    return states
-  }
+      states = states.concat(data.states);
+    });
+    return states;
+  };
 
   const roleWiseSelect = (WorkflowService) => {
     const response = WorkflowService.filter((state) => state.applicationStatus)
@@ -55,10 +69,10 @@ const useApplicationStatus = (select, isEnabled = true, statusMap=[]) => {
         return {
           name: t(`CS_COMMON_FSM_${state.applicationStatus}`),
           code: state.applicationStatus,
-          id: (statusMap?.filter(e => e.applicationstatus === state.applicationStatus)?.[0]?.statusid) || state.uuid,
+          id: statusMap?.filter((e) => e.applicationstatus === state.applicationStatus)?.[0]?.statusid || state.uuid,
           roles,
         };
-      })
+      });
     return response;
   };
 
@@ -68,11 +82,10 @@ const useApplicationStatus = (select, isEnabled = true, statusMap=[]) => {
       return {
         name: t(`CS_COMMON_FSM_${state.applicationStatus}`),
         code: state.applicationStatus,
-        id: (statusMap?.filter(e => e.applicationstatus === state.applicationStatus)?.[0]?.statusid) || state.uuid,
+        id: statusMap?.filter((e) => e.applicationstatus === state.applicationStatus)?.[0]?.statusid || state.uuid,
         roles,
       };
     });
-
     return DSO ? allowedStatusForDSO.map((item) => applicationStatus.filter((status) => status.code === item)[0]) : applicationStatus;
   };
   return useQuery(

@@ -117,9 +117,9 @@ const FSMRegistry = () => {
   );
 
   const inboxTotalCount = dsoData?.TotalCount || dsoData?.totalCount;
-  
-  console.log("vendorData: " + vendorData);
-  console.log("dsoData: " + JSON.stringify(dsoData));
+
+  // console.log("vendorData: " + JSON.stringify(vendorData));
+  // console.log("dsoData: " + JSON.stringify(dsoData));
 
   useEffect(() => {
     refetch();
