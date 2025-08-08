@@ -22,6 +22,7 @@ public class FSMConsumer {
 	@Autowired
 	private NotificationService notificationService;
 	
+	@Autowired
 	private WhatsappNotification whatsappNotification;
 	
 	@KafkaListener(topics = { "${persister.save.fsm.topic}", "${persister.update.fsm.topic}",
