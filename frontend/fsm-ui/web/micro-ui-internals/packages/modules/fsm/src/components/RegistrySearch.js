@@ -20,7 +20,7 @@ const SearchApplication = ({ onSearch, type, onClose, onTabChange, isFstpOperato
   const storedSearchParams = isInboxPage ? Digit.SessionStorage.get("fsm/inbox/searchParams") : Digit.SessionStorage.get("fsm/search/searchParams");
 
   const { data: applicationStatuses, isFetched: areApplicationStatus } = Digit.Hooks.fsm.useApplicationStatus();
-  console.log("applicationStatuses "+applicationStatuses)
+
   const { t } = useTranslation();
   const history = useHistory();
   const { register, handleSubmit, reset, watch, control } = useForm({
