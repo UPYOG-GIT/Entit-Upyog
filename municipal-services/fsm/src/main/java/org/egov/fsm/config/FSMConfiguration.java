@@ -120,6 +120,9 @@ public class FSMConfiguration {
 
 		@Value("${notification.sms.enabled}")
 		private Boolean isSMSEnabled;
+		
+		@Value("${notification.whatsapp.enabled}")
+		private Boolean isWhatsappEnabled;
 
 		// Localization
 		@Value("${egov.localization.host}")
