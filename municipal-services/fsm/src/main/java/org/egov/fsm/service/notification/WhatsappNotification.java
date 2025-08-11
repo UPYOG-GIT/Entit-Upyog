@@ -34,12 +34,16 @@ public class WhatsappNotification {
 			if (fsmRequest.getFsm() == null) {
 				return;
 			}
+			Map<String, Object> additionalDetails = (Map<String, Object>) fsmRequest.getFsm().getAdditionalDetails();
 			String status = fsmRequest.getFsm().getApplicationStatus();
-			String citizenName = fsmRequest.getFsm().getCitizen().getName();
-			String mobileNumber = fsmRequest.getFsm().getCitizen().getMobileNumber();
+//			String citizenName = fsmRequest.getFsm().getCitizen().getName();
+			String citizenName = additionalDetails.get("applicantName").toString();
+			String mobileNumber = additionalDetails.get("applicantMobileNumber").toString();
+//			String mobileNumber = fsmRequest.getFsm().getCitizen().getMobileNumber();
 			String applicationNo = fsmRequest.getFsm().getApplicationNo();
-			String amount = ((Map<String, Object>) fsmRequest.getFsm().getAdditionalDetails()).get("tripAmount")
-					.toString();
+//			String amount = ((Map<String, Object>) fsmRequest.getFsm().getAdditionalDetails()).get("tripAmount")
+//					.toString();
+			String amount = additionalDetails.get("tripAmount").toString();
 
 			Map<String, Object> requestBody = new HashMap<>();
 			if (status.equals("PENDING_FEE_PAYMENT")) {
