@@ -39,7 +39,7 @@ public class OtpSMSRepository {
 	private CustomKafkaTemplate<String, SMSRequest> kafkaTemplate;
 	private String smsTopic;
 
-	@Value("${fsm.sms.topic")
+	@Value("${fsm.sms.topic}")
 	private String fsmSmsTopic;
 
 	@Autowired
