@@ -38,7 +38,7 @@ public class OtpSMSRepository {
 
 	private CustomKafkaTemplate<String, SMSRequest> kafkaTemplate;
 	private String smsTopic;
-	
+
 	@Value("${fsm.sms.topic")
 	private String fsmSmsTopic;
 
@@ -55,11 +55,16 @@ public class OtpSMSRepository {
 	public void send(OtpRequest otpRequest, String otpNumber) {
 		Long currentTime = System.currentTimeMillis() + maxExecutionTime;
 		final String message = getMessage(otpNumber, otpRequest);
-		
-		if (otpRequest.getModule() != null && otpRequest.getModule().equalsIgnoreCase("FSM")) 
-			kafkaTemplate.send(fsmSmsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime));
+
+		log.info("Module " + otpRequest.getModule());
+		log.info("fsmSmsTopic: "+fsmSmsTopic +", smsTopic: "+smsTopic);
+
+		if (otpRequest.getModule() != null && otpRequest.getModule().equalsIgnoreCase("FSM"))
+			kafkaTemplate.send(fsmSmsTopic,
+					new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime));
 		else
-			kafkaTemplate.send(smsTopic, new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime));
+			kafkaTemplate.send(smsTopic,
+					new SMSRequest(otpRequest.getMobileNumber(), message, Category.OTP, currentTime));
 	}
 
 	private String getMessage(String otpNumber, OtpRequest otpRequest) {
