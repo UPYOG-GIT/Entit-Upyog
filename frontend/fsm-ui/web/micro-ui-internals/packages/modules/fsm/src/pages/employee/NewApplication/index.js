@@ -145,7 +145,9 @@ export const NewApplication = ({ parentUrl, heading }) => {
           tripAmount: typeof amount === "number" ? JSON.stringify(amount) : amount,
           distancefromroad: distancefromroad,
           roadWidth: roadWidth,
-          propertyID : data?.cpt?.details?.propertyId
+          propertyID : data?.cpt?.details?.propertyId,
+          applicantName: applicantName,
+          applicantMobileNumber: mobileNumber
         },
         propertyUsage: data?.subtype,
         vehicleCapacity: data?.tripData?.vehicleType?.capacity,

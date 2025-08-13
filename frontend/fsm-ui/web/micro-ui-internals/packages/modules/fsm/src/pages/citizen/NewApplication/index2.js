@@ -98,7 +98,6 @@ const FileComplaint = ({ parentRoute, heading }) => {
   };
 
   const onSubmit = (data) => {
-    console.log("data0000000: ", data)
     // const applicationChannel = data.channel;
     const applicationChannel = "Online";
     const sanitationtype = data?.pitType?.code;
@@ -152,7 +151,9 @@ const FileComplaint = ({ parentRoute, heading }) => {
           tripAmount: typeof amount === "number" ? JSON.stringify(amount) : amount,
           distancefromroad: distancefromroad,
           roadWidth: roadWidth,
-          propertyID : data?.cpt?.details?.propertyId
+          propertyID : data?.cpt?.details?.propertyId,
+          applicantName: applicantName,
+          applicantMobileNumber: mobileNumber
         },
         propertyUsage: data?.subtype,
         vehicleCapacity: data?.tripData?.vehicleType?.capacity,
@@ -170,17 +171,14 @@ const FileComplaint = ({ parentRoute, heading }) => {
           pincode,
           slumName: slum,
           locality: {
-            // code: "CITYA02",
             code: propertyLocation === "FROM_GRAM_PANCHAYAT" ? gramPanchayat?.code : localityCode,
             name: propertyLocation === "FROM_GRAM_PANCHAYAT" ? gramPanchayat?.name : localityName,
           },
           zone: {
-            // code: "CITYA02",
             code: zoneCode,
             name: zoneName,
           },
           ward: {
-            // code: "CITYA02",
             code: wardCode,
             name: wardName,
           },

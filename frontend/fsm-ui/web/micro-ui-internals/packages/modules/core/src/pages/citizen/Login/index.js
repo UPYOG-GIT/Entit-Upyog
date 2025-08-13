@@ -206,6 +206,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       //tenantId: stateCode,
       tenantId: selectedCity?.code,
       userType: getUserType(),
+      module: "FSM"
     };
 
     Digit.SessionStorage.set("CITIZEN.COMMON.HOME.CITY", selectedCity);
@@ -257,6 +258,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       tenantId: selectedCity?.code,
       userType: getUserType(),
       name,
+      module: "FSM"
     };
 
     //setParmas({ ...par, name });
@@ -363,6 +365,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
       //tenantId: stateCode,
       tenantId: selectedCity?.code,
       userType: getUserType(),
+      module: "FSM"
     };
     // console.log("data------" + JSON.stringify(data));
     if (!isUserRegistered) {

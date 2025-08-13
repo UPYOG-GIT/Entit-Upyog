@@ -8,7 +8,7 @@
     "micro-ui-internals/packages/modules/*"
   ],
   "dependencies": {
-    "@entit/digit-ui-css": "9.6.1",
+    "@entit/digit-ui-css": "2.0.1",
     "@upyog/digit-ui-libraries": "3.0.0",
     "@upyog/digit-ui-module-common": "3.0.4",
     "@upyog/digit-ui-module-commonpt": "3.0.2",
