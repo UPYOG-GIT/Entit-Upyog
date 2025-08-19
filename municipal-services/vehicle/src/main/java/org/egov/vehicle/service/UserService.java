@@ -69,7 +69,7 @@ public class UserService {
 			userDetailResponse = userExists(owner);
 			log.info("userDetailResponse.getUser().get(0).getId(): " + userDetailResponse.getUser().get(0).getId());
 
-			if (userDetailResponse != null && CollectionUtils.isEmpty(userDetailResponse.getUser()) && !isUpdate) {
+			if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser()) && !isUpdate) {
 
 				Boolean notFoundUser = Boolean.FALSE;
 				for (int j = 0; j < userDetailResponse.getUser().size(); j++) {
