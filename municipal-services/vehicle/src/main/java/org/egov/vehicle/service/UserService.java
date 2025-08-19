@@ -67,6 +67,7 @@ public class UserService {
 		UserDetailResponse userDetailResponse = null;
 		if (owner != null) {
 			userDetailResponse = userExists(owner);
+			log.info("userDetailResponse.getUser().get(0).getId(): " + userDetailResponse.getUser().get(0).getId());
 
 			if (userDetailResponse != null && CollectionUtils.isEmpty(userDetailResponse.getUser()) && !isUpdate) {
 
@@ -100,12 +101,11 @@ public class UserService {
 						// User with mobile number itself not found then create new user and consider
 						// the new user as applicant.
 						owner = createVehicleOwner(owner, vehicleRequest.getRequestInfo());
-					} else {
-
-						HashMap<String, String> errorMap = new HashMap<>();
-						owner = updateUserDetails(owner, vehicleRequest.getRequestInfo(), errorMap);
-
 					}
+					/*
+					 * else { HashMap<String, String> errorMap = new HashMap<>(); owner =
+					 * updateUserDetails(owner, vehicleRequest.getRequestInfo(), errorMap); }
+					 */
 				}
 
 //				HashMap<String, String> errorMap = new HashMap<>();
