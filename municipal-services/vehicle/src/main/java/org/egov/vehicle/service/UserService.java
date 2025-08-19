@@ -74,6 +74,8 @@ public class UserService {
 				for (int j = 0; j < userDetailResponse.getUser().size(); j++) {
 					User user = userDetailResponse.getUser().get(j);
 
+					log.info("user.getId(): " + user.getId());
+
 					if ((user.getUserName().equalsIgnoreCase(user.getMobileNumber())
 							&& user.getName().equalsIgnoreCase(owner.getName()))
 							|| user.getName().equalsIgnoreCase(owner.getName())) {
@@ -87,30 +89,30 @@ public class UserService {
 					}
 
 				}
-				// users exists with mobile number but non of them have the same Name so create new
+				// users exists with mobile number but non of them have the same Name so create
+				// new
 				// user
 				if (notFoundUser) {
 					owner = createVehicleOwner(owner, vehicleRequest.getRequestInfo());
 
-				}
-
-			 else {
-				if (!isUpdate) {
-					// User with mobile number itself not found then create new user and consider
-					// the new user as applicant.
-					owner = createVehicleOwner(owner, vehicleRequest.getRequestInfo());
 				} else {
+					if (!isUpdate) {
+						// User with mobile number itself not found then create new user and consider
+						// the new user as applicant.
+						owner = createVehicleOwner(owner, vehicleRequest.getRequestInfo());
+					} else {
 
-					HashMap<String, String> errorMap = new HashMap<>();
-					owner = updateUserDetails(owner, vehicleRequest.getRequestInfo(), errorMap);
+						HashMap<String, String> errorMap = new HashMap<>();
+						owner = updateUserDetails(owner, vehicleRequest.getRequestInfo(), errorMap);
 
+					}
 				}
-			}
 
-				HashMap<String, String> errorMap = new HashMap<>();
-				updateUserDetails(owner, vehicleRequest.getRequestInfo(), errorMap);
+//				HashMap<String, String> errorMap = new HashMap<>();
+//				updateUserDetails(owner, vehicleRequest.getRequestInfo(), errorMap);
 
 			}
+			log.info("owner.getId(): " + owner.getId());
 			vehicle.setOwner(owner);
 
 		} else {
