@@ -56,6 +56,8 @@ public class WhatsappNotification {
 				String driverContNo = fsmRequest.getFsm().getDriver().getOwner().getMobileNumber();
 				requestBody = assignDsoDriverMessage(citizenName, applicationNo, mobileNumber, vehicleNo, driverName,
 						driverContNo);
+			} else if (status.equals("CITIZEN_FEEDBACK_PENDING")) {
+				requestBody = applicationFeedbackMessage(citizenName, mobileNumber);
 			}
 
 			HttpHeaders headers = new HttpHeaders();
@@ -90,6 +92,25 @@ public class WhatsappNotification {
 		templateParams.add(citizenName);
 		templateParams.add(applicationNo);
 		templateParams.add(amount);
+
+		requestBody.put("templateParams", templateParams);
+
+		return requestBody;
+	}
+
+	private Map<String, Object> applicationFeedbackMessage(String citizenName, String mobileNumber) {
+
+		Map<String, Object> requestBody = new HashMap<>();
+
+		requestBody.put("apiKey",
+				"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YmRjNGIyY2Y5ZmU4MGJmZDAwYzJhMSIsIm5hbWUiOiJOYWdhciBOaWdhbSBSYWlwdXIiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjdiZDZjMjNmN2JlN2QwZWZkMWRmNDBjIiwiYWN0aXZlUGxhbiI6Ik5PTkUiLCJpYXQiOjE3NDA0ODk5MDZ9.NBLaWEeCwg9Z3bwvaYrtOarkIRZbIuF7IwqZaqjxyjw");
+		requestBody.put("campaignName", "fsm_req_complete");
+		requestBody.put("destination", mobileNumber);
+		requestBody.put("userName", "Nagar Nigam Raipur");
+		requestBody.put("source", "new-landing-page form");
+
+		List<Object> templateParams = new ArrayList<>();
+		templateParams.add(citizenName);
 
 		requestBody.put("templateParams", templateParams);
 
