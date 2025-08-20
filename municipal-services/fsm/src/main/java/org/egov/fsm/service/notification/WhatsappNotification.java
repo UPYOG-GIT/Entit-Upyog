@@ -46,6 +46,8 @@ public class WhatsappNotification {
 			String amount = additionalDetails.get("tripAmount").toString();
 
 			Map<String, Object> requestBody = new HashMap<>();
+			Map<String, Object> requestBodyDriver = new HashMap<>();
+
 			if (status.equals("PENDING_FEE_PAYMENT")) {
 				requestBody = applicationCreatedMessage(citizenName, applicationNo, amount, mobileNumber);
 			} else if (status.equals("ASSIGN_DSO") || status.equals("ASSIGN_DRIVER")) {
@@ -56,6 +58,14 @@ public class WhatsappNotification {
 				String driverContNo = fsmRequest.getFsm().getDriver().getOwner().getMobileNumber();
 				requestBody = assignDsoDriverMessage(citizenName, applicationNo, mobileNumber, vehicleNo, driverName,
 						driverContNo);
+				String address = "Door No " + fsmRequest.getFsm().getAddress().getDoorNo() + ", Street "
+						+ fsmRequest.getFsm().getAddress().getStreet() + ", "
+						+ fsmRequest.getFsm().getAddress().getLandmark();
+				String ward = fsmRequest.getFsm().getAddress().getWard().getName();
+				String zone = fsmRequest.getFsm().getAddress().getZone().getName();
+
+				requestBodyDriver = sentMessageToDriver(citizenName, mobileNumber, driverName, driverContNo, address,
+						ward, zone);
 			} else if (status.equals("CITIZEN_FEEDBACK_PENDING")) {
 				requestBody = applicationFeedbackMessage(citizenName, mobileNumber);
 			}
@@ -71,6 +81,20 @@ public class WhatsappNotification {
 			HttpStatus statusCode = response.getStatusCode();
 
 			log.info("Whatsapp Message Sent status Code " + statusCode);
+
+			if (status.equals("PENDING_WORK_START_BY_DRIVER")) {
+				HttpHeaders headers1 = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
+
+				HttpEntity<Map<String, Object>> entity1 = new HttpEntity<>(requestBody, headers1);
+
+				String url1 = "https://backend.api-wa.co/campaign/entit/api/v2";
+				ResponseEntity<String> response1 = restTemplate.postForEntity(url1, entity1, String.class);
+
+				HttpStatus statusCode1 = response1.getStatusCode();
+
+				log.info("Whatsapp Message Sent status Code " + statusCode1);
+			}
 
 		}
 
@@ -155,6 +179,30 @@ public class WhatsappNotification {
 		templateParams.add(vehicleNo);
 		templateParams.add(driverName);
 		templateParams.add(driverContNo);
+
+		requestBody.put("templateParams", templateParams);
+
+		return requestBody;
+	}
+
+	private Map<String, Object> sentMessageToDriver(String citizenName, String mobileNumber, String driverName,
+			String driverContNo, String address, String ward, String zone) {
+
+		Map<String, Object> requestBody = new HashMap<>();
+
+		requestBody.put("apiKey",
+				"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YmRjNGIyY2Y5ZmU4MGJmZDAwYzJhMSIsIm5hbWUiOiJOYWdhciBOaWdhbSBSYWlwdXIiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjdiZDZjMjNmN2JlN2QwZWZkMWRmNDBjIiwiYWN0aXZlUGxhbiI6Ik5PTkUiLCJpYXQiOjE3NDA0ODk5MDZ9.NBLaWEeCwg9Z3bwvaYrtOarkIRZbIuF7IwqZaqjxyjw");
+		requestBody.put("campaignName", "fsm_driver_noti");
+		requestBody.put("destination", driverContNo);
+		requestBody.put("userName", "Nagar Nigam Raipur");
+		requestBody.put("source", "new-landing-page form");
+
+		List<Object> templateParams = new ArrayList<>();
+		templateParams.add(citizenName);
+		templateParams.add(mobileNumber);
+		templateParams.add(address);
+		templateParams.add(ward);
+		templateParams.add(zone);
 
 		requestBody.put("templateParams", templateParams);
 
