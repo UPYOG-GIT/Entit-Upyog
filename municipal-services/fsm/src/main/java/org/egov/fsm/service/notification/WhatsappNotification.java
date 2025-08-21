@@ -80,20 +80,20 @@ public class WhatsappNotification {
 
 			HttpStatus statusCode = response.getStatusCode();
 
-			log.info("Whatsapp Message Sent status Code " + statusCode);
+			log.info("Whatsapp Message Sent, Status : " + status + " status Code " + statusCode);
 
 			if (status.equals("PENDING_WORK_START_BY_DRIVER")) {
 				HttpHeaders headers1 = new HttpHeaders();
-				headers.setContentType(MediaType.APPLICATION_JSON);
+				headers1.setContentType(MediaType.APPLICATION_JSON);
 
-				HttpEntity<Map<String, Object>> entity1 = new HttpEntity<>(requestBody, headers1);
+				HttpEntity<Map<String, Object>> entity1 = new HttpEntity<>(requestBodyDriver, headers1);
 
 				String url1 = "https://backend.api-wa.co/campaign/entit/api/v2";
 				ResponseEntity<String> response1 = restTemplate.postForEntity(url1, entity1, String.class);
 
 				HttpStatus statusCode1 = response1.getStatusCode();
 
-				log.info("Whatsapp Message Sent status Code " + statusCode1);
+				log.info("Whatsapp Message Sent to Driver, status Code " + statusCode1);
 			}
 
 		}
