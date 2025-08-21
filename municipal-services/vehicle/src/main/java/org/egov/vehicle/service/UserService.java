@@ -67,7 +67,7 @@ public class UserService {
 		UserDetailResponse userDetailResponse = null;
 		if (owner != null) {
 			userDetailResponse = userExists(owner);
-			log.info("userDetailResponse.getUser().get(0).getId(): " + userDetailResponse.getUser().get(0).getId());
+//			log.info("userDetailResponse.getUser().get(0).getId(): " + userDetailResponse.getUser().get(0).getId());
 
 			if (userDetailResponse != null && !CollectionUtils.isEmpty(userDetailResponse.getUser()) && !isUpdate) {
 
@@ -75,7 +75,7 @@ public class UserService {
 				for (int j = 0; j < userDetailResponse.getUser().size(); j++) {
 					User user = userDetailResponse.getUser().get(j);
 
-					log.info("user.getId(): " + user.getId());
+//					log.info("user.getId(): " + user.getId());
 
 					if ((user.getUserName().equalsIgnoreCase(user.getMobileNumber())
 							&& user.getName().equalsIgnoreCase(owner.getName()))
@@ -111,6 +111,8 @@ public class UserService {
 //				HashMap<String, String> errorMap = new HashMap<>();
 //				updateUserDetails(owner, vehicleRequest.getRequestInfo(), errorMap);
 
+			} else {
+				owner = createVehicleOwner(owner, vehicleRequest.getRequestInfo());
 			}
 			log.info("owner.getId(): " + owner.getId());
 			vehicle.setOwner(owner);
