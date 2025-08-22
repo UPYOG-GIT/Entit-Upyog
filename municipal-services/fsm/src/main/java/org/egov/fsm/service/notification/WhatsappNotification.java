@@ -64,8 +64,8 @@ public class WhatsappNotification {
 				String ward = fsmRequest.getFsm().getAddress().getWard().getName();
 				String zone = fsmRequest.getFsm().getAddress().getZone().getName();
 
-				requestBodyDriver = sentMessageToDriver(citizenName, mobileNumber, driverName, driverContNo, address,
-						ward, zone);
+				requestBodyDriver = sentMessageToDriver(applicationNo, citizenName, mobileNumber, driverName,
+						driverContNo, address, ward, zone);
 			} else if (status.equals("CITIZEN_FEEDBACK_PENDING")) {
 				requestBody = applicationFeedbackMessage(citizenName, mobileNumber);
 			}
@@ -83,17 +83,19 @@ public class WhatsappNotification {
 			log.info("Whatsapp Message Sent, Status : " + status + " status Code " + statusCode);
 
 			if (status.equals("PENDING_WORK_START_BY_DRIVER")) {
-				HttpHeaders headers1 = new HttpHeaders();
-				headers1.setContentType(MediaType.APPLICATION_JSON);
+				log.info("Inside Whatsapp Message to Driver");
+				HttpHeaders headersDriver = new HttpHeaders();
+				headersDriver.setContentType(MediaType.APPLICATION_JSON);
 
-				HttpEntity<Map<String, Object>> entity1 = new HttpEntity<>(requestBodyDriver, headers1);
+				HttpEntity<Map<String, Object>> entityDriver = new HttpEntity<>(requestBodyDriver, headersDriver);
 
-				String url1 = "https://backend.api-wa.co/campaign/entit/api/v2";
-				ResponseEntity<String> response1 = restTemplate.postForEntity(url1, entity1, String.class);
+				String urlDriver = "https://backend.api-wa.co/campaign/entit/api/v2";
+				ResponseEntity<String> responseDriver = restTemplate.postForEntity(urlDriver, entityDriver,
+						String.class);
 
-				HttpStatus statusCode1 = response1.getStatusCode();
+				HttpStatus statusCodeDriver = responseDriver.getStatusCode();
 
-				log.info("Whatsapp Message Sent to Driver, status Code " + statusCode1);
+				log.info("Whatsapp Message Sent to Driver, status Code " + statusCodeDriver);
 			}
 
 		}
@@ -185,19 +187,20 @@ public class WhatsappNotification {
 		return requestBody;
 	}
 
-	private Map<String, Object> sentMessageToDriver(String citizenName, String mobileNumber, String driverName,
-			String driverContNo, String address, String ward, String zone) {
-
+	private Map<String, Object> sentMessageToDriver(String applicationNo, String citizenName, String mobileNumber,
+			String driverName, String driverContNo, String address, String ward, String zone) {
+		log.info("driverContNo : " + driverContNo);
 		Map<String, Object> requestBody = new HashMap<>();
 
 		requestBody.put("apiKey",
 				"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YmRjNGIyY2Y5ZmU4MGJmZDAwYzJhMSIsIm5hbWUiOiJOYWdhciBOaWdhbSBSYWlwdXIiLCJhcHBOYW1lIjoiQWlTZW5zeSIsImNsaWVudElkIjoiNjdiZDZjMjNmN2JlN2QwZWZkMWRmNDBjIiwiYWN0aXZlUGxhbiI6Ik5PTkUiLCJpYXQiOjE3NDA0ODk5MDZ9.NBLaWEeCwg9Z3bwvaYrtOarkIRZbIuF7IwqZaqjxyjw");
-		requestBody.put("campaignName", "fsm_driver_noti");
+		requestBody.put("campaignName", "fsm_driver_notification");
 		requestBody.put("destination", driverContNo);
 		requestBody.put("userName", "Nagar Nigam Raipur");
 		requestBody.put("source", "new-landing-page form");
 
 		List<Object> templateParams = new ArrayList<>();
+		templateParams.add(applicationNo);
 		templateParams.add(citizenName);
 		templateParams.add(mobileNumber);
 		templateParams.add(address);
