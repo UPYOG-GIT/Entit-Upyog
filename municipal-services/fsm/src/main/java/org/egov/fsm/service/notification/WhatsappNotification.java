@@ -204,6 +204,7 @@ public class WhatsappNotification {
 		requestBody.put("source", "new-landing-page form");
 
 		List<Object> templateParams = new ArrayList<>();
+		templateParams.add(driverName);
 		templateParams.add(applicationNo);
 		templateParams.add(citizenName);
 		templateParams.add(mobileNumber);
