@@ -89,13 +89,17 @@ public class WhatsappNotification {
 
 				HttpEntity<Map<String, Object>> entityDriver = new HttpEntity<>(requestBodyDriver, headersDriver);
 
-				String urlDriver = "https://backend.api-wa.co/campaign/entit/api/v2";
-				ResponseEntity<String> responseDriver = restTemplate.postForEntity(urlDriver, entityDriver,
-						String.class);
+				try {
+					String urlDriver = "https://backend.api-wa.co/campaign/entit/api/v2";
+					ResponseEntity<String> responseDriver = restTemplate.postForEntity(urlDriver, entityDriver,
+							String.class);
 
-				HttpStatus statusCodeDriver = responseDriver.getStatusCode();
+					HttpStatus statusCodeDriver = responseDriver.getStatusCode();
 
-				log.info("Whatsapp Message Sent to Driver, status Code " + statusCodeDriver);
+					log.info("Whatsapp Message Sent to Driver, status Code " + statusCodeDriver);
+				} catch (Exception e) {
+					log.error("Error sending WhatsApp Message to Driver", e);
+				}
 			}
 
 		}
