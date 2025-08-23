@@ -180,11 +180,11 @@ public class WhatsappNotification {
 		requestBody.put("source", "new-landing-page form");
 
 		List<String> templateParams = new ArrayList<>();
-		templateParams.add(citizenName);
-		templateParams.add(applicationNo);
-		templateParams.add(vehicleNo);
-		templateParams.add(driverName);
-		templateParams.add(driverContNo);
+		templateParams.add(convertToString(citizenName));
+		templateParams.add(convertToString(applicationNo));
+		templateParams.add(convertToString(vehicleNo));
+		templateParams.add(convertToString(driverName));
+		templateParams.add(convertToString(driverContNo));
 
 		requestBody.put("templateParams", templateParams);
 
@@ -204,16 +204,20 @@ public class WhatsappNotification {
 		requestBody.put("source", "new-landing-page form");
 
 		List<String> templateParams = new ArrayList<>();
-		templateParams.add(driverName);
-		templateParams.add(applicationNo);
-		templateParams.add(citizenName);
-		templateParams.add(mobileNumber);
-		templateParams.add(address);
-		templateParams.add(ward);
-		templateParams.add(zone);
+		templateParams.add(convertToString(driverName));
+		templateParams.add(convertToString(applicationNo));
+		templateParams.add(convertToString(citizenName));
+		templateParams.add(convertToString(mobileNumber));
+		templateParams.add(convertToString(address));
+		templateParams.add(convertToString(ward));
+		templateParams.add(convertToString(zone));
 
 		requestBody.put("templateParams", templateParams);
 
 		return requestBody;
+	}
+	
+	private String convertToString(String value) {
+		return value == null ? "" : value;
 	}
 }
