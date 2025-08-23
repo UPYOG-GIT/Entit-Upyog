@@ -220,6 +220,6 @@ public class WhatsappNotification {
 	}
 	
 	private String convertToString(String value) {
-		return value == null ? "" : value;
+		return value == null ? " " : value;
 	}
 }
