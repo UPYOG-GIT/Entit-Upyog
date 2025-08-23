@@ -61,8 +61,10 @@ public class WhatsappNotification {
 				String address = "Door No " + fsmRequest.getFsm().getAddress().getDoorNo() + ", Street "
 						+ fsmRequest.getFsm().getAddress().getStreet() + ", "
 						+ fsmRequest.getFsm().getAddress().getLandmark();
-				String ward = fsmRequest.getFsm().getAddress().getWard().getName();
-				String zone = fsmRequest.getFsm().getAddress().getZone().getName();
+//				String ward = fsmRequest.getFsm().getAddress().getWard().getName();
+//				String zone = fsmRequest.getFsm().getAddress().getZone().getName();
+				String ward = additionalDetails.get("wardName").toString();
+				String zone = additionalDetails.get("zoneName").toString();
 
 				requestBodyDriver = sentMessageToDriver(applicationNo, citizenName, mobileNumber, driverName,
 						driverContNo, address, ward, zone);
