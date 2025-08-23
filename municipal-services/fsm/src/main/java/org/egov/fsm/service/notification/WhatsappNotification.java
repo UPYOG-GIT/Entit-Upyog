@@ -57,7 +57,7 @@ public class WhatsappNotification {
 					requestBody = feePaidMessage(citizenName, applicationNo, mobileNumber);
 				} else if (status.equals("PENDING_WORK_START_BY_DRIVER")) {
 					Map<String, Object> addressAdditionalDetails = (Map<String, Object>) fsmRequest.getFsm()
-							.getAdditionalDetails();
+							.getAddress().getAdditionalDetails();
 					String vehicleNo = fsmRequest.getFsm().getVehicle().getRegistrationNumber();
 					String driverName = fsmRequest.getFsm().getDriver().getName();
 					String driverContNo = fsmRequest.getFsm().getDriver().getOwner().getMobileNumber();
