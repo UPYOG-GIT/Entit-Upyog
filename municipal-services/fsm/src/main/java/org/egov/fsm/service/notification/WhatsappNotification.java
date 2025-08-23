@@ -34,64 +34,68 @@ public class WhatsappNotification {
 			if (fsmRequest.getFsm() == null) {
 				return;
 			}
-			Map<String, Object> additionalDetails = (Map<String, Object>) fsmRequest.getFsm().getAdditionalDetails();
-			String status = fsmRequest.getFsm().getApplicationStatus();
+
+			try {
+				Map<String, Object> additionalDetails = (Map<String, Object>) fsmRequest.getFsm()
+						.getAdditionalDetails();
+				String status = fsmRequest.getFsm().getApplicationStatus();
 //			String citizenName = fsmRequest.getFsm().getCitizen().getName();
-			String citizenName = additionalDetails.get("applicantName").toString();
-			String mobileNumber = additionalDetails.get("applicantMobileNumber").toString();
+				String citizenName = additionalDetails.get("applicantName").toString();
+				String mobileNumber = additionalDetails.get("applicantMobileNumber").toString();
 //			String mobileNumber = fsmRequest.getFsm().getCitizen().getMobileNumber();
-			String applicationNo = fsmRequest.getFsm().getApplicationNo();
+				String applicationNo = fsmRequest.getFsm().getApplicationNo();
 //			String amount = ((Map<String, Object>) fsmRequest.getFsm().getAdditionalDetails()).get("tripAmount")
 //					.toString();
-			String amount = additionalDetails.get("tripAmount").toString();
+				String amount = additionalDetails.get("tripAmount").toString();
 
-			Map<String, Object> requestBody = new HashMap<>();
-			Map<String, Object> requestBodyDriver = new HashMap<>();
+				Map<String, Object> requestBody = new HashMap<>();
+				Map<String, Object> requestBodyDriver = new HashMap<>();
 
-			if (status.equals("PENDING_FEE_PAYMENT")) {
-				requestBody = applicationCreatedMessage(citizenName, applicationNo, amount, mobileNumber);
-			} else if (status.equals("ASSIGN_DSO") || status.equals("ASSIGN_DRIVER")) {
-				requestBody = feePaidMessage(citizenName, applicationNo, mobileNumber);
-			} else if (status.equals("PENDING_WORK_START_BY_DRIVER")) {
-				String vehicleNo = fsmRequest.getFsm().getVehicle().getRegistrationNumber();
-				String driverName = fsmRequest.getFsm().getDriver().getName();
-				String driverContNo = fsmRequest.getFsm().getDriver().getOwner().getMobileNumber();
-				requestBody = assignDsoDriverMessage(citizenName, applicationNo, mobileNumber, vehicleNo, driverName,
-						driverContNo);
-				String address = "Door No " + fsmRequest.getFsm().getAddress().getDoorNo() + ", Street "
-						+ fsmRequest.getFsm().getAddress().getStreet() + ", "
-						+ fsmRequest.getFsm().getAddress().getLandmark();
+				if (status.equals("PENDING_FEE_PAYMENT")) {
+					requestBody = applicationCreatedMessage(citizenName, applicationNo, amount, mobileNumber);
+				} else if (status.equals("ASSIGN_DSO") || status.equals("ASSIGN_DRIVER")) {
+					requestBody = feePaidMessage(citizenName, applicationNo, mobileNumber);
+				} else if (status.equals("PENDING_WORK_START_BY_DRIVER")) {
+					Map<String, Object> addressAdditionalDetails = (Map<String, Object>) fsmRequest.getFsm()
+							.getAdditionalDetails();
+					String vehicleNo = fsmRequest.getFsm().getVehicle().getRegistrationNumber();
+					String driverName = fsmRequest.getFsm().getDriver().getName();
+					String driverContNo = fsmRequest.getFsm().getDriver().getOwner().getMobileNumber();
+					requestBody = assignDsoDriverMessage(citizenName, applicationNo, mobileNumber, vehicleNo,
+							driverName, driverContNo);
+					String address = "Door No " + fsmRequest.getFsm().getAddress().getDoorNo() + ", Street "
+							+ fsmRequest.getFsm().getAddress().getStreet() + ", "
+							+ fsmRequest.getFsm().getAddress().getLandmark();
 //				String ward = fsmRequest.getFsm().getAddress().getWard().getName();
 //				String zone = fsmRequest.getFsm().getAddress().getZone().getName();
-				String ward = additionalDetails.get("wardName").toString();
-				String zone = additionalDetails.get("zoneName").toString();
+					String ward = addressAdditionalDetails.get("wardName").toString();
+					String zone = addressAdditionalDetails.get("zoneName").toString();
 
-				requestBodyDriver = sentMessageToDriver(applicationNo, citizenName, mobileNumber, driverName,
-						driverContNo, address, ward, zone);
-			} else if (status.equals("CITIZEN_FEEDBACK_PENDING")) {
-				requestBody = applicationFeedbackMessage(citizenName, mobileNumber);
-			}
+					requestBodyDriver = sentMessageToDriver(applicationNo, citizenName, mobileNumber, driverName,
+							driverContNo, address, ward, zone);
+				} else if (status.equals("CITIZEN_FEEDBACK_PENDING")) {
+					requestBody = applicationFeedbackMessage(citizenName, mobileNumber);
+				}
 
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON);
 
-			HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
+				HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-			String url = "https://backend.api-wa.co/campaign/entit/api/v2";
-			ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+				String url = "https://backend.api-wa.co/campaign/entit/api/v2";
+				ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
 
-			HttpStatus statusCode = response.getStatusCode();
+				HttpStatus statusCode = response.getStatusCode();
 
-			log.info("Whatsapp Message Sent, Status : " + status + " status Code " + statusCode);
+				log.info("Whatsapp Message Sent, Status : " + status + " status Code " + statusCode);
 
-			if (status.equals("PENDING_WORK_START_BY_DRIVER")) {
-				log.info("Inside Whatsapp Message to Driver");
-				HttpHeaders headersDriver = new HttpHeaders();
-				headersDriver.setContentType(MediaType.APPLICATION_JSON);
+				if (status.equals("PENDING_WORK_START_BY_DRIVER")) {
+					log.info("Inside Whatsapp Message to Driver");
+					HttpHeaders headersDriver = new HttpHeaders();
+					headersDriver.setContentType(MediaType.APPLICATION_JSON);
 
-				HttpEntity<Map<String, Object>> entityDriver = new HttpEntity<>(requestBodyDriver, headersDriver);
+					HttpEntity<Map<String, Object>> entityDriver = new HttpEntity<>(requestBodyDriver, headersDriver);
 
-				try {
 					String urlDriver = "https://backend.api-wa.co/campaign/entit/api/v2";
 					ResponseEntity<String> responseDriver = restTemplate.postForEntity(urlDriver, entityDriver,
 							String.class);
@@ -99,11 +103,11 @@ public class WhatsappNotification {
 					HttpStatus statusCodeDriver = responseDriver.getStatusCode();
 
 					log.info("Whatsapp Message Sent to Driver, status Code " + statusCodeDriver);
-				} catch (Exception e) {
-					log.error("Error sending WhatsApp Message to Driver", e);
-				}
-			}
 
+				}
+			} catch (Exception e) {
+				log.error("Error sending WhatsApp Message to Driver", e);
+			}
 		}
 
 	}
@@ -218,7 +222,7 @@ public class WhatsappNotification {
 
 		return requestBody;
 	}
-	
+
 	private String convertToString(String value) {
 		return value == null ? " " : value;
 	}
