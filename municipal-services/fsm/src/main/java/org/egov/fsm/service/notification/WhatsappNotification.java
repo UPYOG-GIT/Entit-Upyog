@@ -58,10 +58,9 @@ public class WhatsappNotification {
 				String driverContNo = fsmRequest.getFsm().getDriver().getOwner().getMobileNumber();
 				requestBody = assignDsoDriverMessage(citizenName, applicationNo, mobileNumber, vehicleNo, driverName,
 						driverContNo);
-				String address = fsmRequest.getFsm().getAddress().getLandmark();
-//				String address = "Door No " + fsmRequest.getFsm().getAddress().getDoorNo() + ", Street "
-//						+ fsmRequest.getFsm().getAddress().getStreet() + ", "
-//						+ fsmRequest.getFsm().getAddress().getLandmark();
+				String address = "Door No " + fsmRequest.getFsm().getAddress().getDoorNo() + ", Street "
+						+ fsmRequest.getFsm().getAddress().getStreet() + ", "
+						+ fsmRequest.getFsm().getAddress().getLandmark();
 				String ward = fsmRequest.getFsm().getAddress().getWard().getName();
 				String zone = fsmRequest.getFsm().getAddress().getZone().getName();
 
@@ -180,7 +179,7 @@ public class WhatsappNotification {
 		requestBody.put("userName", "Nagar Nigam Raipur");
 		requestBody.put("source", "new-landing-page form");
 
-		List<Object> templateParams = new ArrayList<>();
+		List<String> templateParams = new ArrayList<>();
 		templateParams.add(citizenName);
 		templateParams.add(applicationNo);
 		templateParams.add(vehicleNo);
@@ -204,7 +203,7 @@ public class WhatsappNotification {
 		requestBody.put("userName", "Nagar Nigam Raipur");
 		requestBody.put("source", "new-landing-page form");
 
-		List<Object> templateParams = new ArrayList<>();
+		List<String> templateParams = new ArrayList<>();
 		templateParams.add(driverName);
 		templateParams.add(applicationNo);
 		templateParams.add(citizenName);
