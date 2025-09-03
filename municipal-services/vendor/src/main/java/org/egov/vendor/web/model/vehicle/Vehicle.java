@@ -91,6 +91,10 @@ public class Vehicle {
 
 	@JsonProperty("vendorVehicleStatus")
 	private StatusEnum vendorVehicleStatus = null;
+	
+	@SafeHtml
+	@JsonProperty("vehicleImg")
+	private String vehicleImg = null;
 
 
 	
