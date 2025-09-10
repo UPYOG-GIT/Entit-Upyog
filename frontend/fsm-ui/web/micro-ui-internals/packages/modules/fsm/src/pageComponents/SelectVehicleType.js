@@ -11,6 +11,7 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }
   const [types, setTypes] = useState([]);
   const [selectedType, setSelectedType] = useState({});
   const [selectedCapacity, setSelectedCapacity] = useState("");
+  const [vehicleImage, setVehicleImage] = useState(null);
 
   // useEffect(() => {
   //   if (vehicleData) {
@@ -82,6 +83,7 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }
       const types = makeModelArray.filter((vehicle) => vehicle.make === modal.code);
       setTypes(types);
       setSelectedModal(modal);
+      setVehicleImage(null)
       onSelect(config.key, {
         ...formData[config.key],
         modal: modal,
@@ -93,6 +95,7 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }
   const selectType = (type) => {
     setSelectedCapacity(type.capacity);
     setSelectedType(type);
+    setVehicleImage(type.imgUrl)
     onSelect(config.key, { ...formData[config.key], type: type });
   };
 
@@ -136,6 +139,20 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }
         </CardLabel>
         <TextInput className="" textInputStyle={{ width: "50%" }} value={selectedCapacity} onChange={() => {}} disable={true} />
       </LabelFieldPair>
+      
+      {/* {vehicleImage && (
+      <LabelFieldPair>
+        <CardLabel className="card-label-smaller">
+          {t("Vehicle Image")}
+          {config.isMandatory ? " * " : null}
+        </CardLabel>
+        <img
+          src={vehicleImage}
+          alt="capacity icon"
+          style={{ width: "100px", height: "100px" }}
+        />
+      </LabelFieldPair>
+      )} */}
     </div>
   );
 };

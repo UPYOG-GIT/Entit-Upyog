@@ -302,7 +302,8 @@ const FSMRegistry = () => {
   const onTabChange = (tab) => {
     setTab(tab);
     if (selectedTabs !== tab) {
-      history.push(`/${window?.contextPath}/employee/fsm/registry?selectedTabs=${tab}`);
+      // history.push(`/${window?.contextPath}/employee/fsm/registry?selectedTabs=${tab}`);
+      history.push(`/fsm-ui/employee/fsm/registry?selectedTabs=${tab}`);
     }
   };
 
@@ -319,7 +320,7 @@ const FSMRegistry = () => {
     refetchVendor();
   }, []);
 
-  console.log("isVendorLoading: " + isVendorLoading + ", isLoading: " + isLoading);
+  // console.log("isVendorLoading: " + isVendorLoading + ", isLoading: " + isLoading);
   return (
     <div>
       <Header>{t("ES_FSM_REGISTRY")}</Header>

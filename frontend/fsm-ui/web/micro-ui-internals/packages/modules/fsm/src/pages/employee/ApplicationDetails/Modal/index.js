@@ -530,7 +530,7 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
     })();
   }, [file]);
 
-  console.log("uploadedFile " + uploadedFile);
+  // console.log("uploadedFile " + uploadedFile);
   const onRemoveWorkers = (index, workerToRemove) => {
     setSelectedWorkers(() => selectedWorkers?.filter((worker) => worker.individualId !== workerToRemove.individualId));
   };

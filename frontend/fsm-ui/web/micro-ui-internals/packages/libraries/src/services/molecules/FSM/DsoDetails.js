@@ -100,6 +100,7 @@ const DsoDetails = async (tenantId, filters = {}) => {
         capacity: vehicle.tankCapacity,
         suctionType: vehicle.suctionType,
         model: vehicle.model,
+        imgUrl: vehicle.vehicleImg,
       })),
   }));
 

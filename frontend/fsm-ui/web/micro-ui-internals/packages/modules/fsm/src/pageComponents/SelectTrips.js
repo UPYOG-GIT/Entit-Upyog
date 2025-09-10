@@ -18,6 +18,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
 
   const [vehicle, setVehicle] = useState({ label: formData?.tripData?.vehicleCapacity });
   const [billError, setError] = useState(false);
+  const [vehicleImg, setVehicleImg] = useState("");
 
   const { isLoading: isVehicleMenuLoading, data: vehicleData } = Digit.Hooks.fsm.useMDMS(state, "Vehicle", "VehicleType", { staleTime: Infinity });
 
@@ -57,7 +58,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
       isMandatory: true,
     },
     {
-      label:"ES_NEW_APPLICATION_DISTANCE_FROM_ROAD",
+      label: "ES_NEW_APPLICATION_DISTANCE_FROM_ROAD",
       type: "text",
       name: "distancefromroad",
       default: formData?.tripData?.distancefromroad,
@@ -69,7 +70,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
       name: "roadWidth",
       default: formData?.tripData?.roadWidth,
       isMandatory: true,
-    }
+    },
   ];
 
   function setTripNum(value) {
@@ -79,6 +80,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
   function selectVehicle(value) {
     setVehicle({ label: value.capacity });
     onSelect(config.key, { ...formData[config.key], vehicleType: value });
+    setVehicleImg(value.imgUrl);
   }
   //console.log(formdata)
   function setValue(value, input) {
@@ -91,11 +93,7 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
         setVehicle({ label: formData?.tripData?.vehicleType?.capacity });
       }
 
-      if (
-        formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" &&
-        formData.tripData.noOfTrips &&
-        formData.tripData.amountPerTrip
-      ) {
+      if (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" && formData.tripData.noOfTrips && formData.tripData.amountPerTrip) {
         setValue({
           amount: formData.tripData.amountPerTrip * formData.tripData.noOfTrips,
         });
@@ -122,8 +120,8 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
           //   amount: billSlab.price * formData.tripData.noOfTrips,
           // });
           // onSelect(config.key, { ...formData[config.key], amount: amount, amountPerTrip: billSlab.price });
-          setValue(billSlab.price,"amountPerTrip");
-          setValue(billSlab.price * formData.tripData.noOfTrips,"amount");
+          setValue(billSlab.price, "amountPerTrip");
+          setValue(billSlab.price * formData.tripData.noOfTrips, "amount");
           setError(false);
         } else {
           setValue({
@@ -134,7 +132,13 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
         }
       }
     })();
-  }, [formData?.propertyType,   formData?.address, formData?.tripData?.vehicleType?.capacity, formData?.tripData?.noOfTrips, formData?.address?.propertyLocation?.code]);
+  }, [
+    formData?.propertyType,
+    formData?.address,
+    formData?.tripData?.vehicleType?.capacity,
+    formData?.tripData?.noOfTrips,
+    formData?.address?.propertyLocation?.code,
+  ]);
 
   // console.log(formData,"formData 1111111111")
   return isVehicleMenuLoading && isDsoLoading ? (
@@ -156,6 +160,14 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
           disable={editScreen && applicationData?.applicationStatus != "CREATED" ? true : false}
         />
       </LabelFieldPair>
+      {vehicleImg && (
+        <LabelFieldPair>
+          <CardLabel className="card-label-smaller">
+            {t("Vehicle Image")}
+          </CardLabel>
+          <img src={vehicleImg} alt="capacity icon" style={{ width: "300px", height: "300px", marginBottom: "20px",  }} />
+        </LabelFieldPair>
+      )}
       {inputs?.map((input, index) => (
         <LabelFieldPair key={index}>
           <CardLabel className="card-label-smaller">
@@ -168,7 +180,6 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
               style={{ ...styles, ...FSMTextFieldStyle }}
               onChange={(e) => setValue(e.target.value, input.name)}
               key={input.name}
-              
               value={formData && formData[config.key] ? formData[config.key][input.name] : null}
               {...input.validation}
               disable={input.disable}

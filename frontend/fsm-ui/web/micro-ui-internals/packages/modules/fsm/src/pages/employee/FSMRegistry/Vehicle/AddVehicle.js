@@ -88,6 +88,7 @@ const AddVehicle = ({ parentUrl, heading }) => {
     const emailId = data?.emailId;
     const dob = new Date(`${data.dob}`).getTime() || new Date(`1/1/1970`).getTime();
     const vendorId = data?.selectvendor?.id;
+    const vehicleImg = data?.vehicle?.type?.imgUrl;
 
     const formData = {
       vehicle: {
@@ -104,6 +105,7 @@ const AddVehicle = ({ parentUrl, heading }) => {
         gpsEnabled: true,
         source: "Municipal records",
         vendorId: vendorId,
+        vehicleImg: vehicleImg,
         owner: {
           tenantId: tenantId,
           name: ownerName,

@@ -44,25 +44,25 @@ const FileComplaint = ({ parentRoute, heading }) => {
   };
 
   const onFormValueChange = (setValue, formData) => {
-
     if (
-      formData?.pitType!==undefined &&
-      formData?.tripData?.vehicleType &&
-      formData?.tripData?.roadWidth!==undefined &&
-      formData?.tripData?.distancefromroad!==undefined &&
-      formData?.propertyType &&
-      formData?.subtype &&
-      formData?.address?.locality?.code || formData?.cpt?.details?.address?.locality?.code &&
-      formData?.tripData?.vehicleType &&
-      formData?.channel &&
-      formData?.pitType &&
-      formData?.tripData?.roadWidth &&
-      formData?.tripData?.distancefromroad &&
-      formData?.address?.street &&
-      formData?.address?.doorNo &&
-      (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0)
+      (formData?.pitType !== undefined &&
+        formData?.tripData?.vehicleType &&
+        formData?.tripData?.roadWidth !== undefined &&
+        formData?.tripData?.distancefromroad !== undefined &&
+        formData?.propertyType &&
+        formData?.subtype &&
+        formData?.address?.locality?.code) ||
+      (formData?.cpt?.details?.address?.locality?.code &&
+        formData?.tripData?.vehicleType &&
+        formData?.channel &&
+        formData?.pitType &&
+        formData?.tripData?.roadWidth &&
+        formData?.tripData?.distancefromroad &&
+        formData?.address?.street &&
+        formData?.address?.doorNo &&
+        (formData?.tripData?.amountPerTrip || formData?.tripData?.amountPerTrip === 0))
     ) {
-      console.log("formDataformData",formData)
+      console.log("formDataformData", formData);
       setSubmitValve(true);
       const pitDetailValues = formData?.pitDetail ? Object.values(formData?.pitDetail).filter((value) => value > 0) : null;
       let max = Digit.SessionStorage.get("total_amount");
@@ -142,7 +142,7 @@ const FileComplaint = ({ parentRoute, heading }) => {
           name: applicantName,
           mobileNumber,
           gender: gender,
-          emailId: emailId
+          emailId: emailId,
         },
         tenantId: tenantId,
         sanitationtype: sanitationtype,
@@ -151,9 +151,9 @@ const FileComplaint = ({ parentRoute, heading }) => {
           tripAmount: typeof amount === "number" ? JSON.stringify(amount) : amount,
           distancefromroad: distancefromroad,
           roadWidth: roadWidth,
-          propertyID : data?.cpt?.details?.propertyId,
+          propertyID: data?.cpt?.details?.propertyId,
           applicantName: applicantName,
-          applicantMobileNumber: mobileNumber
+          applicantMobileNumber: mobileNumber,
         },
         propertyUsage: data?.subtype,
         vehicleCapacity: data?.tripData?.vehicleType?.capacity,
@@ -194,12 +194,15 @@ const FileComplaint = ({ parentRoute, heading }) => {
             },
             village: village?.code
               ? {
-                code: village?.code ? village?.code : "",
-                name: village?.name ? village?.name : "",
-              }
+                  code: village?.code ? village?.code : "",
+                  name: village?.name ? village?.name : "",
+                }
               : newVillage,
             newLocality: newLocality,
             newGramPanchayat: newGp,
+            localityName: localityName ? localityName : "",
+            wardName: wardName ? wardName : "",
+            zoneName: zoneName ? zoneName : "",
           },
         },
         noOfTrips,
@@ -217,7 +220,6 @@ const FileComplaint = ({ parentRoute, heading }) => {
     // history.push("/fsm-ui/employee/fsm/response", formData);
     history.push("/fsm-ui/citizen/fsm/response", formData);
     // history.push(`${parentRoute}/response`);
-    
   };
 
   if (isLoading || isTripConfigLoading || isApplicantConfigLoading) {
@@ -225,7 +227,7 @@ const FileComplaint = ({ parentRoute, heading }) => {
   }
 
   // const configs = [...preFields, ...commonFields];
-  let conf = [...newConfig]
+  let conf = [...newConfig];
   // conf.indexRoute = "search-property";
   // configs.indexRoute = "select-trip-number";
   // console.log("confffffffff : "+JSON.stringify(conf))
