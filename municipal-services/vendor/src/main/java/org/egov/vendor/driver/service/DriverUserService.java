@@ -252,11 +252,11 @@ public class DriverUserService {
 		}
 		if (driver.getRoles() != null) {
 			driver.getRoles().add(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName()));
-			driver.getRoles().add(getRolObj(config.getCitizenRole(), config.getCitizenRoleName()));
+//			driver.getRoles().add(getRolObj(config.getCitizenRole(), config.getCitizenRoleName()));
 		} else {
 			List<Role> roles = new ArrayList<>();
 			roles.add(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName()));
-			roles.add(getRolObj(config.getCitizenRole(), config.getCitizenRoleName()));
+//			roles.add(getRolObj(config.getCitizenRole(), config.getCitizenRoleName()));
 			driver.setRoles(roles);
 			
 //			driver.setRoles(Arrays.asList(getRolObj(config.getDsoDriver(), config.getDsoDriverRoleName())));
