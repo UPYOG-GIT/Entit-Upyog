@@ -94,11 +94,11 @@ export const useFetchPayment = ({ tenantId, consumerCode, businessService }, con
   };
 };
 
-export const usePaymentUpdate = ({ egId }, businessService, config) => {
+export const usePaymentUpdate = ({ egId }, businessService, config, consumerCode) => {
   // console.log("object........"+JSON.stringify(config) + "egid "+egId+"BS "+businessService);
   const getPaymentData = async (egId) => {
     // console.log("Hii")
-    const transaction = await Digit.PaymentService.updateCitizenReciept(egId);
+    const transaction = await Digit.PaymentService.updateCitizenReciept(egId, consumerCode);
     const payments = await Digit.PaymentService.getReciept(transaction.Transaction[0].tenantId, businessService, {
       consumerCodes: transaction.Transaction[0].consumerCode,
     });

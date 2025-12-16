@@ -11,6 +11,16 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
     });
   };
 
+  const usePaymentGateway1 = () => {
+    return useQuery("PAYMENT_GATEWAY", () => MdmsService.getPaymentGateway(tenantId, moduleCode, type), {
+      select: (data) => {
+        // return data?.[moduleCode]?.[type].filter((e) => e.active && e.module === "FSM").map(({ gateway }) => gateway);
+        return data?.[moduleCode]?.[type].filter((e) => e.active && e.module === "FSM").map(({ gateway }) => gateway);
+      },
+      ...config,
+    });
+  };
+
   const useReceiptKey = () => {
     return useQuery("RECEIPT_KEY", () => MdmsService.getReceiptKey(tenantId, moduleCode, type), config);
   };
@@ -25,7 +35,7 @@ const useMDMS = (tenantId, moduleCode, type, config = {}, payload = []) => {
 
   switch (type) {
     case "PaymentGateway":
-      return usePaymentGateway();
+      return usePaymentGateway1();
     case "ReceiptKey":
       return useReceiptKey();
     case "FSTPPlantInfo":

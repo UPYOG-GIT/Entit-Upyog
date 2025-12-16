@@ -435,26 +435,26 @@ const ActionModal = ({ t, action, tenantId, state, id, closeModal, submitAction,
         });
       }
     }
-    if (action === "START_WORK" && file) {
+    if (action === "START_WORK") {
       workflow.comments = data.comments;
-      workflow.verificationDocuments = [
+      file ? workflow.verificationDocuments = [
         {
           documentType: "Work Start",
           fileName: file?.name,
           fileStoreId: uploadedFile,
         },
-      ];
+      ] : workflow.verificationDocument = [];
     }
 
-    if (action === "WORK_COMPLETED" && file) {
+    if (action === "WORK_COMPLETED") {
       workflow.comments = data.comments;
-      workflow.verificationDocuments = [
+      file ? workflow.verificationDocuments = [
         {
           documentType: "Work Completed",
           fileName: file?.name,
           fileStoreId: uploadedFile,
         },
-      ];
+      ] : workflow.verificationDocument = [];
     }
 
     if (reassignReason) addCommentToWorkflow(reassignReason, workflow, data);

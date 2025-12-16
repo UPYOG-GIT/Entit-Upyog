@@ -19,6 +19,7 @@ const WrapPaymentComponent = (props) => {
   const [printing, setPrinting] = useState(false);
   const [allowFetchBill, setallowFetchBill] = useState(false);
   const { businessService: business_service, consumerCode, tenantId } = useParams();
+  // console.log("useParams "+JSON.stringify(useParams()));
   const { data: bpaData = {}, isLoading: isBpaSearchLoading, isSuccess: isBpaSuccess, error: bpaerror } = Digit.Hooks.obps.useOBPSSearch(
     "",
     {},
@@ -32,7 +33,7 @@ const WrapPaymentComponent = (props) => {
     retry: false,
     staleTime: Infinity,
     refetchOnWindowFocus: false,
-  });
+  }, consumerCode);
   // console.log("data "+JSON.stringify(data));
   // console.log(data?.payments?.Payments[0]?.paymentDetails[0]?.businessService);
   // console.log("data?.txnStatus: "+data?.txnStatus);

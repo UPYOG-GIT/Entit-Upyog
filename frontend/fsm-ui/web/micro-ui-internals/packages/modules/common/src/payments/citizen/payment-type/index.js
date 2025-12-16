@@ -40,6 +40,14 @@ export const SelectPaymentType = (props) => {
     { tenantId: tenantId, consumerCode: wrkflow === "WNS" ? stringReplaceAll(consumerCode, "+", "/") : consumerCode, businessService },
     {}
   );
+
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
   useEffect(() => {
     if (paymentdetails?.Bill && paymentdetails.Bill.length == 0) {
       setShowToast({ key: true, label: "CS_BILL_NOT_FOUND" });
@@ -88,10 +96,31 @@ export const SelectPaymentType = (props) => {
       const redirectUrl = data?.Transaction?.redirectUrl;
       if (d?.paymentType == "AXIS") {
         window.location = redirectUrl;
+      }
+      if (d?.paymentType == "RAZORPAY") {
+        // console.log("data :" + JSON.stringify(data));
+
+        // window.location = redirectUrl;
+        const raw = redirectUrl.split("data=")[1];
+        const decoded = JSON.parse(decodeURIComponent(raw));
+
+        const rzpOptions = {
+          key: decoded.key,
+          amount: decoded.amount,
+          currency: decoded.currency,
+          name: "Payment",
+          order_id: decoded.orderId,
+          callback_url: data?.Transaction?.callbackUrl,
+          handler: function (response) {
+            window.location = data?.Transaction?.callbackUrl;
+          },
+        };
+
+        const rzp = new window.Razorpay(rzpOptions);
+        rzp.open();
       } else {
         // new payment gatewayfor UPYOG pay
         try {
-
           // console.log(redirectUrl);
           const gatewayParam = redirectUrl
             ?.split("?")
@@ -104,13 +133,12 @@ export const SelectPaymentType = (props) => {
               return curr;
             }, {});
 
-
           var newForm = $("<form>", {
-            action: gatewayParam.txURL+"="+gatewayParam.command,
+            action: gatewayParam.txURL + "=" + gatewayParam.command,
             method: "POST",
             target: "_top",
           });
-          
+
           const orderForNDSLPaymentSite = [
             "encRequest",
             "access_code",
@@ -134,19 +162,18 @@ export const SelectPaymentType = (props) => {
 
           // override default date for UPYOG Custom pay
           gatewayParam["requestDateTime"] = gatewayParam["requestDateTime"]?.split(new Date().getFullYear()).join(`${new Date().getFullYear()} `);
-        
+
           // gatewayParam["redirect_url"]= redirectUrl?.split("redirect_url=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
-          gatewayParam["redirect_url"]= redirectUrl;
-          gatewayParam["cancel_url"]= redirectUrl?.split("cancel_url=")?.[1]?.split("eg_pg_txnid=")?.[0]+'eg_pg_txnid=' +gatewayParam?.orderId;
+          gatewayParam["redirect_url"] = redirectUrl;
+          gatewayParam["cancel_url"] = redirectUrl?.split("cancel_url=")?.[1]?.split("eg_pg_txnid=")?.[0] + "eg_pg_txnid=" + gatewayParam?.orderId;
           // gatewayParam["successUrl"]= data?.Transaction?.callbackUrl;
           // gatewayParam["failUrl"]= data?.Transaction?.callbackUrl;
-          
+
           // var formdata = new FormData();
-          
+
           for (var key of orderForNDSLPaymentSite) {
-           
             // formdata.append(key,gatewayParam[key]);
-           
+
             newForm.append(
               $("<input>", {
                 name: key,
@@ -158,9 +185,7 @@ export const SelectPaymentType = (props) => {
           $(document.body).append(newForm);
           newForm.submit();
 
-        
           // makePayment(gatewayParam.txURL,formdata);
-
         } catch (e) {
           console.log("Error in payment redirect ", e);
           //window.location = redirectionUrl;
