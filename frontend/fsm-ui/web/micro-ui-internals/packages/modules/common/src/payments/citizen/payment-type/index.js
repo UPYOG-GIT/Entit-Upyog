@@ -19,6 +19,7 @@ import { useParams, useHistory, useLocation, Redirect } from "react-router-dom";
 import { stringReplaceAll } from "../bills/routes/bill-details/utils";
 import $ from "jquery";
 import { makePayment } from "./payGov";
+import { startHdfcPayment } from "./hdfcCollectNow";
 
 export const SelectPaymentType = (props) => {
   const { state = {} } = useLocation();
@@ -41,12 +42,12 @@ export const SelectPaymentType = (props) => {
     {}
   );
 
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    document.body.appendChild(script);
-  }, []);
+  // useEffect(() => {
+  //   const script = document.createElement("script");
+  //   script.src = "https://checkout.razorpay.com/v1/checkout.js";
+  //   script.async = true;
+  //   document.body.appendChild(script);
+  // }, []);
 
   useEffect(() => {
     if (paymentdetails?.Bill && paymentdetails.Bill.length == 0) {
@@ -90,7 +91,8 @@ export const SelectPaymentType = (props) => {
         },
       },
     };
-
+    
+  //  const responsedata ;
     try {
       const data = await Digit.PaymentService.createCitizenReciept(tenantId, filterData);
       const redirectUrl = data?.Transaction?.redirectUrl;
@@ -101,23 +103,26 @@ export const SelectPaymentType = (props) => {
         // console.log("data :" + JSON.stringify(data));
 
         // window.location = redirectUrl;
-        const raw = redirectUrl.split("data=")[1];
-        const decoded = JSON.parse(decodeURIComponent(raw));
+        // const raw = redirectUrl.split("data=")[1];
+        // const decoded = JSON.parse(decodeURIComponent(raw));
+        console.log("Calling the function for the payment");
+        // responsedata = 
+        startHdfcPayment(data);
+        console.log("getting out the razorpay method calling chain");
+        // const rzpOptions = {
+        //   key: decoded.key,
+        //   amount: decoded.amount,
+        //   currency: decoded.currency,
+        //   name: "Payment",
+        //   order_id: decoded.orderId,
+        //   callback_url: data?.Transaction?.callbackUrl,
+        //   handler: function (response) {
+        //     window.location = data?.Transaction?.callbackUrl;
+        //   },
+        // };
 
-        const rzpOptions = {
-          key: decoded.key,
-          amount: decoded.amount,
-          currency: decoded.currency,
-          name: "Payment",
-          order_id: decoded.orderId,
-          callback_url: data?.Transaction?.callbackUrl,
-          handler: function (response) {
-            window.location = data?.Transaction?.callbackUrl;
-          },
-        };
-
-        const rzp = new window.Razorpay(rzpOptions);
-        rzp.open();
+        // const rzp = new window.Razorpay(rzpOptions);
+        // rzp.open();
       } else {
         // new payment gatewayfor UPYOG pay
         try {
@@ -185,14 +190,16 @@ export const SelectPaymentType = (props) => {
           $(document.body).append(newForm);
           newForm.submit();
 
-          // makePayment(gatewayParam.txURL,formdata);
+           makePayment(gatewayParam.txURL,formdata);
         } catch (e) {
           console.log("Error in payment redirect ", e);
           //window.location = redirectionUrl;
         }
       }
     } catch (error) {
+      console.log("Error iin payment ",JSON.stringify(error));
       let messageToShow = "CS_PAYMENT_UNKNOWN_ERROR_ON_SERVER";
+      // console.log("Error in the payment type ",JSON.stringify(messageToShow));
       if (error.response?.data?.Errors?.[0]) {
         const { code, message } = error.response?.data?.Errors?.[0];
         messageToShow = code;
