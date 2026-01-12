@@ -106,11 +106,12 @@ export const PaymentService = {
       url: Urls.payment.create_citizen_reciept,
       useCache: false,
       method: "POST",
-      auth: false,
-      userService: false,
+      auth: true, 
+      userService: true,
       params: { tenantId },
       data: { ...details },
     }),
+    // set auth and userservice as false if not worked 
 
   updateCitizenReciept: (transactionId, consumerCode) =>
     Request({
