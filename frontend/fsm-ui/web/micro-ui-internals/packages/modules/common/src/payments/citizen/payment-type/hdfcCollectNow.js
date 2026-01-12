@@ -48,7 +48,7 @@ export function startHdfcPayment(createOrderResponse) {
   //     email: 'shivank@niua.org',
   //     contact: '9000090000'
   //   };
-  if (razorpay && razorpay.orderId) {
+  if (razorpay && ( razorpay.orderId || razorpay.order_id)) {
     // const orderId = razorpay.orderId;
     const orderId = razorpay.order_id;
     const keyId = razorpay.key;
