@@ -84,10 +84,10 @@ export const SelectPaymentType = (props) => {
         }, 
         // success below url generation is commented according to requirement if not worked then
         //  just uncommend the 87,88,89 line number and comment the 90 line number
-        // callbackUrl: window.location.href.includes("mcollect")
-        //   ? `${window.location.protocol}//${window.location.host}/fsm-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}?workflow=mcollect`
-        //   : `${window.location.protocol}//${window.location.host}/fsm-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}`,
-        callbackUrl: `${window.location.protocol}//${window.location.host}/fsm-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}?propertyId=${consumerCode}`,
+        callbackUrl: window.location.href.includes("mcollect")
+          ? `${window.location.protocol}//${window.location.host}/fsm-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}?workflow=mcollect`
+          : `${window.location.protocol}//${window.location.host}/fsm-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}`,
+        // callbackUrl: `${window.location.protocol}//${window.location.host}/fsm-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}?propertyId=${consumerCode}`,
           additionalDetails: {
           isWhatsapp: false,
         },
