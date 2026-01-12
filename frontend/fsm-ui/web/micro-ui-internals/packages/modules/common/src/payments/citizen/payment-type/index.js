@@ -81,12 +81,14 @@ export const SelectPaymentType = (props) => {
           name: name || userInfo?.info?.name,
           mobileNumber: mobileNumber || userInfo?.info?.mobileNumber,
           tenantId: tenantId,
-        },
-        // success
-        callbackUrl: window.location.href.includes("mcollect")
-          ? `${window.location.protocol}//${window.location.host}/fsm-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}?workflow=mcollect`
-          : `${window.location.protocol}//${window.location.host}/fsm-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}`,
-        additionalDetails: {
+        }, 
+        // success below url generation is commented according to requirement if not worked then
+        //  just uncommend the 87,88,89 line number and comment the 90 line number
+        // callbackUrl: window.location.href.includes("mcollect")
+        //   ? `${window.location.protocol}//${window.location.host}/fsm-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}?workflow=mcollect`
+        //   : `${window.location.protocol}//${window.location.host}/fsm-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}`,
+        callbackUrl: `${window.location.protocol}//${window.location.host}/fsm-ui/citizen/payment/success/${businessService}/${consumerCode}/${tenantId}?propertyId=${consumerCode}`,
+          additionalDetails: {
           isWhatsapp: false,
         },
       },
@@ -105,10 +107,10 @@ export const SelectPaymentType = (props) => {
         // window.location = redirectUrl;
         // const raw = redirectUrl.split("data=")[1];
         // const decoded = JSON.parse(decodeURIComponent(raw));
-        console.log("Calling the function for the payment");
+        // console.log("Calling the function for the payment");
         // responsedata = 
         startHdfcPayment(data);
-        console.log("getting out the razorpay method calling chain");
+        // console.log("getting out the razorpay method calling chain");
         // const rzpOptions = {
         //   key: decoded.key,
         //   amount: decoded.amount,
