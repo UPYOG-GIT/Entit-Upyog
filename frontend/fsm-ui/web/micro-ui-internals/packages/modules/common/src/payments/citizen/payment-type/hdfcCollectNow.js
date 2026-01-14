@@ -55,8 +55,8 @@ export function startHdfcPayment(createOrderResponse) {
     const amount = razorpay.amount;
     const currency = razorpay?.currency || 'INR';
     // const name = 'Payment';
-    // const callbackUrl = createOrderResponse?.Transaction?.callbackUrl;
-    const callbackUrl = razorpay.callback_url;
+    const callbackUrl = createOrderResponse?.Transaction?.callbackUrl;
+    // const callbackUrl = razorpay.callback_url;
     const prefill = razorpay.prefill || {
       name: 'Shivank',
       email: 'shivank@niua.org',
