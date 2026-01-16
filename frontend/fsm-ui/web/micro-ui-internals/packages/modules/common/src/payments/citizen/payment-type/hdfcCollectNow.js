@@ -27,41 +27,42 @@ export function startHdfcPayment(createOrderResponse) {
   const txn = createOrderResponse.Transaction;
   console.log("HDFC Transaction Data:", txn);
   // Option A: backend returned a `razorpay` object with explicit fields
-  // const razorpay = txn.additionalDetails;
+   const razorpay = txn.additionalDetails;
+   console.log("Razorpay data",razorpay)
   // const razorpay = txn.redirectUrl;
-  const decode = createOrderResponse?.Transaction?.redirectUrl.split("data=")[1];
+  // const decode = createOrderResponse?.Transaction?.redirectUrl.split("data=")[1];
   // const decoded = createOrderResponse?
-  const razorpay = JSON.parse(decodeURIComponent(decode));
+  // const razorpay = JSON.parse(decodeURIComponent(decode));
   console.log("Razorpay Data:", razorpay);
 
 
   
   
-  // if (razorpay && razorpay.order_id) {
-  //   const orderId = razorpay.order_id;
-  //   const keyId = razorpay.key;
-  //   const amount = razorpay.amount;
-  //   const currency = razorpay?.currency || 'INR';
-  //   const callbackUrl = razorpay.callback_url;
-  //   const prefill = razorpay.prefill || {
-  //     name: 'Shivank',
-  //     email: 'shivank@niua.org',
-  //     contact: '9000090000'
-  //   };
-  if (razorpay && ( razorpay.orderId || razorpay.order_id)) {
-    // const orderId = razorpay.orderId;
+  if (razorpay && (razorpay.order_id || razorpay.order_id)) {
     const orderId = razorpay.order_id;
     const keyId = razorpay.key;
     const amount = razorpay.amount;
     const currency = razorpay?.currency || 'INR';
-    // const name = 'Payment';
-    const callbackUrl = createOrderResponse?.Transaction?.callbackUrl;
-    // const callbackUrl = razorpay.callback_url;
+    const callbackUrl = razorpay.callbackUrl;
     const prefill = razorpay.prefill || {
       name: 'Shivank',
       email: 'shivank@niua.org',
       contact: '9000090000'
     };
+  // if (razorpay && ( razorpay.orderId || razorpay.order_id)) {
+  //   // const orderId = razorpay.orderId;
+  //   const orderId = razorpay.order_id;
+  //   const keyId = razorpay.key;
+  //   const amount = razorpay.amount;
+  //   const currency = razorpay?.currency || 'INR';
+  //   // const name = 'Payment';
+  //   const callbackUrl = createOrderResponse?.Transaction?.callbackUrl;
+  //   // const callbackUrl = razorpay.callback_url;
+  //   const prefill = razorpay.prefill || {
+  //     name: 'Shivank',
+  //     email: 'shivank@niua.org',
+  //     contact: '9000090000'
+  //   };
 
     // Build form to post to Razorpay embedded endpoint
     const form = document.createElement('form');
