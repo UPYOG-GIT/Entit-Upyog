@@ -36,14 +36,15 @@ export function startHdfcPayment(createOrderResponse) {
   console.log("Razorpay Data:", razorpay);
 
 
-  
+ const returnURL = razorpay.callbackUrl;
+ const originalreturnurl = returnURL.split("originalreturnurl=")[1].split("&order_id=")[0]; 
   
   if (razorpay && (razorpay.order_id || razorpay.order_id)) {
     const orderId = razorpay.order_id;
     const keyId = razorpay.key;
     const amount = razorpay.amount;
     const currency = razorpay?.currency || 'INR';
-    const callbackUrl = razorpay.callbackUrl;
+    const callbackUrl = originalreturnurl;
     const prefill = razorpay.prefill || {
       name: 'Shivank',
       email: 'shivank@niua.org',
