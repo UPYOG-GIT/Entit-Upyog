@@ -103,13 +103,21 @@ export const SelectPaymentType = (props) => {
       }
       if (d?.paymentType == "RAZORPAY") {
         // console.log("data :" + JSON.stringify(data));
-
+        
+        // const rturl = data?.Transaction?.additionalDetails?.callbackUrl;
+        // const originalreturnurl = returnURL.split("originalreturnurl=")[1];
+        // console.log("redirect url",originalreturnurl);
         console.log("CallbackUrl", JSON.stringify(data?.Transaction?.callbackUrl));
+
         // window.location = redirectUrl;
         // const raw = redirectUrl.split("data=")[1];
         // const decoded = JSON.parse(decodeURIComponent(raw));
         // console.log("Calling the function for the payment");
         // responsedata = 
+        
+        
+       
+        console.log("calling payment method");
         startHdfcPayment(data);
         // console.log("getting out the razorpay method calling chain");
         // const rzpOptions = {

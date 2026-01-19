@@ -33,11 +33,12 @@ export function startHdfcPayment(createOrderResponse) {
   // const decode = createOrderResponse?.Transaction?.redirectUrl.split("data=")[1];
   // const decoded = createOrderResponse?
   // const razorpay = JSON.parse(decodeURIComponent(decode));
-  console.log("Razorpay Data:", razorpay);
+  //console.log("Razorpay Data:", razorpay);
 
 
  const returnURL = razorpay.callbackUrl;
- const originalreturnurl = returnURL.split("originalreturnurl=")[1].split("&order_id=")[0]; 
+ const originalreturnurl = returnURL.split("originalreturnurl=")[1]; 
+ console.log("original return url printing",originalreturnurl);
   
   if (razorpay && (razorpay.order_id || razorpay.order_id)) {
     const orderId = razorpay.order_id;
