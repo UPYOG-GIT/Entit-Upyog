@@ -17,7 +17,7 @@
 
 export function startHdfcPayment(createOrderResponse) {
   // console.log("Inside the Razorpay payment method");
-  console.log("Starting HDFC CollectNow Payment with response:", createOrderResponse);
+  console.log("Starting HDFC CollectNow Payment with response:", JSON.stringify(createOrderResponse));
   // Defensive checks
   if (!createOrderResponse || !createOrderResponse.Transaction) {
     console.error("Invalid create order response for HDFC", createOrderResponse);
@@ -28,24 +28,26 @@ export function startHdfcPayment(createOrderResponse) {
   console.log("HDFC Transaction Data:", txn);
   // Option A: backend returned a `razorpay` object with explicit fields
    const razorpay = txn.additionalDetails;
-   console.log("Razorpay data",razorpay)
+   console.log("Razorpay data",JSON.stringify(razorpay));
   // const razorpay = txn.redirectUrl;
   // const decode = createOrderResponse?.Transaction?.redirectUrl.split("data=")[1];
   // const decoded = createOrderResponse?
   // const razorpay = JSON.parse(decodeURIComponent(decode));
-  //console.log("Razorpay Data:", razorpay);
+  // console.log("Razorpay Data:", razorpay);
 
 
  const returnURL = razorpay.callbackUrl;
- const originalreturnurl = returnURL.split("originalreturnurl=")[1]; 
- console.log("original return url printing",originalreturnurl);
+//  const originalreturnurl = decodeURIComponent(returnURL.split("originalreturnurl=")[1]);
+ const originalreturnurl = returnURL.split("originalreturnurl=")[1];
+ console.log("original return url printing",returnURL);
   
   if (razorpay && (razorpay.order_id || razorpay.order_id)) {
     const orderId = razorpay.order_id;
     const keyId = razorpay.key;
     const amount = razorpay.amount;
     const currency = razorpay?.currency || 'INR';
-    const callbackUrl = originalreturnurl;
+    // const callbackUrl = returnURL;
+    const callbackUrl = razorpay.callback_url;
     const prefill = razorpay.prefill || {
       name: 'Shivank',
       email: 'shivank@niua.org',

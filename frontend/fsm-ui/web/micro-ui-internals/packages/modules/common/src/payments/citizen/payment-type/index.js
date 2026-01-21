@@ -102,11 +102,11 @@ export const SelectPaymentType = (props) => {
         window.location = redirectUrl;
       }
       if (d?.paymentType == "RAZORPAY") {
-        // console.log("data :" + JSON.stringify(data));
+        console.log("data :" + JSON.stringify(data));
         
-        // const rturl = data?.Transaction?.additionalDetails?.callbackUrl;
-        // const originalreturnurl = returnURL.split("originalreturnurl=")[1];
-        // console.log("redirect url",originalreturnurl);
+        const rturl = data?.Transaction?.additionalDetails?.callbackUrl;
+        const originalreturnurl = rturl.split("originalreturnurl=")[1];
+        console.log("redirect url",originalreturnurl);
         console.log("CallbackUrl", JSON.stringify(data?.Transaction?.callbackUrl));
 
         // window.location = redirectUrl;
