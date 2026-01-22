@@ -101,39 +101,15 @@ export const SelectPaymentType = (props) => {
       if (d?.paymentType == "AXIS") {
         window.location = redirectUrl;
       }
-      if (d?.paymentType == "RAZORPAY") {
-        console.log("data :" + JSON.stringify(data));
-        
-        const rturl = data?.Transaction?.additionalDetails?.callbackUrl;
-        const originalreturnurl = rturl.split("originalreturnurl=")[1];
-        console.log("redirect url",originalreturnurl);
-        console.log("CallbackUrl", JSON.stringify(data?.Transaction?.callbackUrl));
-
-        // window.location = redirectUrl;
-        // const raw = redirectUrl.split("data=")[1];
-        // const decoded = JSON.parse(decodeURIComponent(raw));
-        // console.log("Calling the function for the payment");
-        // responsedata = 
-        
-        
-       
-        console.log("calling payment method");
-        startHdfcPayment(data);
-        // console.log("getting out the razorpay method calling chain");
-        // const rzpOptions = {
-        //   key: decoded.key,
-        //   amount: decoded.amount,
-        //   currency: decoded.currency,
-        //   name: "Payment",
-        //   order_id: decoded.orderId,
-        //   callback_url: data?.Transaction?.callbackUrl,
-        //   handler: function (response) {
-        //     window.location = data?.Transaction?.callbackUrl;
-        //   },
-        // };
-
-        // const rzp = new window.Razorpay(rzpOptions);
-        // rzp.open();
+       else if (d?.paymentType == "RAZORPAY") {
+              // console.log("data :" + JSON.stringify(data));
+            try{
+              console.log("calling payment method");
+              startHdfcPayment(data);
+            }catch(e){
+                  console.log("Error in HDFC Payment Redirect ", e);
+                  setShowToast({ key: true, label: "CS_PAYMENT_INIT_FAILED" });
+            }
       } else {
         // new payment gatewayfor UPYOG pay
         try {
