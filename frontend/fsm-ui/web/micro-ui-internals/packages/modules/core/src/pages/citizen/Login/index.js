@@ -458,7 +458,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
             >
               <Box display="flex" alignItems="center">
                 <img src="https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/rmc_logo.png" alt="Logo" />
-                <Typography variant="h6">| Chhattisgarh</Typography>
+                {/* <Typography variant="h6"> </Typography> */}
               </Box>
               <Typography variant="h6" padding={4} style={{ marginTop: 5, padding: 4, color: "#484848", fontWeight: 500, fontSize: 16 }}>
                 {location.pathname === "/fsm-ui/citizen/register/name" || location.pathname === "/fsm-ui/citizen/register/otp"

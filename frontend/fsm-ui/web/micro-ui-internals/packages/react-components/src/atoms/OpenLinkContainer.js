@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { NotificationBell } from "./svgindex";
 
+const logo="https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/rmc_logo.png";
 const OpenLinkContainer = ({ img,}) => {
   return (
     <div className="navbar">
@@ -11,6 +12,7 @@ const OpenLinkContainer = ({ img,}) => {
           id="topbar-logo" 
           crossOrigin="anonymous"
           src={"https://cdn.jsdelivr.net/npm/@upyog/digit-ui-css@1.0.7/img/m_seva_white_logo.png"}
+          // src ={logo}
           alt="mSeva"
         />
       </div>

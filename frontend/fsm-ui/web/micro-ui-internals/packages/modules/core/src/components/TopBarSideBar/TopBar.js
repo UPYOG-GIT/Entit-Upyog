@@ -95,23 +95,29 @@ const TopBar = ({
     );
   }
   const loggedin = userDetails?.access_token ? true : false;
+  const staticLogo ='https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/rmc_logo.png';
+  const staticBlankLogo ='https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/HCM_blank.png';
   return (
     <div className="topbar">
       {mobileView ? <Hamburger handleClick={toggleSidebar} color="#9E9E9E" /> : null}
-      <img className="city" src={loggedin ? cityDetails?.logoId : stateInfo?.statelogo} />
+      {/* <img className="city" src={loggedin ? cityDetails?.logoId : stateInfo?.statelogo} /> */}
+      <img className="city" src={loggedin ? staticLogo : stateInfo?.statelogo} />
       <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
         {loggedin &&
           (cityDetails?.city?.ulbGrade ? (
             <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
-              {t(cityDetails?.i18nKey).toUpperCase()}{" "}
-              {t(`ULBGRADE_${cityDetails?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`).toUpperCase()}
+              {/* {t(cityDetails?.i18nKey).toUpperCase()}{" "}
+              {t(`ULBGRADE_${cityDetails?.city?.ulbGrade.toUpperCase().replace(" ", "_").replace(".", "_")}`).toUpperCase()} */}
+               Municipal Corporation, Raipur (C.G.) 
             </p>
           ) : (
-            <img className="state" src={logoUrl} />
+            // <img className="state" src={staticBlankLogo} />
+            <img className="state" src="https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/HCM_blank.png" />
           ))}
         {!loggedin && (
           <p className="ulb" style={mobileView ? { fontSize: "14px", display: "inline-block" } : {}}>
-            {t(`MYCITY_${stateInfo?.code?.toUpperCase()}_LABEL`)} {t(`MYCITY_STATECODE_LABEL`)}
+            {/* {t(`MYCITY_${stateInfo?.code?.toUpperCase()}_LABEL`)} {t(`MYCITY_STATECODE_LABEL`)}RAIPUR MUNICIPAL CORPORATION */}
+            Municipal Corporation, Raipur (C.G.) 
           </p>
         )}
         {!mobileView && (
@@ -142,7 +148,8 @@ const TopBar = ({
                 />
               </div>
             )}
-            <img className="state" src={logoUrl} />
+            {/* <img className="state" src={logoUrl} /> */}
+            <img className="state" src="https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/HCM_blank.png" />
           </div>
         )}
       </span>
