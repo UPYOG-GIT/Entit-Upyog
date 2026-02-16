@@ -28,8 +28,8 @@ const LanguageSelection = () => {
     <Background>
       <Card className="bannerCard removeBottomMargin">
         <div className="bannerHeader">
-          <img className="bannerLogo" src={stateInfo?.logoUrl} alt="Digit" />
-
+          {/* <img className="bannerLogo" src={stateInfo?.logoUrl} alt="Digit" /> */}
+           <img className="bannerLogo" src="https://try-digit-eks-yourname.s3.ap-south-1.amazonaws.com/rmc_logo.png" alt="Digit" />
           <p>{t(`TENANT_TENANTS_${stateInfo?.code.toUpperCase()}`)}</p>
         </div>
         <div className="language-selector" style={{ justifyContent: "space-around", marginBottom: "24px", padding: "0 5%" }}>

@@ -89,9 +89,13 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
 
   useEffect(() => {
     (async () => {
-      if (formData?.tripData?.vehicleType !== vehicle) {
-        setVehicle({ label: formData?.tripData?.vehicleType?.capacity });
-      }
+      // if (formData?.tripData?.vehicleType !== vehicle) {
+      //   setVehicle({ label: formData?.tripData?.vehicleType?.capacity });
+      //   console.log(JSON.stringify("form data ",formData?.tripData));
+      // }
+      if ( formData?.tripData?.vehicleType?.capacity &&  formData?.tripData?.vehicleType?.capacity !== vehicle?.label ) {
+            setVehicle({ label: formData?.tripData?.vehicleType?.capacity });
+          }
 
       if (formData?.address?.propertyLocation?.code === "FROM_GRAM_PANCHAYAT" && formData.tripData.noOfTrips && formData.tripData.amountPerTrip) {
         setValue({
@@ -145,9 +149,9 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
     <Loader />
   ) : (
     <div>
-      <LabelFieldPair>
-        <CardLabel className="card-label-smaller">{t("ES_NEW_APPLICATION_LOCATION_VEHICLE_REQUESTED") + " * "}</CardLabel>
-        <Dropdown
+      {/* <LabelFieldPair>
+        <CardLabel className="card-label-smaller">{t("ES_NEW_APPLICATION_LOCATION_VEHICLE_REQUESTED") + " * "}</CardLabel> */}
+        {/* <Dropdown
           className="form-field"
           style={styles}
           isMandatory
@@ -158,8 +162,82 @@ const SelectTrips = ({ t, config, onSelect, formData = {}, userType, styles, FSM
           select={selectVehicle}
           t={t}
           disable={editScreen && applicationData?.applicationStatus != "CREATED" ? true : false}
-        />
-      </LabelFieldPair>
+        /> */}
+        <LabelFieldPair>
+          <CardLabel className="card-label-smaller">
+            {t("ES_NEW_APPLICATION_LOCATION_VEHICLE_REQUESTED") + " * "}
+          </CardLabel>
+
+              {/*
+              <Dropdown
+                className="form-field"
+                style={styles}
+                isMandatory
+                option={vehicleMenu?.map((vehicle) => ({ ...vehicle, label: vehicle.capacity })).sort((a, b) => a.capacity - b.capacity)}
+                optionKey="label"
+                id="vehicle"
+                selected={vehicle}
+                select={selectVehicle}
+                t={t}
+                disable={editScreen && applicationData?.applicationStatus != "CREATED" ? true : false}
+              />
+              */}
+
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "15px" }}>
+            {vehicleMenu
+              ?.sort((a, b) => a.capacity - b.capacity)
+              ?.map((item) => (
+                <div
+                  key={item.id || item.capacity}
+                  onClick={() =>
+                    !(editScreen && applicationData?.applicationStatus !== "CREATED") &&
+                    selectVehicle(item)
+                  }
+                  style={{
+                    cursor:
+                      editScreen && applicationData?.applicationStatus !== "CREATED"
+                        ? "not-allowed"
+                        : "pointer",
+                    border:
+                      // vehicle?.label === item.capacity
+                      Number(vehicle?.label) === Number(item.capacity)
+                      ? "2px solid #007bff"
+                        : "1px solid #ccc",
+                    borderRadius: "10px",
+                    padding: "10px",
+                    textAlign: "center",
+                    backgroundColor:
+                      // vehicle?.label === item.capacity ? "#f0f8ff" : "#fff",
+                    Number(vehicle?.label) === Number(item.capacity) ? "#f0f8ff" : "#fff",
+                     opacity:
+                      editScreen && applicationData?.applicationStatus !== "CREATED"
+                        ? 0.6
+                        : 1,
+                    transition: "all 0.3s ease",
+                  }}
+                >
+                  <img
+                    src={item.imgUrl}
+                    alt={item.capacity}
+                    style={{
+                      width: "120px",
+                      height: "120px",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <p
+                    style={{
+                      marginTop: "8px",
+                      fontWeight: "bold",
+                      fontSize: "14px",
+                    }}
+                  >
+                    {item.capacity} L
+                  </p>
+                </div>
+              ))}
+          </div>
+     </LabelFieldPair>
       {vehicleImg && (
         <LabelFieldPair>
           <CardLabel className="card-label-smaller">

@@ -122,15 +122,30 @@ const SelectVehicleType = ({ t, config, onSelect, userType, formData, setValue }
           {t("ES_FSM_REGISTRY_VEHICLE_TYPE")}
           {config.isMandatory ? " * " : null}
         </CardLabel>
-        <Dropdown
-          className="form-field"
-          isMandatory
-          selected={selectedType}
-          option={types?.sort((a, b) => a.name.localeCompare(b.name))}
-          select={selectType}
-          optionKey="name"
-          t={t}
-        />
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+          {types?.map((type) => (
+            <div
+              key={type.code}
+              onClick={() => selectType(type)}
+              style={{
+                cursor: 'pointer',
+                border: selectedType?.code === type.code ? '2px solid #007bff' : '1px solid #ccc',
+                borderRadius: '8px',
+                padding: '10px',
+                textAlign: 'center',
+                backgroundColor: selectedType?.code === type.code ? '#f0f8ff' : '#fff',
+                transition: 'border-color 0.3s, background-color 0.3s'
+              }}
+            >
+              <img
+                src={type.imgUrl}
+                alt={type.name}
+                style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+              />
+              <p style={{ margin: '5px 0 0 0', fontSize: '14px', fontWeight: 'bold' }}>{type.capacity} L</p>
+            </div>
+          ))}
+        </div>
       </LabelFieldPair>
       <LabelFieldPair>
         <CardLabel className="card-label-smaller">
