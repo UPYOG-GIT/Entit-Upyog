@@ -554,7 +554,7 @@ const Login = ({ stateCode, isUserRegistered = true }) => {
                     error={showError}
                   >
                     {cities &&
-                      cities.map((city) => (
+                    cities.filter((city)=>city.name ==="Raipur").map((city) => (
                         <MenuItem key={city.code} value={city.code}>
                           {city.name} {"Municipal Corporation"}
                         </MenuItem>
