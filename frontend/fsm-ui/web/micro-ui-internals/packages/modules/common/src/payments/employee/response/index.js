@@ -3,6 +3,7 @@ import { Banner, Card, CardText, SubmitBar, ActionBar, DownloadPrefixIcon, Loade
 import { useHistory, useParams, Link, LinkLabel } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "react-query";
+import Urls from "../../../../../../libraries/src/services/atoms/urls";
 
 export const SuccessfulPayment = (props) => {
   const { addParams, clearParams } = props;
@@ -123,65 +124,64 @@ export const SuccessfulPayment = (props) => {
   }
 
 
-  const printReciept = async () => {
+ const printReciept = async () => {
     const tenantId = Digit.ULBService.getCurrentTenantId();
-    const state = Digit.ULBService.getStateId();
-    const payments = await Digit.PaymentService.getReciept(tenantId, businessService, { receiptNumbers: receiptNumber });
-    let response = { filestoreIds: [payments.Payments[0]?.fileStoreId] };
-
-    if (!payments.Payments[0]?.fileStoreId) {
-      response = await Digit.PaymentService.generatePdf(state, { Payments: payments.Payments }, generatePdfKey);
+    const paymentsHistory = await Digit.PaymentService.getReciept(
+      tenantId,
+      businessService,
+      { receiptNumbers: receiptNumber }
+    );
+    if (!paymentsHistory?.Payments?.length) {
+      console.error("No payments found");
+      return;
     }
-    const fileStore = await Digit.PaymentService.printReciept(state, { fileStoreIds: response.filestoreIds[0] });
-    window.open(fileStore[response.filestoreIds[0]], "_blank");
-  };
-
+    const paymentIndex = paymentsHistory.Payments.length === 1 ? 0 : 1;
+    const response = await fetch(Urls.payment.get_fsm_receipt, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ Payments: [paymentsHistory.Payments[paymentIndex]] }),
+    });
+    if (!response.ok) {
+      console.error("Failed:", response.status);
+      return;
+    }
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `Receipt_${receiptNumber}.pdf`;  // ← filename
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+};
 
   if (businessService?.includes("BPA") && isBpaSearchLoading) return <Loader />
 
-  return (
+   return (
     <React.Fragment>
       <Card>
-        <Banner message={getMessage()} info={t("PAYMENT_LOCALIZATION_RECIEPT_NO")} applicationNumber={receiptNumber} successful={true} />
+        <Banner 
+          message={getMessage()} 
+          info={t("PAYMENT_LOCALIZATION_RECIEPT_NO")} 
+          applicationNumber={receiptNumber} 
+          successful={true} 
+        />
         <CardText>{getCardText()}</CardText>
-        {generatePdfKey ? (
-          <div style={{ display: "flex" }}>
-            <div className="primary-label-btn d-grid" style={{ marginLeft: "unset", marginRight: "20px" }} onClick={printReciept}>
-              <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-                <path d="M0 0h24v24H0z" fill="none" />
-                <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z" />
-              </svg>
-              {t("CS_COMMON_PRINT_RECEIPT")}
-            </div>
-            {businessService == "TL" ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={printCertificate}>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
-                  <path d="M0 0h24v24H0z" fill="none" />
-                  <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z" />
-                </svg>
-                {t("CS_COMMON_PRINT_CERTIFICATE")}
-              </div>
-            ) : null}
-            {data?.[0]?.businessService === "BPA_OC" && ( data?.[0]?.status==="APPROVED" || data?.[0]?.status==="PENDING_SANC_FEE_PAYMENT" ) ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={e => getPermitOccupancyOrderSearch("occupancy-certificate")}>
-                <DownloadPrefixIcon />
-                {t("BPA_OC_CERTIFICATE")}
-              </div>
-            ) : null}
-            {/* {data?.[0]?.businessService === "BPA_LOW" ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={r => getPermitOccupancyOrderSearch("buildingpermit-low")}>
-                <DownloadPrefixIcon />
-                {t("BPA_PERMIT_ORDER")}
-              </div>
-            ) : null} */}
-            {((data?.[0]?.businessService === "BPA") || (data?.[0]?.businessService === "BPA_LOW")) && (data?.[0]?.businessService !== "BPA_OC") && (data?.[0]?.status==="PENDING_SANC_FEE_PAYMENT" || data?.[0]?.status === "APPROVED") ? (
-              <div className="primary-label-btn d-grid" style={{ marginLeft: "unset" }} onClick={r => getPermitOccupancyOrderSearch("buildingpermit")}>
-                <DownloadPrefixIcon />
-                {t("BPA_PERMIT_ORDER")}
-              </div>
-            ) : null}
+        {/* ✅ No generatePdfKey condition - always show for FSM */}
+        <div style={{ display: "flex" }}>
+          <div
+            className="primary-label-btn d-grid"
+            style={{ marginLeft: "unset", marginRight: "20px" }}
+            onClick={printReciept}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+              <path d="M0 0h24v24H0z" fill="none" />
+              <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z" />
+            </svg>
+            {t("CS_COMMON_PRINT_RECEIPT")}
           </div>
-        ) : null}
+        </div>
       </Card>
       <ActionBar style={{ display: "flex", justifyContent: "flex-end", alignItems: "baseline" }}>
         <Link to="/fsm-ui/employee">

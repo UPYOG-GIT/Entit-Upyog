@@ -32,6 +32,7 @@ import { Link, useHistory, useParams } from "react-router-dom";
 import { ViewImages } from "../../../components/ViewImages";
 import getPDFData from "../../../getPDFData";
 import JsDictionary from "../../../../../../libraries/src/services/atoms/JsDictionary";
+import Urls from "../../../../../../libraries/src/services/atoms/urls";
 
 const ApplicationDetails = (props) => {
   const userInfo = Digit.UserService.getUser();
@@ -292,47 +293,43 @@ const ApplicationDetails = (props) => {
     setShowOptions(false);
   };
 
-  const downloadFinalPaymentReceipt = async () => {
-    const receiptFile = {
-      filestoreIds: [paymentsHistory.Payments[0]?.fileStoreId],
-    };
-
-    if (!receiptFile?.fileStoreIds?.[0]) {
-      const newResponse = await Digit.PaymentService.generatePdf(state, { Payments: [paymentsHistory.Payments[0]] }, "fsm-receipt");
-      const fileStore = await Digit.PaymentService.printReciept(state, {
-        fileStoreIds: newResponse.filestoreIds[0],
-      });
-      window.open(fileStore[newResponse.filestoreIds[0]], "_blank");
-      setShowOptions(false);
-    } else {
-      const fileStore = await Digit.PaymentService.printReciept(state, {
-        fileStoreIds: receiptFile.filestoreIds[0],
-      });
-      window.open(fileStore[receiptFile.filestoreIds[0]], "_blank");
-      setShowOptions(false);
-    }
-  };
-  const downloadAdvancePaymentReceipt = async () => {
-    const paymemntIndex = paymentsHistory.Payments.length === 1 ? 0 : 1;
-    const receiptFile = {
-      filestoreIds: [paymentsHistory.Payments[paymemntIndex]?.fileStoreId],
-    };
-
-    if (!receiptFile?.fileStoreIds?.[0]) {
-      const newResponse = await Digit.PaymentService.generatePdf(state, { Payments: [paymentsHistory.Payments[paymemntIndex]] }, "fsm-receipt");
-      const fileStore = await Digit.PaymentService.printReciept(state, {
-        fileStoreIds: newResponse.filestoreIds[0],
-      });
-      window.open(fileStore[newResponse.filestoreIds[0]], "_blank");
-      setShowOptions(false);
-    } else {
-      const fileStore = await Digit.PaymentService.printReciept(state, {
-        fileStoreIds: receiptFile.filestoreIds[0],
-      });
-      window.open(fileStore[receiptFile.filestoreIds[0]], "_blank");
-      setShowOptions(false);
-    }
-  };
+ const downloadFinalPaymentReceipt = async () => {
+     const response = await fetch(Urls.payment.get_fsm_receipt, {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify({ Payments: [paymentsHistory.Payments[0]] }),
+     });
+     if (!response.ok) { console.error("Failed:", response.status); return; }
+     const blob = await response.blob();
+     const url = window.URL.createObjectURL(blob);
+     const link = document.createElement("a");
+     link.href = url;
+     link.download = "finalPaymentReceipt.pdf";
+     document.body.appendChild(link);
+     link.click();
+     document.body.removeChild(link);
+     window.URL.revokeObjectURL(url);
+     setShowOptions(false);
+ };
+ const downloadAdvancePaymentReceipt = async () => {
+     const paymentIndex = paymentsHistory.Payments.length === 1 ? 0 : 1;
+     const response = await fetch(Urls.payment.get_fsm_receipt, {
+       method: "POST",
+       headers: { "Content-Type": "application/json" },
+       body: JSON.stringify({ Payments: [paymentsHistory.Payments[paymentIndex]] }),
+     });
+     if (!response.ok) { console.error("Failed:", response.status); return; }
+     const blob = await response.blob();
+     const url = window.URL.createObjectURL(blob);
+     const link = document.createElement("a");
+     link.href = url;
+     link.download = "advancePaymentReceipt.pdf";
+     document.body.appendChild(link);
+     link.click();
+     document.body.removeChild(link);
+     window.URL.revokeObjectURL(url);
+     setShowOptions(false);
+ };
   const [isDisplayDownloadMenu, setIsDisplayDownloadMenu] = useState(false);
 
   let dowloadOptions =
@@ -343,7 +340,7 @@ const ApplicationDetails = (props) => {
             onClick: handleDownloadPdf,
           },
           {
-            label: t("CS_DOWNLOAD_RECEIPT"),
+            label: t("Download Receipt"),
             onClick: () => {
               setShowReceiptOptions(true), setShowOptions(false);
             },
@@ -359,7 +356,7 @@ const ApplicationDetails = (props) => {
     paymentsHistory?.Payments.length > 1
       ? [
           {
-            label: t("ADVANCE_PAYMENT_RECEIPT"),
+            label: t("Advance Payment Receipt"),
             onClick: downloadAdvancePaymentReceipt,
           },
           {
@@ -369,7 +366,7 @@ const ApplicationDetails = (props) => {
         ]
       : [
           {
-            label: t("ADVANCE_PAYMENT_RECEIPT"),
+            label: t("Advance Payment Receipt"),
             onClick: downloadAdvancePaymentReceipt,
           },
         ];
