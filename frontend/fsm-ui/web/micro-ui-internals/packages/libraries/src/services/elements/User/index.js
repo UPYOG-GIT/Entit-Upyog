@@ -49,11 +49,12 @@ export const UserService = {
     finally{
       window.localStorage.clear();
       window.sessionStorage.clear();
-      if (userType === "citizen") {
-        window.location.replace("/fsm-ui/citizen/fsm-home");
-      } else {
-        window.location.replace("/fsm-ui/employee/user/language-selection");
-      }
+      // if (userType === "citizen") {
+      //   window.location.replace("/fsm-ui/citizen/fsm-home");
+      // } else {
+      //   window.location.replace("/fsm-ui/employee/user/language-selection");
+      // }
+      window.location.replace("/fsm-ui/citizen/fsm-home");
     }
   },
   sendOtp: (details, stateCode) =>

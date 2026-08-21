@@ -127,7 +127,7 @@ const Login = ({ config: propsConfig, t, isDisabled }) => {
             customProps: {},
             component: (props, customProps) => (
               <Dropdown
-                option={cities}
+                option={cities.filter((item) => item.name === "Raipur")}
                 className="login-city-dd"
                 optionKey="i18nKey"
                 select={(d) => {

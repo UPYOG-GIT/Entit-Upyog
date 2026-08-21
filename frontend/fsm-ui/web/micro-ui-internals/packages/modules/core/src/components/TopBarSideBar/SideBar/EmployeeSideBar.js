@@ -49,7 +49,11 @@ const EmployeeSideBar = () => {
         } else if (roles.includes("BPAREG_APPROVER")) { 
           setRedirectUrl("/fsm-ui/employee");
         } else {
-          setRedirectUrl("/employee");
+          const currentUrl = window.location.href;
+          if(currentUrl.includes("/fsm-ui/employee")) {
+            setRedirectUrl("/fsm-ui/citizen/fsm-home");
+          } else
+            setRedirectUrl("/employee");
         }
       }
   
