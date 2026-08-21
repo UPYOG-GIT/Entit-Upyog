@@ -131,12 +131,12 @@ export const Search = {
             value: `${response?.address?.locality?.code}`,
           },
           {
-            title: "ES_APPLICATION_DETAILS_LOCATION_WARD_NAME",
-            value: `${response?.address?.additionalDetails.wardName}`,
-          },
-          {
             title: "ES_APPLICATION_DETAILS_LOCATION_ZONE",
             value: `${response?.address?.additionalDetails.zoneName}`,
+          },
+          {
+            title: "ES_APPLICATION_DETAILS_LOCATION_WARD_NAME",
+            value: `${response?.address?.additionalDetails.wardName}`,
           },
           { title: "ES_APPLICATION_DETAILS_LOCATION_CITY", value: response?.address?.city },
           { title: "ES_APPLICATION_DETAILS_LOCATION_PINCODE", value: response?.address?.pincode },
