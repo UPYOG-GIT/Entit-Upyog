@@ -94,6 +94,7 @@ export const Search = {
     
     // const totalAmount = response?.noOfTrips === 0 || amountPerTrip === "N/A" ? "N/A" : response?.noOfTrips * Number(amountPerTrip);
     const totalAmount = demandDetails?.Demands[0]?.demandDetails?.map((detail) => detail?.taxAmount)?.reduce((a, b) => a + b) || "N/A";
+   console.log("WardName "+response?.address?.additionalDetails.wardName);
     const employeeResponse = [
       {
         title: "ES_TITLE_APPLICATION_DETAILS",
@@ -129,6 +130,14 @@ export const Search = {
             title: "ES_APPLICATION_DETAILS_LOCATION_LOCALITY",
             // value: `${response?.tenantId?.toUpperCase()?.split(".")?.join("_")}_REVENUE_${response?.address?.locality?.code}`,
             value: `${response?.address?.locality?.code}`,
+          },
+          {
+            title: "ES_APPLICATION_DETAILS_LOCATION_WARD_NAME",
+            value: `${response?.address?.additionalDetails.wardName}`,
+          },
+          {
+            title: "ES_APPLICATION_DETAILS_LOCATION_ZONE",
+            value: `${response?.address?.additionalDetails.zoneName}`,
           },
           { title: "ES_APPLICATION_DETAILS_LOCATION_CITY", value: response?.address?.city },
           { title: "ES_APPLICATION_DETAILS_LOCATION_PINCODE", value: response?.address?.pincode },
