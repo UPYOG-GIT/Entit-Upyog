@@ -94,7 +94,6 @@ export const Search = {
     
     // const totalAmount = response?.noOfTrips === 0 || amountPerTrip === "N/A" ? "N/A" : response?.noOfTrips * Number(amountPerTrip);
     const totalAmount = demandDetails?.Demands[0]?.demandDetails?.map((detail) => detail?.taxAmount)?.reduce((a, b) => a + b) || "N/A";
-   console.log("WardName "+response?.address?.additionalDetails.wardName);
     const employeeResponse = [
       {
         title: "ES_TITLE_APPLICATION_DETAILS",
