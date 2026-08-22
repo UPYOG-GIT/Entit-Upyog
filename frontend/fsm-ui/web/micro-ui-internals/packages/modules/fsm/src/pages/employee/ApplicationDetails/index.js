@@ -36,6 +36,8 @@ import Urls from "../../../../../../libraries/src/services/atoms/urls";
 
 const ApplicationDetails = (props) => {
   const userInfo = Digit.UserService.getUser();
+  const isDriver = userInfo?.info?.roles?.some((role) => role.code === "FSM_DRIVER") || false;
+ 
   // const tenantId = Digit.ULBService.getCurrentTenantId();
   // const tenantId = Digit.ULBService.getCitizenCurrentTenant();
   // const tenantId = userInfo?.info?.tenantId;
@@ -60,7 +62,7 @@ const ApplicationDetails = (props) => {
   const isMobile = window.Digit.Utils.browser.isMobile();
   const [shownDownloadOptions, setShoowDownloadOptions] = useState(false);
   const { data: storeData } = Digit.Hooks.useStore.getInitData();
-
+  
   const { tenants } = storeData || {};
   const { data: paymentsHistory } = Digit.Hooks.fsm.usePaymentHistory(tenantId, applicationNumber);
 
@@ -105,6 +107,9 @@ const ApplicationDetails = (props) => {
   //   getTripData: true,
   // });
 
+  //const isDriverDsoPage = window.location.pathname.includes("/citizen/fsm/dso-application-details");
+
+
   const workflowDetails = Digit.Hooks.useWorkflowDetails({
     tenantId: applicationDetails?.tenantId || tenantId,
     id: applicationNumber,
@@ -113,6 +118,9 @@ const ApplicationDetails = (props) => {
     serviceData: applicationDetails,
     getTripData: true,
   });
+
+  const currentStatus = workflowDetails?.data?.timeline?.[0]?.status;
+  const hideTakeActionForDriver = isDriver && currentStatus === "CITIZEN_FEEDBACK_PENDING";
 
   function OpenImage(imageSource, index,thumbnailsToShow){
     window.open(thumbnailsToShow?.fullImage?.[0],"_blank");
@@ -550,8 +558,9 @@ const ApplicationDetails = (props) => {
             />
           )}
           {!workflowDetails?.isLoading &&
+            !hideTakeActionForDriver &&
             workflowDetails?.data?.nextActions?.length === 1 &&
-            workflowDetails?.data?.nextActions?.[0]?.action !== "RATE" && (
+            workflowDetails?.data?.nextActions?.[0]?.action !== "RATE" &&  (
               <ActionBar style={{ zIndex: "19" }}>
                 <SubmitBar
                   label={t(`ES_FSM_${workflowDetails?.data?.nextActions[0].action}`)}
@@ -559,7 +568,8 @@ const ApplicationDetails = (props) => {
                 />
               </ActionBar>
             )}
-          {!workflowDetails?.isLoading && workflowDetails?.data?.nextActions?.length > 1 && (
+          {!workflowDetails?.isLoading && !hideTakeActionForDriver && workflowDetails?.data?.nextActions?.length > 1 && 
+           (
             <ActionBar style={{ zIndex: "19" }}>
               {displayMenu && workflowDetails?.data?.nextActions ? (
                 <Menu
